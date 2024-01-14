@@ -1,0 +1,4 @@
+CREATE PROCEDURE sp_DeleteUserByID(IN userId INT)
+BEGIN
+    DELETE FROM user WHERE id = userId;
+END
