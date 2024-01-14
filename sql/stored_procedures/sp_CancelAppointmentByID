@@ -1,0 +1,10 @@
+DELIMITER //
+
+CREATE PROCEDURE sp_CancelAppointmentByID(IN p_appointment_id INT)
+BEGIN
+    UPDATE appointment
+    SET cancelled = 1
+    WHERE id = p_appointment_id;
+END //
+
+DELIMITER ;
