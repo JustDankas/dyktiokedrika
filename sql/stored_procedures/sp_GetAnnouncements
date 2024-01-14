@@ -1,0 +1,4 @@
+CREATE PROCEDURE `sp_GetAnnouncements` ()
+BEGIN
+	select * from announcements;
+END
