@@ -9,6 +9,9 @@ import { LandingPageComponent } from './pages/landing-page-compoenents/landing-p
 import { ChooseProgramComponent } from './pages/landing-page-compoenents/choose-program/choose-program.component';
 import { BecomeMemberComponent } from './pages/landing-page-compoenents/become-member/become-member.component';
 import { OurClassesComponent } from './pages/landing-page-compoenents/our-classes/our-classes.component';
+import { ClassesScheduleComponent } from './pages/landing-page-compoenents/classes-schedule/classes-schedule.component';
+import { ExpertTrainersComponent } from './pages/landing-page-compoenents/expert-trainers/expert-trainers.component';
+import { ContactUsComponent } from './pages/landing-page-compoenents/contact-us/contact-us.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +22,9 @@ import { OurClassesComponent } from './pages/landing-page-compoenents/our-classe
     ChooseProgramComponent,
     BecomeMemberComponent,
     OurClassesComponent,
+    ClassesScheduleComponent,
+    ExpertTrainersComponent,
+    ContactUsComponent,
   ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [],
