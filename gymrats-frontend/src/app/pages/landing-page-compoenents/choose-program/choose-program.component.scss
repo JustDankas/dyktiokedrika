@@ -1,0 +1,19 @@
+.features-items {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  .feature-item {
+    width: 70%;
+    box-sizing: border-box;
+  }
+  .feature-item:nth-child(1),
+  .feature-item:nth-child(3),
+  .feature-item:nth-child(5) {
+    justify-self: end;
+  }
+  .feature-item:nth-child(2),
+  .feature-item:nth-child(4),
+  .feature-item:nth-child(6) {
+    justify-self: start;
+  }
+}
