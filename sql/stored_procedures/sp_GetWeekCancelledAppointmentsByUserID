@@ -1,0 +1,9 @@
+CREATE PROCEDURE sp_GetWeekCancelledAppointmentsByUserID(IN userId INT)
+BEGIN
+    SELECT user_id, slot_id, cancelled, program_id, start, end
+    FROM appointment
+    JOIN slot ON appointment.slot_id = slot.id
+    WHERE appointment.cancelled = 1 
+      AND appointment.user_id = userId
+      AND DATEDIFF(CURDATE(), slot.start) BETWEEN 0 AND 6;
+END
