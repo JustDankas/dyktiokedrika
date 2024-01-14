@@ -1,5 +1,5 @@
 -- Update Program by ID
-CREATE PROCEDURE sp_UpdateProgramByID(
+CREATE PROCEDURE sp_UpdateProgram(
     IN p_program_id INT,
     IN p_trainer_id INT,
     IN p_title VARCHAR(255),
