@@ -1,0 +1,10 @@
+CREATE DEFINER = CURRENT_USER TRIGGER `increase_slot_seats_after_cancel` 
+AFTER UPDATE ON `appointment` FOR EACH ROW
+BEGIN
+    IF NEW.cancelled = 1 AND OLD.cancelled = 0 THEN
+        UPDATE slot
+        SET seats_available = seats_available + 1
+        WHERE id = NEW.slot_id;
+    END IF;
+
+END
