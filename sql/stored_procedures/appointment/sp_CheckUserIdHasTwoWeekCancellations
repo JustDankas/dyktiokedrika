@@ -1,13 +1,8 @@
-CREATE PROCEDURE sp_CheckUserIdHasTwoWeekCancellations(IN userId INT, OUT result BOOLEAN)
+CREATE DEFINER=`root`@`%` PROCEDURE `sp_CheckUserIdHasTwoWeekCancellations`(IN userId INT, OUT result BOOLEAN)
 BEGIN
-    SELECT COUNT(*) = 2 INTO result
-    FROM appointment
-    JOIN slot ON appointment.slot_id = slot.id
-    WHERE appointment.cancelled = 1 
-      AND appointment.user_id = userId
-      AND DATEDIFF(CURDATE(), slot.start) BETWEEN 0 AND 6;
-END 
-
--- Example of calling the stored procedure
--- CALL sp_CheckUserIdHasTwoWeekCancellations(3, @result);
--- SELECT @result AS has_exactly_2_cancellations;
+	SELECT COUNT(*) >= 2 INTO result
+	FROM appointment
+	WHERE user_id = userId
+	  AND cancelled = 1
+	  AND DATEDIFF(CURDATE(), cancelled_on) BETWEEN 0 AND 6;
+END
