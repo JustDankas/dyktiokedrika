@@ -1,0 +1,80 @@
+<div
+  class="modal fade"
+  id="login"
+  tabindex="-1"
+  aria-labelledby="loginLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title fs-5" id="loginLabel">LOGIN</h2>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="loginForm">
+          <div class="mb-3 w-100">
+            <input
+              class="form-control"
+              placeholder="Name"
+              type="text"
+              formControlName="nameControl"
+            />
+            <div
+              class="form-text form-error"
+              *ngIf="nameControl?.hasError('required') && nameControl?.touched"
+            >
+              Name is required
+            </div>
+          </div>
+          <div class="mb-3 w-100">
+            <input
+              class="form-control"
+              placeholder="Email"
+              type="email"
+              formControlName="emailControl"
+            />
+            <div
+              class="form-text form-error"
+              *ngIf="
+                emailControl?.hasError('required') && emailControl?.touched
+              "
+            >
+              Email is required
+            </div>
+            <div
+              class="form-text form-error"
+              *ngIf="emailControl?.hasError('email')"
+            >
+              Provide a valid email
+            </div>
+          </div>
+          <div class="mb-3 w-100">
+            <input
+              class="form-control"
+              type="password"
+              placeholder="Password"
+              formControlName="passwordControl"
+            />
+            <div
+              class="form-text form-error"
+              *ngIf="
+                passwordControl?.hasError('required') &&
+                passwordControl?.touched
+              "
+            >
+              Please enter your password
+            </div>
+          </div>
+          <button
+            class="btn btn-primary"
+            type="submit button"
+            (click)="$event.preventDefault(); onSubmit()"
+            [disabled]="loginForm.invalid"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

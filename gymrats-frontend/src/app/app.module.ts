@@ -12,6 +12,10 @@ import { OurClassesComponent } from './pages/landing-page-compoenents/our-classe
 import { ClassesScheduleComponent } from './pages/landing-page-compoenents/classes-schedule/classes-schedule.component';
 import { ExpertTrainersComponent } from './pages/landing-page-compoenents/expert-trainers/expert-trainers.component';
 import { ContactUsComponent } from './pages/landing-page-compoenents/contact-us/contact-us.component';
+import { LoginModalComponent } from './components/login-modal/login-modal.component';
+import { RegisterModalComponent } from './components/register-modal/register-modal.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -25,8 +29,15 @@ import { ContactUsComponent } from './pages/landing-page-compoenents/contact-us/
     ClassesScheduleComponent,
     ExpertTrainersComponent,
     ContactUsComponent,
+    LoginModalComponent,
+    RegisterModalComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

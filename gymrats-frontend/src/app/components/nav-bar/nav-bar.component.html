@@ -14,7 +14,22 @@
             </li>
             <li class="scroll-to-section"><a href="#schedule">Schedules</a></li>
             <li class="scroll-to-section"><a href="#contact-us">Contact</a></li>
-            <li class="main-button"><a href="#">Sign Up</a></li>
+            <button
+              type="button"
+              class="button me-3"
+              data-bs-toggle="modal"
+              data-bs-target="#login"
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              class="button"
+              data-bs-toggle="modal"
+              data-bs-target="#register"
+            >
+              Sign Up
+            </button>
           </ul>
           <a class="menu-trigger">
             <span>Menu</span>
@@ -25,3 +40,6 @@
     </div>
   </div>
 </header>
+
+<app-login-modal></app-login-modal>
+<app-register-modal></app-register-modal>

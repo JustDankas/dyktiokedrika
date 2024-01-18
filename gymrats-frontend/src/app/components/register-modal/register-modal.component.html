@@ -1,0 +1,275 @@
+<div
+  class="modal fade"
+  id="register"
+  tabindex="-1"
+  aria-labelledby="registerLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title fs-5 w-100 text-center" id="registerLabel">
+          CREATE ACCOUNT
+        </h2>
+      </div>
+      <!-- <div class="modal-body"> -->
+      <form [formGroup]="registerForm">
+        <div class="modal-body">
+          <div id="signUpCarousel" class="carousel slide">
+            <div class="carousel-inner">
+              <!-- Form Step 1 -->
+              <!-- Form Step 1 -->
+              <!-- Form Step 1 -->
+              <div class="carousel-item active">
+                <div class="step-c">
+                  <div class="mb-3 w-100">
+                    <input
+                      class="form-control"
+                      placeholder="Name"
+                      type="text"
+                      formControlName="nameControl"
+                    />
+                    <div
+                      class="form-text form-error"
+                      *ngIf="
+                        nameControl?.hasError('required') &&
+                        nameControl?.touched
+                      "
+                    >
+                      Name is required
+                    </div>
+                  </div>
+                  <div class="mb-3 w-100">
+                    <input
+                      class="form-control"
+                      placeholder="Surname"
+                      type="text"
+                      formControlName="surnameControl"
+                    />
+                    <div
+                      class="form-text form-error"
+                      *ngIf="
+                        surnameControl?.hasError('required') &&
+                        surnameControl?.touched
+                      "
+                    >
+                      Surname is required
+                    </div>
+                  </div>
+                  <div class="mb-3 w-100">
+                    <input
+                      class="form-control"
+                      placeholder="Email"
+                      type="email"
+                      formControlName="emailControl"
+                    />
+                    <div
+                      class="form-text form-error"
+                      *ngIf="
+                        emailControl?.hasError('required') &&
+                        emailControl?.touched
+                      "
+                    >
+                      Email is required
+                    </div>
+                    <div
+                      class="form-text form-error"
+                      *ngIf="emailControl?.hasError('email')"
+                    >
+                      Provide a valid email
+                    </div>
+                  </div>
+                  <div class="mb-3 w-100">
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Username"
+                      formControlName="usernameControl"
+                    />
+                    <div
+                      class="form-text form-error"
+                      *ngIf="
+                        usernameControl?.hasError('required') &&
+                        usernameControl?.touched
+                      "
+                    >
+                      Username is required
+                    </div>
+                  </div>
+                  <div class="mb-3 w-100">
+                    <input
+                      class="form-control"
+                      type="password"
+                      placeholder="Password"
+                      formControlName="passwordControl"
+                    />
+                    <div
+                      class="form-text form-error"
+                      *ngIf="
+                        passwordControl?.hasError('required') &&
+                        passwordControl?.touched
+                      "
+                    >
+                      Please enter your password
+                    </div>
+                  </div>
+                  <div class="register-actions">
+                    <div>
+                      <button
+                        type="button"
+                        class="circle-btn me-1 bg-primary"
+                        (click)="prev()"
+                      ></button>
+                      <button
+                        type="button"
+                        class="circle-btn"
+                        (click)="next()"
+                      ></button>
+                    </div>
+                    <button
+                      class="btn btn-primary w-100"
+                      type="button"
+                      (click)="next()"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Form Step 2 -->
+              <!-- Form Step 2 -->
+              <!-- Form Step 2 -->
+              <div class="carousel-item">
+                <div class="step-c">
+                  <div class="mb-3 w-100">
+                    <!-- <input
+                      class="form-control"
+                      placeholder="Country"
+                      type="text"
+                      formControlName="countryControl"
+                    /> -->
+                    <select
+                      class="form-select"
+                      aria-label="Default select example"
+                      formControlName="countryControl"
+                    >
+                      <option selected value="undefined">Select Country</option>
+                      <option
+                        *ngFor="let country of countries"
+                        [value]="country.country"
+                      >
+                        {{ country.country }}
+                      </option>
+                    </select>
+                    <div
+                      class="form-text form-error"
+                      *ngIf="
+                        countryControl?.hasError('required') &&
+                        countryControl?.touched
+                      "
+                    >
+                      Country is required
+                    </div>
+                  </div>
+                  <div class="mb-3 w-100">
+                    <!-- <input
+                      class="form-control"
+                      placeholder="City"
+                      type="text"
+                      formControlName="cityControl"
+                    /> -->
+                    <select
+                      class="form-select"
+                      aria-label="Default select example"
+                      formControlName="cityControl"
+                    >
+                      <option selected value="undefined">Select City</option>
+                      <option *ngFor="let city of cities" [value]="city">
+                        {{ city }}
+                      </option>
+                    </select>
+                    <div
+                      class="form-text form-error"
+                      *ngIf="
+                        cityControl?.hasError('required') &&
+                        cityControl?.touched
+                      "
+                    >
+                      Please enter a city
+                    </div>
+                  </div>
+                  <div class="mb-3 w-100">
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Street"
+                      formControlName="streetControl"
+                    />
+                    <div
+                      class="form-text form-error"
+                      *ngIf="
+                        streetControl?.hasError('required') &&
+                        streetControl?.touched
+                      "
+                    >
+                      Please enter your street address
+                    </div>
+                  </div>
+                  <div class="register-actions">
+                    <div>
+                      <button
+                        type="button"
+                        class="circle-btn me-1"
+                        (click)="prev()"
+                      ></button>
+                      <button
+                        type="button"
+                        class="circle-btn bg-primary"
+                        (click)="next()"
+                      ></button>
+                    </div>
+                    <button
+                      class="btn btn-primary w-100"
+                      type="submit button"
+                      (click)="$event.preventDefault(); onSubmit()"
+                      [disabled]="registerForm.invalid"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              id="carousel-prev"
+              class="carousel-control-prev d-none"
+              type="button"
+              data-bs-target="#signUpCarousel"
+              data-bs-slide="prev"
+            ></button>
+            <button
+              id="carousel-next"
+              class="carousel-control-prev d-none"
+              type="button"
+              data-bs-target="#signUpCarousel"
+              data-bs-slide="next"
+            ></button>
+            <!-- <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselExample"
+              data-bs-slide="next"
+            >
+              <span
+                class="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Next</span>
+            </button> -->
+          </div>
+        </div>
+      </form>
+      <!-- </div> -->
+    </div>
+  </div>
+</div>

@@ -1,4 +1,3 @@
-@import "../node_modules/bootstrap/scss/bootstrap";
 /* You can add global styles to this file, and also import other style files */
 
 $primary-200: #ba4987;
@@ -43,6 +42,8 @@ $danger-400: #ff1919;
 $danger-500: #ff0000;
 $danger-600: #ca0000;
 
+$primary: $primary-400;
+
 /*
 
 TemplateMo 548 Training Studio
@@ -74,6 +75,7 @@ font & reset css
 --------------------------------------------- 
 */
 @import url("https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i");
+@import "../node_modules/bootstrap/scss/bootstrap";
 /* 
 ---------------------------------------------
 reset
@@ -304,7 +306,7 @@ body {
 }
 
 .main-button a:hover {
-  background-color: #f9735b;
+  background-color: $primary-300;
 }
 
 /* 
@@ -436,7 +438,7 @@ header
 }
 
 .header-area .main-nav .nav li:last-child a:hover {
-  background-color: #f9735b;
+  background-color: $primary-300;
   opacity: 1;
 }
 
@@ -897,7 +899,7 @@ Our Classes
   background-color: $primary-400;
 }
 #tabs .main-rounded-button a:hover {
-  background-color: #f9735b;
+  background-color: $primary-300;
 }
 #tabs ul li a img {
   max-width: 100%;
@@ -1180,7 +1182,7 @@ contact
 }
 
 .contact-form button:hover {
-  background-color: #f9735b;
+  background-color: $primary-300;
 }
 
 /* 
@@ -1344,5 +1346,17 @@ responsive
 @media (max-width: 450px) {
   .feature-item .right-content a.text-button {
     margin-left: 130px;
+  }
+}
+.button {
+  background-color: $primary-400;
+  color: white;
+  padding: 5px 15px;
+  outline: none;
+  border: none;
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: $primary-300;
+    border-radius: 5px;
   }
 }
