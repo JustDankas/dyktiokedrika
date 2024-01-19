@@ -1,5 +1,21 @@
 import { Injectable } from '@angular/core';
 
+enum Role {
+  user,
+  trainer,
+  admin,
+}
+interface IUser {
+  id: number;
+  name: string;
+  surname: string;
+  email: string;
+  username: string;
+  image: string;
+  registration_date: string;
+  role: Role;
+}
+
 type ILoginForm = Partial<{
   nameControl: string | null;
   emailControl: string | null;
@@ -21,6 +37,17 @@ type IRegisterForm = Partial<{
   providedIn: 'root',
 })
 export class UserService {
+  user: IUser | null = {
+    id: 1,
+    name: 'Dungeon',
+    surname: 'Master',
+    email: 'sex@example.com',
+    username: 'makemecum',
+    image:
+      'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
+    registration_date: new Date().toISOString(),
+    role: Role['user'],
+  };
   constructor() {}
 
   login({ nameControl, emailControl, passwordControl }: ILoginForm) {

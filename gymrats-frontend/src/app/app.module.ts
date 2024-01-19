@@ -16,6 +16,7 @@ import { LoginModalComponent } from './components/login-modal/login-modal.compon
 import { RegisterModalComponent } from './components/register-modal/register-modal.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { HttpClientModule } from '@angular/common/http';
     ContactUsComponent,
     LoginModalComponent,
     RegisterModalComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,
