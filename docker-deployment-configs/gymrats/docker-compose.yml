@@ -1,0 +1,12 @@
+version: '3'
+services:
+  backend:
+    image: orestiskarap/dyktiokedrika_frontend
+    container_name: gymrats_backend
+    ports:
+      - "4242:4200"
+  frontend:
+    image: orestiskarap/dyktiokedrika_backend
+    container_name: gymrats_frontend
+    ports:
+      - "8420:8000"

@@ -1,0 +1,26 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: dev_mysql
+    restart: always
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - 3385:3306
+    volumes:
+      - ./data/db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: "gymratsDB"
+      MYSQL_USER: "papeiravloi"
+      MYSQL_PASSWORD: "d1kti0k3ntrik@"
+      MYSQL_ROOT_PASSWORD: "d1kti0k3ntrik@"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: "dev_phpmyadmin"
+    restart: always
+    ports:
+      - 9292:80
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
