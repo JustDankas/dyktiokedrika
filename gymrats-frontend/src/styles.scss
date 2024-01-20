@@ -1185,6 +1185,13 @@ contact
   background-color: $primary-300;
 }
 
+main {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 80px;
+  background-color: $neutral-500;
+}
+
 /* 
 ---------------------------------------------
 footer

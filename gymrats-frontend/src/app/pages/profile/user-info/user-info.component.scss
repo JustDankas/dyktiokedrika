@@ -1,0 +1,30 @@
+@use "../../../../styles/variables" as *;
+.profile-c {
+  display: flex;
+  align-self: start;
+}
+
+img {
+  width: 150px;
+  height: 150px;
+  border-radius: 100%;
+  object-fit: cover;
+}
+.profile-info-c {
+  display: flex;
+  flex-direction: column;
+}
+.profile-name-badge-c {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.settings-btn {
+  color: $neutral-300;
+  font-size: 20px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+p {
+  color: $neutral-200;
+}

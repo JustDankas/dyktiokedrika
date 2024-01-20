@@ -17,6 +17,8 @@ import { RegisterModalComponent } from './components/register-modal/register-mod
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { UserInfoComponent } from './pages/profile/user-info/user-info.component';
+import { ProgramItemComponent } from './pages/profile/program-item/program-item.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,8 @@ import { ProfileComponent } from './pages/profile/profile.component';
     LoginModalComponent,
     RegisterModalComponent,
     ProfileComponent,
+    UserInfoComponent,
+    ProgramItemComponent,
   ],
   imports: [
     BrowserModule,
