@@ -1,10 +1,12 @@
 export interface IUser {
-  uid: string;
+  id?: number;
   name: string;
   surname: string;
-  address_id: string;
   email: string;
-  country: string;
   username: string;
   password: string;
+  image: string;
+  registration_date: string;
+  role: "admin" | "user" | "trainer" | "notAssigned";
+  // specialization?: string;
 }
