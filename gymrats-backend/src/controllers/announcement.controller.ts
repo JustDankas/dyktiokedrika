@@ -59,11 +59,11 @@ export const getAllAnnouncements = async (req: Request, res: Response) => {
   }
 };
 export const updateAnnouncement = async (
-  req: Request<IAnnouncement["id"]>,
+  req: Request<Omit<IAnnouncement, "created_at">>,
   res: Response
 ) => {
   try {
-    const { id } = req.body;
+    const { id, title, text, image } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
     res.send("Invalid fields in the request form").status(400);
@@ -174,9 +174,19 @@ async function getAnnouncements() {
   return rows[0];
 }
 
-async function updateAnnouncementById(id: IAnnouncement["id"]) {
+async function updateAnnouncementById({
+  id,
+  title,
+  text,
+  image,
+}: Omit<IAnnouncement, "created_at">) {
   // @ts-ignore
-  await sqlPool.query<IAnnouncement>("CALL sp_UpdateAnnouncement(?)", [id]);
+  await sqlPool.query<IAnnouncement>("CALL sp_UpdateAnnouncement(?,?,?,?)", [
+    id,
+    title,
+    text,
+    image,
+  ]);
 }
 
 async function deleteAnnouncementById(id: IAnnouncement["id"]) {
