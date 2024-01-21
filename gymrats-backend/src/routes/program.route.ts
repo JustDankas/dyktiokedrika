@@ -13,5 +13,5 @@ router.route("/delete_program").delete(programDeleteById);
 router.route("/view_all_programs").get(getAllPrograms);
 router.route("/view_program").get(getProgramById);
 router.route("/update_program").put(updateProgram);
-router.route("/delete_all_programs").delete(deleteAllPrograms);
+
 export default router;

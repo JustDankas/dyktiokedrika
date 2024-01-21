@@ -75,15 +75,30 @@ export const getAllPrograms = async (req: Request, res: Response) => {
     return;
   }
 };
-export const updateProgram = async (
-  req: Request<IProgram["id"]>,
-  res: Response
-) => {
+export const updateProgram = async (req: Request<IProgram>, res: Response) => {
   try {
-    const { id } = req.body;
+    const { trainer_id, title, description, type, price, is_group, max_size } =
+      req.body;
+
+    try {
+      // @ts-ignore
+      const userRole = await sqlPool.query<IUser["role"]>(
+        `SELECT role FROM user WHERE id = ? LIMIT 1`,
+        [trainer_id]
+      );
+
+      if (userRole[0] !== "trainer") {
+        res.status(400).send("User that was provided is not a trainer");
+        return;
+      }
+    } catch (getError) {
+      console.log(getError);
+      res.send("Internal Server Error").status(500);
+      return;
+    }
   } catch (deconstructionError) {
     console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    res.status(400).send("Invalid fields in the request form");
     return;
   }
   try {
@@ -161,9 +176,27 @@ async function getPrograms() {
   const [rows] = await sqlPool.query<IProgram[]>("CALL sp_GetPrograms()");
   return rows;
 }
-async function updateProgramById(id: IProgram["id"]) {
+async function updateProgramById({
+  id,
+  trainer_id,
+  title,
+  description,
+  type,
+  price,
+  is_group,
+  max_size,
+}: IProgram) {
   // @ts-ignore
-  await sqlPool.query<IProgram>("CALL sp_UpdateProgramByID(?)", [id]);
+  await sqlPool.query<IProgram>("CALL sp_UpdateProgramByID(?,?,?,?,?,?,?,?)", [
+    id,
+    trainer_id,
+    title,
+    description,
+    type,
+    price,
+    is_group,
+    max_size,
+  ]);
 }
 
 async function deleteProgramById(id: IProgram["id"]) {
