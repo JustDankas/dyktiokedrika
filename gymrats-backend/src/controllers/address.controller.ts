@@ -81,7 +81,7 @@ export const updateAddress = async (
   res: Response
 ) => {
   try {
-    const { id } = req.body;
+    const { id, country, city, street } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
     res.send("Invalid fields in the request form").status(400);
@@ -183,9 +183,19 @@ async function getAddresses() {
   return rows[0];
 }
 
-async function updateAddressById(id: IAddress["id"]) {
+async function updateAddressById({
+  id,
+  country,
+  city,
+  street,
+}: Omit<IAddress, "user_id">) {
   // @ts-ignore
-  await sqlPool.query<IAddress>("CALL sp_UpdateAddressById(?)", [id]);
+  await sqlPool.query<IAddress>("CALL sp_UpdateAddressById(?,?,?,?)", [
+    id,
+    country,
+    city,
+    street,
+  ]);
 }
 
 async function deleteAddressById(id: IAddress["id"]) {
