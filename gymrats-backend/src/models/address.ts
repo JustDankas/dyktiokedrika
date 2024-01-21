@@ -5,3 +5,5 @@ export interface IAddress {
   city: string;
   street: string;
 }
+
+export interface IAddressCreationRequest extends Omit<IAddress, "id"> {}

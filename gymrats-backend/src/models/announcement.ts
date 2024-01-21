@@ -5,3 +5,6 @@ export interface IAnnouncement {
   created_at: string;
   image: string;
 }
+
+export interface IAnnouncementCreationRequest
+  extends Omit<IAnnouncement, "id" | "created_at"> {}

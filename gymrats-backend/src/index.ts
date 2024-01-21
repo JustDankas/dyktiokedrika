@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import testRoute from "./routes/test.route";
 import userRoute from "./routes/user.route";
 import announcementRoute from "./routes/announcement.route";
+import addressRoute from "./routes/address.route";
+import programRoute from "./routes/program.route";
 //For env File
 dotenv.config();
 
@@ -22,6 +24,8 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/test", testRoute);
 app.use("/user", userRoute);
 app.use("/announcement", announcementRoute);
+app.use("/address", addressRoute);
+app.use("/program", programRoute);
 
 app.listen(port, () => {
   console.log(`Server is Fire at http://localhost:${port}`);

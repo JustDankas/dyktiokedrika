@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
-import { IUser } from "../models/user";
+import { IUser, ILoginRequest } from "../models/user";
 import jwt from "jsonwebtoken";
-import { ILoginRequest } from "../models/loginRequest";
 
 export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
   try {

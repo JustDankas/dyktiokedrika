@@ -10,3 +10,8 @@ export interface IUser {
   role: "admin" | "user" | "trainer" | "notAssigned";
   // specialization?: string;
 }
+
+export interface ILoginRequest {
+  username: IUser["username"];
+  password: IUser["password"];
+}

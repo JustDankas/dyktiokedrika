@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
-import { IAnnouncement } from "../models/announcement";
-import { IAnnouncementCreationRequest } from "../models/announcementCreationRequest";
+import {
+  IAnnouncement,
+  IAnnouncementCreationRequest,
+} from "../models/announcement";
 
 export const announcementCreate = async (
   req: Request<IAnnouncementCreationRequest>,
