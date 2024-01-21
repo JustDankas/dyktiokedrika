@@ -7,6 +7,7 @@ import userRoute from "./routes/user.route";
 import announcementRoute from "./routes/announcement.route";
 import addressRoute from "./routes/address.route";
 import programRoute from "./routes/program.route";
+import { authenticateController } from "./controllers/authenticate.controller";
 //For env File
 dotenv.config();
 
@@ -14,7 +15,7 @@ const app: Application = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-
+// app.use(bodyParser.urlencoded({ extended: true }));
 const port = process.env.PORT || 8000;
 
 app.get("/", (req: Request, res: Response) => {
@@ -23,9 +24,9 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/test", testRoute);
 app.use("/user", userRoute);
-app.use("/announcement", announcementRoute);
-app.use("/address", addressRoute);
-app.use("/program", programRoute);
+app.use("/announcement", authenticateController, announcementRoute);
+app.use("/address", authenticateController, addressRoute);
+app.use("/program", authenticateController, programRoute);
 
 app.listen(port, () => {
   console.log(`Server is Fire at http://localhost:${port}`);
