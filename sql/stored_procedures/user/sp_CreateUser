@@ -1,0 +1,21 @@
+CREATE PROCEDURE sp_CreateUser(
+    IN newName VARCHAR(255),
+    IN newSurname VARCHAR(255),
+    IN newEmail VARCHAR(255),
+    IN newUsername VARCHAR(255),
+    IN newPassword VARCHAR(255),
+    IN newImage BLOB
+)
+BEGIN
+    INSERT INTO user(name, surname, email, username, password, image)
+    VALUES (newName, newSurname, newEmail, newUsername, newPassword, newImage);
+END
+
+-- Example of calling the stored procedure
+-- CALL sp_CreateUser(
+--     'Name',
+--     'Surname',
+--     'user@example.com',
+--     'username',
+--     'password',
+-- );
