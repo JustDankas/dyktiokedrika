@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
 import { IUser, ILoginRequest } from "../models/user";
 import jwt from "jsonwebtoken";
+import { ICreateUser } from "../interfaces/user.interface";
 
 export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
   try {
@@ -16,7 +17,10 @@ export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
   }
 };
 
-export const userRegister = async (req: Request<IUser>, res: Response) => {
+export const userRegister = async (
+  req: Request<ICreateUser>,
+  res: Response
+) => {
   try {
     const newUser = await createNewUser(req.body);
     res.send("OK").status(200);
@@ -163,11 +167,12 @@ async function getUsers() {
   return rows[0];
 }
 
-async function createNewUser(user: IUser) {
+async function createNewUser(user: ICreateUser) {
   // @ts-ignore
 
-  const [row] = await sqlPool.query<IUser>(
-    `CALL sp_CreateUser(?,?,?,?,?,?)
+  // const [row] = await sqlPool.query<IUser>(
+  const [row] = await sqlPool.query<{ id: string }[]>(
+    `CALL sp_CreateUser(?,?,?,?,?,?,?,?,?)
      `,
     [
       user.name,
@@ -176,6 +181,9 @@ async function createNewUser(user: IUser) {
       user.username,
       user.password,
       user.image,
+      user.country,
+      user.city,
+      user.street,
     ]
   );
   return row;

@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 export enum Role {
@@ -54,7 +55,7 @@ export class UserService {
     city: 'Athens',
     street: 'Some Street 11',
   };
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   login({ nameControl, emailControl, passwordControl }: ILoginForm) {
     console.log('Login', nameControl, emailControl, passwordControl);
@@ -70,16 +71,30 @@ export class UserService {
     cityControl,
     streetControl,
   }: IRegisterForm) {
-    console.log(
-      'register',
-      nameControl,
-      surnameControl,
-      emailControl,
-      usernameControl,
-      passwordControl,
-      countryControl,
-      cityControl,
-      streetControl
-    );
+    // console.log(
+    //   'register',
+    //   nameControl,
+    //   surnameControl,
+    //   emailControl,
+    //   usernameControl,
+    //   passwordControl,
+    //   countryControl,
+    //   cityControl,
+    //   streetControl
+    // );
+    const body = {
+      name: nameControl,
+      surname: surnameControl,
+      email: emailControl,
+      username: usernameControl,
+      password: passwordControl,
+      country: countryControl,
+      city: cityControl,
+      street: streetControl,
+      role: 'notAssigned',
+      image: null,
+      registration_date: new Date().toISOString(),
+    };
+    return this.http.post('http://localhost:8000/user/register', body);
   }
 }

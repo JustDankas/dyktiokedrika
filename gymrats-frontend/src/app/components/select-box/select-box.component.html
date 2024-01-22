@@ -1,0 +1,20 @@
+<div class="select-c">
+  <input
+    type="text"
+    class="search-input"
+    ngModel
+    #search
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+  />
+  <ul ngModel #countryList class="hidden">
+    <li>
+      <label for="gr-flag">Greece</label>
+      <input id="gr-flag" type="radio" checked name="country" />
+    </li>
+    <li>
+      <label for="al-flag">Albania</label>
+      <input id="al-flag" type="radio" name="country" />
+    </li>
+  </ul>
+</div>

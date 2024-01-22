@@ -70,7 +70,9 @@ export class RegisterModalComponent implements OnInit {
   }
 
   onSubmit() {
-    this.userSrv.register(this.registerForm.value);
+    this.userSrv.register(this.registerForm.value).subscribe((data) => {
+      console.log(data);
+    });
   }
 
   next() {

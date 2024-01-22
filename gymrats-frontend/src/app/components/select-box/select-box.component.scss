@@ -1,0 +1,23 @@
+.search-input {
+  padding: 5px;
+  outline: none;
+}
+.hidden {
+  display: none;
+}
+li {
+  position: relative;
+}
+// label {
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   //   background-color: red;
+// }
+li:has(input:checked) label {
+  //   background-color: purple;
+}
+// .search-input:focus ul {
+//   display: block;
+// }

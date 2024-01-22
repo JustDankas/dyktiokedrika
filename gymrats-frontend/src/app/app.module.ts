@@ -14,11 +14,12 @@ import { ExpertTrainersComponent } from './pages/landing-page-compoenents/expert
 import { ContactUsComponent } from './pages/landing-page-compoenents/contact-us/contact-us.component';
 import { LoginModalComponent } from './components/login-modal/login-modal.component';
 import { RegisterModalComponent } from './components/register-modal/register-modal.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { UserInfoComponent } from './pages/profile/user-info/user-info.component';
 import { ProgramItemComponent } from './pages/profile/program-item/program-item.component';
+import { SelectBoxComponent } from './components/select-box/select-box.component';
 
 @NgModule({
   declarations: [
@@ -37,12 +38,14 @@ import { ProgramItemComponent } from './pages/profile/program-item/program-item.
     ProfileComponent,
     UserInfoComponent,
     ProgramItemComponent,
+    SelectBoxComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

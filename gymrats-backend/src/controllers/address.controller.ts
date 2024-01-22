@@ -148,7 +148,7 @@ export const addressesDelete = async (req: Request, res: Response) => {
   }
 };
 
-async function createAddress({
+export async function createAddress({
   user_id,
   country,
   city,
