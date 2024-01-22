@@ -2,19 +2,25 @@
   <input
     type="text"
     class="search-input"
-    ngModel
-    #search
+    (input)="onFilterInput($event)"
     (focus)="onFocus()"
     (blur)="onBlur()"
+    placeholder="Select a Country"
   />
-  <ul ngModel #countryList class="hidden">
-    <li>
-      <label for="gr-flag">Greece</label>
-      <input id="gr-flag" type="radio" checked name="country" />
-    </li>
-    <li>
-      <label for="al-flag">Albania</label>
-      <input id="al-flag" type="radio" name="country" />
-    </li>
-  </ul>
+  <div class="list-c">
+    <ul ngModel #countryList class="hidden">
+      <li *ngFor="let country of filteredCountries">
+        <label [htmlFor]="country.iso2"
+          ><span
+            class="flag"
+            [ngClass]="['flag-' + country.iso2 | lowercase]"
+          ></span>
+          {{ country.country }}</label
+        >
+        <input [id]="country.iso2" type="radio" checked name="country" />
+      </li>
+    </ul>
+  </div>
 </div>
+<!-- (focus)="onFocus()"
+(blur)="onBlur()" -->
