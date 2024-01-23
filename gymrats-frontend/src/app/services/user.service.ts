@@ -71,17 +71,6 @@ export class UserService {
     cityControl,
     streetControl,
   }: IRegisterForm) {
-    // console.log(
-    //   'register',
-    //   nameControl,
-    //   surnameControl,
-    //   emailControl,
-    //   usernameControl,
-    //   passwordControl,
-    //   countryControl,
-    //   cityControl,
-    //   streetControl
-    // );
     const body = {
       name: nameControl,
       surname: surnameControl,
@@ -95,6 +84,7 @@ export class UserService {
       image: null,
       registration_date: new Date().toISOString(),
     };
+    // console.log(body);
     return this.http.post('http://localhost:8000/user/register', body);
   }
 }

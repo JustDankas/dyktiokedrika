@@ -10,10 +10,10 @@ export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
     const user = await getUserByUsernameAndPassword(username, password);
     const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
     res.cookie("token", token, { httpOnly: true });
-    res.send(user).status(200);
+    res.json(user).status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
@@ -23,19 +23,19 @@ export const userRegister = async (
 ) => {
   try {
     const newUser = await createNewUser(req.body);
-    res.send("OK").status(200);
+    res.json("OK").status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 export const userUpdate = async (req: Request<IUser>, res: Response) => {
   try {
     const updatedUser = await updateExistingUser(req.body);
-    res.send("OK").status(200);
+    res.json("OK").status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
@@ -48,20 +48,20 @@ export const getUsersByRole = async (
     const { role } = req.body;
 
     const usersList = await getUsersByTheirRole(role);
-    res.send(usersList).status(200);
+    res.json(usersList).status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const usersList = await getUsers();
-    res.send(usersList).status(200);
+    res.json(usersList).status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
@@ -71,10 +71,10 @@ export const massUpdateUserRoles = async (req: Request, res: Response) => {
 
     await massUpdateRoles(updatedRoles);
 
-    res.send("User roles updated successfully").status(200);
+    res.json("User roles updated successfully").status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 export const massDeleteUsersByRole = async (req: Request, res: Response) => {
@@ -84,11 +84,11 @@ export const massDeleteUsersByRole = async (req: Request, res: Response) => {
     await massDeleteByRole(role);
 
     res
-      .send(`Users that had the ${role} have been deleted successfully`)
+      .json(`Users that had the ${role} have been deleted successfully`)
       .status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 export const deleteAllUsersExceptAdmins = async (
@@ -99,11 +99,11 @@ export const deleteAllUsersExceptAdmins = async (
     await deleteUsersExceptAdmins("admin");
 
     res
-      .send(`All users except admins have been deleted successfully`)
+      .json(`All users except admins have been deleted successfully`)
       .status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
@@ -114,10 +114,10 @@ export const userDeleteById = async (
   try {
     const { id } = req.body;
     const user = await deleteUserById(id);
-    res.send("Deletion Successful").status(200);
+    res.json("Deletion Successful").status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 

@@ -1,8 +1,18 @@
 @use "../../../styles/variables" as *;
 
+.search-input-c {
+  background-color: white;
+
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .search-input {
-  padding: 5px;
+  // padding: 10px;
+  // padding-left: 15px;
   outline: none;
+  border: none;
   border-radius: 5px;
   border: 1px solid $neutral-200;
 }

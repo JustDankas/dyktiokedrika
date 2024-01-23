@@ -24,7 +24,7 @@ export class RegisterModalComponent implements OnInit {
 
   countries: ICountry[] = [];
   cities: string[] = [];
-
+  selectedCountry: string | null = null;
   constructor(
     private countriesSrv: CountriesService,
     private userSrv: UserService
@@ -69,7 +69,12 @@ export class RegisterModalComponent implements OnInit {
     return this.registerForm?.get('streetControl');
   }
 
+  countryChange(country: string) {
+    this.countryControl?.setValue(country);
+  }
+
   onSubmit() {
+    // this.userSrv.register(this.registerForm.value);
     this.userSrv.register(this.registerForm.value).subscribe((data) => {
       console.log(data);
     });

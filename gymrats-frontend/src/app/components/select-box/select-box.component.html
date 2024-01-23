@@ -1,12 +1,16 @@
 <div class="select-c">
   <input
+    tabindex="0"
     type="text"
-    class="search-input"
+    class="search-input form-select"
+    [value]="filter"
     (input)="onFilterInput($event)"
     (focus)="onFocus()"
-    (blur)="onBlur()"
     placeholder="Select a Country"
+    appClickOutside
+    (clickOutside)="closeMenu()"
   />
+
   <div class="list-c">
     <ul ngModel #countryList class="hidden">
       <li *ngFor="let country of filteredCountries">
@@ -17,7 +21,14 @@
           ></span>
           {{ country.country }}</label
         >
-        <input [id]="country.iso2" type="radio" checked name="country" />
+        <input
+          [id]="country.iso2"
+          type="radio"
+          checked
+          name="country"
+          [value]="country.country"
+          (input)="changeCountry($event)"
+        />
       </li>
     </ul>
   </div>

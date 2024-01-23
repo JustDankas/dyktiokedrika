@@ -7,10 +7,5 @@ import { CountriesService, ICountry } from 'src/app/services/countries.service';
   styleUrls: ['./nav-bar.component.scss'],
 })
 export class NavBarComponent {
-  countries: ICountry[] = [];
-  constructor(private countriesSrv: CountriesService) {
-    this.countriesSrv.getCountries().subscribe((res) => {
-      this.countries = res.data;
-    });
-  }
+  constructor() {}
 }

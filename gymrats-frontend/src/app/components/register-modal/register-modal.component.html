@@ -148,7 +148,7 @@
                       type="text"
                       formControlName="countryControl"
                     /> -->
-                    <select
+                    <!-- <select
                       class="form-select"
                       aria-label="Default select example"
                       formControlName="countryControl"
@@ -160,8 +160,15 @@
                       >
                         {{ country.country }}
                       </option>
-                    </select>
-                    <div
+                    </select> -->
+                    <div class="w-100">
+                      <app-select-box
+                        [countries]="countries"
+                        formControlName="countryControl"
+                        (countryChanged)="countryChange($event)"
+                      ></app-select-box>
+                    </div>
+                    <!-- <div
                       class="form-text form-error"
                       *ngIf="
                         countryControl?.hasError('required') &&
@@ -169,11 +176,9 @@
                       "
                     >
                       Country is required
-                    </div>
+                    </div> -->
                   </div>
-                  <div class="mb-3 w-100">
-                    <app-select-box></app-select-box>
-                  </div>
+
                   <div class="mb-3 w-100">
                     <!-- <input
                       class="form-control"

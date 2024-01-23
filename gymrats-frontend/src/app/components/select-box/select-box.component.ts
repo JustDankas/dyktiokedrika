@@ -2,9 +2,11 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -18,9 +20,11 @@ import { CountriesService, ICountry } from 'src/app/services/countries.service';
 export class SelectBoxComponent implements AfterViewInit, OnChanges {
   // @ViewChild("search") search: ElementRef<HTMLInputElement>;
   @ViewChild('countryList', { static: true })
-  countryList!: ElementRef<HTMLUListElement>;
+  countryListEl!: ElementRef<HTMLUListElement>;
   @Input() countries: ICountry[] = [];
   filteredCountries: ICountry[] = [];
+  filter: string = '';
+  @Output() countryChanged = new EventEmitter<string>();
   constructor() {
     this.filteredCountries = this.countries;
   }
@@ -32,6 +36,7 @@ export class SelectBoxComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit(): void {}
 
   onFilterInput(filter: Event) {
+    this.filter = (filter.target as HTMLInputElement).value;
     this.filteredCountries = this.countries.filter((c) =>
       new RegExp((filter.target as HTMLInputElement).value, 'ig').test(
         c.country
@@ -40,9 +45,17 @@ export class SelectBoxComponent implements AfterViewInit, OnChanges {
   }
 
   onFocus() {
-    this.countryList.nativeElement.classList.remove('hidden');
+    this.countryListEl.nativeElement.classList.remove('hidden');
   }
-  onBlur() {
-    this.countryList.nativeElement.classList.add('hidden');
+  closeMenu() {
+    this.countryListEl.nativeElement.classList.add('hidden');
+  }
+  changeCountry(ev: Event) {
+    const { value } = ev.target as HTMLInputElement;
+    this.filter = value;
+    this.filteredCountries = this.countries.filter((c) =>
+      new RegExp(value, 'ig').test(c.country)
+    );
+    this.countryChanged.emit(value);
   }
 }
