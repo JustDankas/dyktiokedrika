@@ -15,7 +15,7 @@
           <div class="mb-3 w-100">
             <input
               class="form-control"
-              placeholder="Name"
+              placeholder="Username"
               type="text"
               formControlName="nameControl"
             />
@@ -23,10 +23,10 @@
               class="form-text form-error"
               *ngIf="nameControl?.hasError('required') && nameControl?.touched"
             >
-              Name is required
+              Username is required
             </div>
           </div>
-          <div class="mb-3 w-100">
+          <!-- <div class="mb-3 w-100">
             <input
               class="form-control"
               placeholder="Email"
@@ -47,7 +47,7 @@
             >
               Provide a valid email
             </div>
-          </div>
+          </div> -->
           <div class="mb-3 w-100">
             <input
               class="form-control"

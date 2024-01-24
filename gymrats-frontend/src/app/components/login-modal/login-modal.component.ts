@@ -10,7 +10,7 @@ import { UserService } from 'src/app/services/user.service';
 export class LoginModalComponent {
   loginForm = new FormGroup({
     nameControl: new FormControl('', Validators.required),
-    emailControl: new FormControl('', [Validators.required, Validators.email]),
+    // emailControl: new FormControl('', [Validators.required, Validators.email]),
     passwordControl: new FormControl('', [Validators.required]),
   });
 
@@ -21,17 +21,19 @@ export class LoginModalComponent {
   }
 
   onSubmit() {
-    console.log(this.loginForm);
+    // console.log(this.loginForm);
 
-    this.userSrv.login(this.loginForm.value);
+    this.userSrv.login(this.loginForm.value).subscribe((data) => {
+      console.log(data);
+    });
   }
 
   get nameControl() {
     return this.loginForm.get('nameControl');
   }
-  get emailControl() {
-    return this.loginForm.get('emailControl');
-  }
+  // get emailControl() {
+  //   return this.loginForm.get('emailControl');
+  // }
   get passwordControl() {
     return this.loginForm.get('passwordControl');
   }

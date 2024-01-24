@@ -9,10 +9,12 @@ import {
   massUpdateUserRoles,
   massDeleteUsersByRole,
   deleteAllUsersExceptAdmins,
+  userAuth,
 } from "../controllers/user.controller";
 
 const router = express.Router();
 router.route("/login").post(userLogin);
+router.route("/auth").post(userAuth);
 router.route("/register").post(userRegister);
 router.route("/update_user/").put(userUpdate);
 router.route("/delete_user/").delete(userDeleteById);

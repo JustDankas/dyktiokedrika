@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
-import { IUser, ILoginRequest } from "../models/user";
+import { IUser, ILoginRequest, IAuth } from "../models/user";
 import jwt from "jsonwebtoken";
 import { ICreateUser } from "../interfaces/user.interface";
 
@@ -8,9 +8,36 @@ export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
   try {
     const { username, password } = req.body;
     const user = await getUserByUsernameAndPassword(username, password);
+    if (!user) {
+      throw new Error("Incorrect credentials");
+    }
+    console.log(user);
     const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, {
+      path: "/",
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    });
     res.json(user).status(200);
+  } catch (error) {
+    console.log(error);
+    res.json("Internal Server Error").status(500);
+  }
+};
+export const userAuth = async (req: Request<IAuth>, res: Response) => {
+  try {
+    const { token } = req.body;
+    console.log(token);
+    jwt.verify(token as string, "secret", (err, decoded) => {
+      if (err) {
+        console.error(err);
+      }
+      console.log(decoded);
+    });
+    // console.log(id);
+    // const user = await getUserByUsernameAndPassword(username, password);
+    // const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
+    // res.cookie("token", token, { httpOnly: true });
+    res.json("OK").status(200);
   } catch (error) {
     console.log(error);
     res.json("Internal Server Error").status(500);
@@ -127,12 +154,13 @@ async function getUserByUsernameAndPassword(
 ) {
   // @ts-ignore
 
-  const [rows] = await sqlPool.query<IUser>(
+  const [rows] = await sqlPool.query(
     `CALL sp_GetUserByUsernameAndPassword(?,?)
      `,
     [username, password]
   );
-  return rows;
+  //@ts-ignore
+  return rows[0][0];
 }
 
 async function getUserById(id: number) {

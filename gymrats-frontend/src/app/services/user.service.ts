@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ConfigService } from './config.service';
 
 export enum Role {
   user,
@@ -22,7 +23,6 @@ export interface IUser {
 
 type ILoginForm = Partial<{
   nameControl: string | null;
-  emailControl: string | null;
   passwordControl: string | null;
 }>;
 
@@ -55,10 +55,35 @@ export class UserService {
     city: 'Athens',
     street: 'Some Street 11',
   };
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private configSrv: ConfigService) {
+    this.loginFromToken();
+  }
 
-  login({ nameControl, emailControl, passwordControl }: ILoginForm) {
-    console.log('Login', nameControl, emailControl, passwordControl);
+  loginFromToken() {
+    console.log(document.cookie);
+    const token = document.cookie.split(';').find((c) => /auth=.+/.test(c));
+    if (token) {
+      console.log(token.split('=')[1]);
+      this.http
+        .post(
+          this.configSrv.url + 'user/auth',
+          { token: token.split('=')[1] },
+          {
+            headers: {
+              credentials: 'include',
+            },
+          }
+        )
+        .subscribe((data) => console.log(data));
+    }
+  }
+
+  login({ nameControl, passwordControl }: ILoginForm) {
+    const body = {
+      username: nameControl,
+      password: passwordControl,
+    };
+    return this.http.post(this.configSrv.url + 'user/login', body);
   }
 
   register({
