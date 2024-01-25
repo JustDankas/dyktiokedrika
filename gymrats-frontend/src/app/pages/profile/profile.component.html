@@ -1,0 +1,24 @@
+<main>
+  <section class="container-md">
+    <div class="row">
+      <div class="col-6 profile-c">
+        <app-user-info></app-user-info>
+      </div>
+      <div class="col-6"></div>
+    </div>
+    <div class="row">
+      <div class="col-8">
+        <h3>This Week</h3>
+        <ul>
+          <app-program-item
+            *ngFor="let item of programs"
+            [description]="item.description"
+            [title]="item.title"
+            [image]="item.image"
+          ></app-program-item>
+        </ul>
+      </div>
+      <div class="col-4"></div>
+    </div>
+  </section>
+</main>

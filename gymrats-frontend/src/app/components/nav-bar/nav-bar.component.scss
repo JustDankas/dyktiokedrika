@@ -1,4 +1,6 @@
+@use "../../../styles/variables" as *;
 .main-nav {
   display: flex;
   justify-content: space-evenly;
+  align-items: center;
 }

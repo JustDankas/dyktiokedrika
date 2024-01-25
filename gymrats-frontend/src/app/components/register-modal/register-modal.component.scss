@@ -1,0 +1,31 @@
+@use "../../../styles/variables" as *;
+
+.circle-btn {
+  width: 15px;
+  height: 15px;
+  border-radius: 200%;
+  border: none;
+  outline: none;
+  background-color: $secondary-500;
+  border: 1px solid $primary-600;
+}
+.register-actions {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.step-c {
+  min-height: 365px;
+  display: flex;
+  flex-direction: column;
+  //   justify-content: space-between;
+}
+.form-error {
+  color: $danger-300;
+  width: 100%;
+}
+h2 {
+  color: $primary-400;
+}

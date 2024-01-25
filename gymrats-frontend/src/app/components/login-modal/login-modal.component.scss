@@ -1,0 +1,16 @@
+@use "../../../styles/variables" as *;
+h2 {
+  text-align: center;
+  width: 100%;
+  color: $primary-400;
+  font-weight: bold;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.form-error {
+  color: $danger-300;
+  width: 100%;
+}

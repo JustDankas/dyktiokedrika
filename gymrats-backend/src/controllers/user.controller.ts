@@ -1,38 +1,68 @@
 import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
-import { IUser, ILoginRequest } from "../models/user";
+import { IUser, ILoginRequest, IAuth } from "../models/user";
 import jwt from "jsonwebtoken";
+import { ICreateUser } from "../interfaces/user.interface";
 
-export const userLogin = async (req: Request, res: Response) => {
+export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
   try {
     const { username, password } = req.body;
-    // @ts-ignore
-    const user: IUser = await getUserByUsernameAndPassword(username, password);
+    const user = await getUserByUsernameAndPassword(username, password);
+    if (!user) {
+      throw new Error("Incorrect credentials");
+    }
+    console.log(user);
     const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
-    res.cookie("token", token, { httpOnly: true });
-    res.send(user).status(200);
+    res.cookie("token", token, {
+      path: "/",
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    });
+    res.json(user).status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
+  }
+};
+export const userAuth = async (req: Request<IAuth>, res: Response) => {
+  try {
+    const { token } = req.body;
+    console.log(token);
+    jwt.verify(token as string, "secret", (err, decoded) => {
+      if (err) {
+        console.error(err);
+      }
+      console.log(decoded);
+    });
+    // console.log(id);
+    // const user = await getUserByUsernameAndPassword(username, password);
+    // const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
+    // res.cookie("token", token, { httpOnly: true });
+    res.json("OK").status(200);
+  } catch (error) {
+    console.log(error);
+    res.json("Internal Server Error").status(500);
   }
 };
 
-export const userRegister = async (req: Request<IUser>, res: Response) => {
+export const userRegister = async (
+  req: Request<ICreateUser>,
+  res: Response
+) => {
   try {
     const newUser = await createNewUser(req.body);
-    res.send("OK").status(200);
+    res.json("OK").status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 export const userUpdate = async (req: Request<IUser>, res: Response) => {
   try {
     const updatedUser = await updateExistingUser(req.body);
-    res.send("OK").status(200);
+    res.json("OK").status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
@@ -45,20 +75,20 @@ export const getUsersByRole = async (
     const { role } = req.body;
 
     const usersList = await getUsersByTheirRole(role);
-    res.send(usersList).status(200);
+    res.json(usersList).status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const usersList = await getUsers();
-    res.send(usersList).status(200);
+    res.json(usersList).status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
@@ -68,10 +98,10 @@ export const massUpdateUserRoles = async (req: Request, res: Response) => {
 
     await massUpdateRoles(updatedRoles);
 
-    res.send("User roles updated successfully").status(200);
+    res.json("User roles updated successfully").status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 export const massDeleteUsersByRole = async (req: Request, res: Response) => {
@@ -81,11 +111,11 @@ export const massDeleteUsersByRole = async (req: Request, res: Response) => {
     await massDeleteByRole(role);
 
     res
-      .send(`Users that had the ${role} have been deleted successfully`)
+      .json(`Users that had the ${role} have been deleted successfully`)
       .status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 export const deleteAllUsersExceptAdmins = async (
@@ -96,11 +126,11 @@ export const deleteAllUsersExceptAdmins = async (
     await deleteUsersExceptAdmins("admin");
 
     res
-      .send(`All users except admins have been deleted successfully`)
+      .json(`All users except admins have been deleted successfully`)
       .status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
@@ -111,10 +141,10 @@ export const userDeleteById = async (
   try {
     const { id } = req.body;
     const user = await deleteUserById(id);
-    res.send("Deletion Successful").status(200);
+    res.json("Deletion Successful").status(200);
   } catch (error) {
     console.log(error);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
@@ -123,15 +153,14 @@ async function getUserByUsernameAndPassword(
   password: string
 ) {
   // @ts-ignore
-  console.log(username, password);
-  const [response] = await sqlPool.query(
+
+  const [rows] = await sqlPool.query(
     `CALL sp_GetUserByUsernameAndPassword(?,?)
      `,
     [username, password]
   );
-  console.log(response);
-  // @ts-ignore
-  return response[0][0];
+  //@ts-ignore
+  return rows[0][0];
 }
 
 async function getUserById(id: number) {
@@ -166,11 +195,12 @@ async function getUsers() {
   return rows[0];
 }
 
-async function createNewUser(user: IUser) {
+async function createNewUser(user: ICreateUser) {
   // @ts-ignore
 
-  const [row] = await sqlPool.query<IUser>(
-    `CALL sp_CreateUser(?,?,?,?,?,?)
+  // const [row] = await sqlPool.query<IUser>(
+  const [row] = await sqlPool.query<{ id: string }[]>(
+    `CALL sp_CreateUser(?,?,?,?,?,?,?,?,?)
      `,
     [
       user.name,
@@ -179,6 +209,9 @@ async function createNewUser(user: IUser) {
       user.username,
       user.password,
       user.image,
+      user.country,
+      user.city,
+      user.street,
     ]
   );
   return row;
