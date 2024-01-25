@@ -200,7 +200,7 @@ async function createNewUser(user: ICreateUser) {
 
   // const [row] = await sqlPool.query<IUser>(
   const [row] = await sqlPool.query<{ id: string }[]>(
-    `CALL sp_CreateUser(?,?,?,?,?,?,?,?,?)
+    `CALL sp_CreateUser(?,?,?,?,?,?,?,?)
      `,
     [
       user.name,
@@ -208,7 +208,6 @@ async function createNewUser(user: ICreateUser) {
       user.email,
       user.username,
       user.password,
-      user.image,
       user.country,
       user.city,
       user.street,
