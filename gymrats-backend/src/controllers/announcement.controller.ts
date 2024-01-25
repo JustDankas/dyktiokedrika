@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
-import { IAnnouncement } from "../models/announcement";
-import { IAnnouncementCreationRequest } from "../models/announcementCreationRequest";
+import {
+  IAnnouncement,
+  IAnnouncementCreationRequest,
+} from "../models/announcement";
 
 export const announcementCreate = async (
   req: Request<IAnnouncementCreationRequest>,
@@ -57,11 +59,11 @@ export const getAllAnnouncements = async (req: Request, res: Response) => {
   }
 };
 export const updateAnnouncement = async (
-  req: Request<IAnnouncement["id"]>,
+  req: Request<Omit<IAnnouncement, "created_at">>,
   res: Response
 ) => {
   try {
-    const { id } = req.body;
+    const { id, title, text, image } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
     res.send("Invalid fields in the request form").status(400);
@@ -97,6 +99,53 @@ export const announcementDeleteById = async (
   }
 };
 
+export const announcementsDelete = async (req: Request, res: Response) => {
+  try {
+    await deleteAllAnnouncements();
+    res.send("All Announcements Successfully deleted").status(200);
+    return;
+  } catch (deleteError) {
+    console.log(deleteError);
+    res.send("Internal Server Error").status(500);
+  }
+};
+
+export const announcementsDeleteByDateRange = async (
+  req: Request<{ start: string; end: string }>,
+  res: Response
+) => {
+  try {
+    const { start, end } = req.body;
+
+    if (!start || !end) {
+      res.send("Invalid date range").status(400);
+      return;
+    }
+  } catch (deconstructionError) {
+    console.log(deconstructionError);
+    res.send("Invalid fields in the request form").status(400);
+    return;
+  }
+
+  try {
+    const { start, end } = req.body;
+
+    const parsedStartDate = new Date(start);
+    const parsedEndDate = new Date(end);
+
+    await deleteAnnouncementsByDateRange(parsedStartDate, parsedEndDate);
+
+    res
+      .send(
+        `Announcements Successfully deleted within the date range ${start} to ${end}`
+      )
+      .status(200);
+  } catch (deleteError) {
+    console.error(deleteError);
+    res.send("Internal Server Error").status(500);
+  }
+};
+
 async function createAnnouncement({
   title,
   text,
@@ -125,12 +174,35 @@ async function getAnnouncements() {
   return rows[0];
 }
 
-async function updateAnnouncementById(id: IAnnouncement["id"]) {
+async function updateAnnouncementById({
+  id,
+  title,
+  text,
+  image,
+}: Omit<IAnnouncement, "created_at">) {
   // @ts-ignore
-  await sqlPool.query<IAnnouncement>("CALL sp_UpdateAnnouncement(?)", [id]);
+  await sqlPool.query<IAnnouncement>("CALL sp_UpdateAnnouncement(?,?,?,?)", [
+    id,
+    title,
+    text,
+    image,
+  ]);
 }
 
 async function deleteAnnouncementById(id: IAnnouncement["id"]) {
   // @ts-ignore
   await sqlPool.query<IAnnouncement>("CALL sp_DeleteAnnouncementById(?)", [id]);
+}
+
+async function deleteAllAnnouncements() {
+  // @ts-ignore
+  await sqlPool.query<IAnnouncement>("CALL sp_DeleteAllAnnouncements()");
+}
+
+async function deleteAnnouncementsByDateRange(start: Date, end: Date) {
+  // @ts-ignore
+  await sqlPool.query<IAnnouncement[]>(
+    "CALL sp_DeleteAnnouncementsByDateRange(?,?)",
+    [start, end]
+  );
 }

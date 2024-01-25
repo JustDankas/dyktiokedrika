@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
-import { IUser } from "../models/user";
+import { IUser, ILoginRequest } from "../models/user";
 import jwt from "jsonwebtoken";
-import { ILoginRequest } from "../models/loginRequest";
 
-export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
+export const userLogin = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
-    const user = await getUserByUsernameAndPassword(username, password);
+    // @ts-ignore
+    const user: IUser = await getUserByUsernameAndPassword(username, password);
     const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
     res.cookie("token", token, { httpOnly: true });
     res.send(user).status(200);
@@ -123,13 +123,15 @@ async function getUserByUsernameAndPassword(
   password: string
 ) {
   // @ts-ignore
-
-  const [rows] = await sqlPool.query<IUser>(
+  console.log(username, password);
+  const [response] = await sqlPool.query(
     `CALL sp_GetUserByUsernameAndPassword(?,?)
      `,
     [username, password]
   );
-  return rows;
+  console.log(response);
+  // @ts-ignore
+  return response[0][0];
 }
 
 async function getUserById(id: number) {

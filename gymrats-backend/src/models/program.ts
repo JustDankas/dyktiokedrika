@@ -8,3 +8,7 @@ export interface IProgram {
   is_group: boolean;
   max_size: number;
 }
+
+export interface IProgramCreationRequest extends Omit<IProgram, "id"> {
+  trainer_id: number;
+}
