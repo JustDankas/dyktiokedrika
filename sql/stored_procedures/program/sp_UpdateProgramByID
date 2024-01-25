@@ -1,13 +1,14 @@
 -- Update Program by ID
-CREATE PROCEDURE sp_UpdateProgram(
+CREATE PROCEDURE sp_UpdateProgramByID(
     IN p_program_id INT,
     IN p_trainer_id INT,
     IN p_title VARCHAR(255),
-    IN p_description VARCHAR(255),
+    IN p_description LONGTEXT,
     IN p_type VARCHAR(255),
     IN p_price DECIMAL(8,2),
     IN p_is_group TINYINT(1),
-    IN p_max_size INT
+    IN p_max_size INT,
+    IN p_image BLOB
 )
 BEGIN
     UPDATE program
@@ -18,6 +19,7 @@ BEGIN
         type = p_type,
         price = p_price,
         is_group = p_is_group,
-        max_size = p_max_size
+        max_size = p_max_size,
+        image = p_image
     WHERE id = p_program_id;
 END
