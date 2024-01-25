@@ -110,6 +110,6 @@ export class UserService {
       registration_date: new Date().toISOString(),
     };
     // console.log(body);
-    return this.http.post('http://localhost:8000/user/register', body);
+    return this.http.post(this.configSrv.url + 'user/register', body);
   }
 }
