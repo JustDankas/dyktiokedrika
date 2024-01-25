@@ -9,7 +9,5 @@ import { CountriesService } from './services/countries.service';
 export class AppComponent implements OnInit {
   title = 'gymrats-frontend';
   constructor(private countriesSrc: CountriesService) {}
-  ngOnInit(): void {
-    // this.countriesSrc.initiate();
-  }
+  ngOnInit(): void {}
 }
