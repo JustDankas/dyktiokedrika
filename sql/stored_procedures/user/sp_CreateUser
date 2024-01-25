@@ -10,8 +10,8 @@ CREATE DEFINER=`root`@`%` PROCEDURE `sp_CreateUser`(
 )
 BEGIN
 	DECLARE new_document_id INT;
-    INSERT INTO user(name, surname, email, username, password, image)
-    VALUES (newName, newSurname, newEmail, newUsername, newPassword, newImage);
+    INSERT INTO user(name, surname, email, username, password)
+    VALUES (newName, newSurname, newEmail, newUsername, newPassword);
     SET new_document_id = last_insert_id();
     call sp_CreateAddress(new_document_id,newCountry,newCity,newStreet);
 END
