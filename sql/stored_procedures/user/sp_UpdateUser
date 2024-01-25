@@ -6,8 +6,7 @@ CREATE PROCEDURE sp_UpdateUser(
     IN newUsername VARCHAR(255),
     IN newPassword VARCHAR(255),
     IN newImage BLOB,
-    IN newRegistrationDate TIMESTAMP,
-    IN newRole ENUM('admin', 'trainer', 'user', 'notAssigned')
+    IN newAbout LONGTEXT
 )
 BEGIN
     UPDATE user
@@ -18,8 +17,7 @@ BEGIN
         username = newUsername,
         password = newPassword,
         image = newImage,
-        registration_date = newRegistrationDate,
-        role = newRole
+        about = newAbout
     WHERE id = userId;
 END 
 
