@@ -152,10 +152,11 @@ export const getUsersByRole = async (req: Request, res: Response) => {
     const body = req.body as IUser;
     const { role } = body;
     if (!role) {
-      throw {
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: "Missing required parameter 'role' in the request body",
-      };
+      res
+        .send(
+          `${StatusCodes.BAD_REQUEST}\nMissing required parameter 'role' in the request body`
+        )
+        .status(StatusCodes.BAD_REQUEST);
     }
 
     if (
@@ -164,10 +165,11 @@ export const getUsersByRole = async (req: Request, res: Response) => {
       role !== "trainer" &&
       role !== "notAssigned"
     ) {
-      throw {
-        statusCode: StatusCodes.BAD_REQUEST,
-        message: "Invalid role in the request body",
-      };
+      res
+        .send(
+          `${StatusCodes.BAD_REQUEST}\nInvalid role: ${role}. Valid roles are: admin, user, trainer, notAssigned`
+        )
+        .status(StatusCodes.BAD_REQUEST);
     }
 
     const usersList = await getUsersByTheirRole(role);
