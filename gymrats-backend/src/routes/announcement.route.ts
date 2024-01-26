@@ -8,6 +8,7 @@ import {
   announcementsDelete,
   announcementsDeleteByDateRange,
 } from "../controllers/announcement.controller";
+import { authenticateController } from "../controllers/authenticate.controller";
 const router = express.Router();
 router.route("/create_announcement").post(announcementCreate);
 router.route("/view_announcement").post(getAnnouncementById);

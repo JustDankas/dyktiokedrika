@@ -3,13 +3,11 @@ import { sqlPool } from "../mysqlPool";
 import { IProgram, IProgramCreationRequest } from "../models/program";
 import { IUser } from "../models/user";
 
-export const programCreate = async (
-  req: Request<IProgramCreationRequest>,
-  res: Response
-) => {
+export const programCreate = async (req: Request, res: Response) => {
   try {
+    const body = req.body as IProgramCreationRequest;
     const { trainer_id, title, description, type, price, is_group, max_size } =
-      req.body;
+      body;
 
     try {
       // @ts-ignore

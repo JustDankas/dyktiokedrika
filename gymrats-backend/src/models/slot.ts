@@ -11,3 +11,11 @@ export interface ISlotCreationRequest {
   start: string;
   end: string;
 }
+
+export interface ISlotUpdateRequest {
+  id: number;
+  program_id: number;
+  seats_available: number;
+  start: string;
+  end: string;
+}
