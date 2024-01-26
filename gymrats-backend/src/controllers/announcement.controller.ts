@@ -4,153 +4,355 @@ import {
   IAnnouncement,
   IAnnouncementCreationRequest,
 } from "../models/announcement";
+import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import {
+  SqlError,
+  isSqlError,
+  isValidIsoDate,
+} from "../models/errorHandlingHelpers";
 
-export const announcementCreate = async (
-  req: Request<IAnnouncementCreationRequest>,
-  res: Response
-) => {
+export const announcementCreate = async (req: Request, res: Response) => {
   try {
-    const { title, text, image } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    const body = req.body as IAnnouncementCreationRequest;
+    if (!body.title || !body.text || !body.image) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing at least one of the required parameters in the request body: 'title', 'text', 'image' `
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+
+    const { title, text, image } = body;
+    await createAnnouncement(title, text, image);
+    res
+      .send(
+        `${getReasonPhrase(
+          StatusCodes.CREATED
+        )}\nAnnouncement Successfully created`
+      )
+      .status(StatusCodes.CREATED);
     return;
-  }
-  try {
-    await createAnnouncement(req.body);
-    res.send("Announcement Successfully created").status(200);
-    return;
-  } catch (createError) {
-    console.log(createError);
-    res.send("Internal Server Error").status(500);
-    return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
-export const getAnnouncementById = async (
-  req: Request<IAnnouncement["id"]>,
-  res: Response
-) => {
+export const getAnnouncementById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    const body = req.body as IAnnouncement;
+    if (!body.id) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing required parameter in the request body: 'id' `
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    if (body.id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
+            body.id
+          }. Id should be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const { id } = body;
+
+    const announcement = await getSpecificAnnouncementById(id);
+    if (!announcement) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nAnnouncement not found with id: ${id}`
+        )
+        .status(StatusCodes.NOT_FOUND);
+    }
+    res.send(announcement).status(StatusCodes.OK);
     return;
-  }
-  try {
-    const announcement = await getSpecificAnnouncementById(req.body);
-    res.send(announcement).status(200);
-    return;
-  } catch (createError) {
-    console.log(createError);
-    res.send("Internal Server Error").status(500);
-    return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
+
 export const getAllAnnouncements = async (req: Request, res: Response) => {
   try {
     const announcementList = await getAnnouncements();
-    res.send(announcementList).status(200);
+    if (!announcementList) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.NOT_FOUND
+          )}\nNo announcements found in the database`
+        )
+        .status(StatusCodes.NOT_FOUND);
+    }
+    res.send(announcementList).status(StatusCodes.OK);
     return;
-  } catch (getError) {
-    console.log(getError);
-    res.send("Internal Server Error").status(500);
-    return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
-export const updateAnnouncement = async (
-  req: Request<Omit<IAnnouncement, "created_at">>,
-  res: Response
-) => {
+export const updateAnnouncement = async (req: Request, res: Response) => {
   try {
-    const { id, title, text, image } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    const body = req.body as Omit<IAnnouncement, "created_at">;
+    if (!body.id || !body.title || !body.text || !body.image) {
+      res.send(
+        `${getReasonPhrase(
+          StatusCodes.BAD_REQUEST
+        )}\nMissing at least one required parameter in the request body of the following: 'id', 'title', 'text', 'image'`
+      );
+    }
+    if (body.id <= 0) {
+      res.send(
+        `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
+          body.id
+        }. Id should be a positive integer`
+      );
+    }
+    const { id, title, text, image } = body;
+
+    await updateAnnouncementById(id, title, text, image);
+    res
+      .send(
+        `${getReasonPhrase(
+          StatusCodes.OK
+        )}\nAnnouncement with id: ${id} Successfully updated`
+      )
+      .status(StatusCodes.OK);
     return;
-  }
-  try {
-    await updateAnnouncementById(req.body);
-    res.send("Announcement Successfully updated").status(200);
-    return;
-  } catch (updateError) {
-    console.log(updateError);
-    res.send("Internal Server Error").status(500);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
-export const announcementDeleteById = async (
-  req: Request<IAnnouncement["id"]>,
-  res: Response
-) => {
+
+export const announcementDeleteById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
-    return;
-  }
-  try {
-    await deleteAnnouncementById(req.body);
-    res.send("Announcement Successfully deleted").status(200);
-    return;
-  } catch (deleteError) {
-    console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+    const body = req.body as IAnnouncement;
+    if (!body.id) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing required parameter 'id' in the request body`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    if (body.id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
+            body.id
+          }. Id should be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+
+    const { id } = body;
+    await deleteAnnouncementById(id);
+    res.send(
+      `${getReasonPhrase(
+        StatusCodes.NO_CONTENT
+      )}\nAnnouncement with id: ${id} Successfully deleted`
+    );
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
 
 export const announcementsDelete = async (req: Request, res: Response) => {
   try {
     await deleteAllAnnouncements();
-    res.send("All Announcements Successfully deleted").status(200);
+    res
+      .send(
+        `${getReasonPhrase(
+          StatusCodes.NO_CONTENT
+        )}\nAll Announcements Successfully deleted from the database`
+      )
+      .status(StatusCodes.NO_CONTENT);
     return;
-  } catch (deleteError) {
-    console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
 
 export const announcementsDeleteByDateRange = async (
-  req: Request<{ start: string; end: string }>,
+  req: Request,
   res: Response
 ) => {
   try {
-    const { start, end } = req.body;
+    const body = req.body as { start: string; end: string };
 
-    if (!start || !end) {
-      res.send("Invalid date range").status(400);
+    if (!body.start || !body.end) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing at least one required parameter in the request body from the following: 'start' or 'end' `
+        )
+        .status(StatusCodes.BAD_REQUEST);
       return;
     }
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
-    return;
-  }
 
-  try {
-    const { start, end } = req.body;
+    const { start, end } = body;
 
     const parsedStartDate = new Date(start);
     const parsedEndDate = new Date(end);
+
+    if (
+      isNaN(parsedStartDate.getTime()) ||
+      isNaN(parsedEndDate.getTime()) ||
+      parsedStartDate >= parsedEndDate
+    ) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nInvalid date in start or end parameter or start date is after end date`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+      return;
+    }
+
+    if (!isValidIsoDate(start) || !isValidIsoDate(end)) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nInvalid date format in the request start or end parameter. Use full ISO date format.`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+      return;
+    }
 
     await deleteAnnouncementsByDateRange(parsedStartDate, parsedEndDate);
 
     res
       .send(
-        `Announcements Successfully deleted within the date range ${start} to ${end}`
+        `${getReasonPhrase(
+          StatusCodes.NO_CONTENT
+        )}\nAnnouncements Successfully deleted within the date range ${parsedStartDate} to ${parsedEndDate}`
       )
-      .status(200);
-  } catch (deleteError) {
-    console.error(deleteError);
-    res.send("Internal Server Error").status(500);
+      .status(StatusCodes.NO_CONTENT);
+    return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
 
-async function createAnnouncement({
-  title,
-  text,
-  image,
-}: IAnnouncementCreationRequest) {
+async function createAnnouncement(
+  title: IAnnouncement["title"],
+  text: IAnnouncement["text"],
+  image: IAnnouncement["image"]
+) {
   await sqlPool.query("CALL sp_createAnnouncement(?,?,?)", [
     title,
     text,
@@ -160,11 +362,12 @@ async function createAnnouncement({
 
 async function getSpecificAnnouncementById(id: IAnnouncement["id"]) {
   // @ts-ignore
-  const [row] = await sqlPool.query<IAnnouncement>(
+  const [rows] = await sqlPool.query<IAnnouncement>(
     "CALL sp_GetAnnouncementById(?)",
     [id]
   );
-  return row;
+  // @ts-ignore
+  return rows[0][0];
 }
 async function getAnnouncements() {
   // @ts-ignore
@@ -174,12 +377,12 @@ async function getAnnouncements() {
   return rows[0];
 }
 
-async function updateAnnouncementById({
-  id,
-  title,
-  text,
-  image,
-}: Omit<IAnnouncement, "created_at">) {
+async function updateAnnouncementById(
+  id: IAnnouncement["id"],
+  title: IAnnouncement["title"],
+  text: IAnnouncement["text"],
+  image: IAnnouncement["image"]
+) {
   // @ts-ignore
   await sqlPool.query<IAnnouncement>("CALL sp_UpdateAnnouncement(?,?,?,?)", [
     id,

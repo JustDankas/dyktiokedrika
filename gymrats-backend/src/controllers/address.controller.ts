@@ -1,119 +1,296 @@
 import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
 import { IAddress, IAddressCreationRequest } from "../models/address";
+import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { SqlError, isSqlError } from "../models/errorHandlingHelpers";
 
-export const addressCreate = async (
-  req: Request<IAddressCreationRequest>,
-  res: Response
-) => {
+export const addressCreate = async (req: Request, res: Response) => {
   try {
-    const { user_id, country, city, street } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    const body = req.body as IAddressCreationRequest;
+    if (!body.user_id || !body.country || !body.city || !body.street) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing at least one required parameter in the request body from the following: 'user_id', 'country', 'city', 'street'`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    if (body.user_id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nUser_id must be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const { user_id, country, city, street } = body;
+
+    await createAddress(user_id, country, city, street);
+
+    res
+      .send(
+        `${getReasonPhrase(StatusCodes.CREATED)}\nAddress Successfully created`
+      )
+      .status(StatusCodes.CREATED);
     return;
-  }
-  try {
-    await createAddress(req.body);
-    res.send("Address Successfully created").status(200);
-    return;
-  } catch (createError) {
-    console.log(createError);
-    res.send("Internal Server Error").status(500);
-    return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
-export const getAddressById = async (
-  req: Request<IAddress["id"]>,
-  res: Response
-) => {
+export const getAddressById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
-    return;
-  }
-  try {
-    const address = await getSpecificAddressById(req.body);
-    res.send(address).status(200);
-    return;
-  } catch (getError) {
-    console.log(getError);
-    res.send("Internal Server Error").status(500);
-    return;
+    const body = req.body as IAddress;
+    if (!body.id) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing required parameter from request body:'id'`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    if (body.id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nId must be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const { id } = body;
+    const address = await getSpecificAddressById(id);
+    if (!address) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.NOT_FOUND
+          )}\nAddress not found with id: ${id} in the database`
+        )
+        .status(StatusCodes.NOT_FOUND);
+      return;
+    }
+    res.send(address).status(StatusCodes.OK);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
-export const getAddressByUserId = async (
-  req: Request<IAddress["user_id"]>,
-  res: Response
-) => {
+export const getAddressesByUserId = async (req: Request, res: Response) => {
   try {
-    const { user_id } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
-    return;
-  }
-  try {
+    const body = req.body as IAddress;
+    if (!body.user_id) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing required parameter in the request body: 'user_id' `
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    if (body.user_id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid user_id ${
+            body.user_id
+          } in the request body. Id should be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
     const userAddresses = await getAllAddressByUserId(req.body);
-    res.send(userAddresses).status(200);
+    if (!userAddresses) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.NOT_FOUND
+          )}\nUser addresses not found of user with user id: ${
+            req.body.user_id
+          } in the database`
+        )
+        .status(StatusCodes.NOT_FOUND);
+    }
+    res.send(userAddresses).status(StatusCodes.OK);
     return;
-  } catch (getError) {
-    console.log(getError);
-    res.send("Internal Server Error").status(500);
-    return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
 export const getAllAddresses = async (req: Request, res: Response) => {
   try {
     const addressList = await getAddresses();
-    res.send(addressList).status(200);
+    if (!addressList) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.NOT_FOUND
+          )}\nNo addresses in the database`
+        )
+        .status(StatusCodes.NOT_FOUND);
+    }
+    res.send(addressList).status(StatusCodes.OK);
     return;
-  } catch (getError) {
-    console.log(getError);
-    res.send("Internal Server Error").status(500);
-    return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
-export const updateAddress = async (
-  req: Request<IAddress["id"]>,
-  res: Response
-) => {
+
+export const updateAddress = async (req: Request, res: Response) => {
   try {
-    const { id, country, city, street } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    const body = req.body as Omit<IAddress, "user_id">;
+    if (!body.id || !body.country || !body.city || !body.street) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing at least one required parameter from the following in the request body: 'id', 'country', 'city', 'street'`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    if (body.id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
+            body.id
+          } in the request body. Id should be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const { id, country, city, street } = body;
+    await updateAddressById(id, country, city, street);
+    res
+      .send(`${getReasonPhrase(StatusCodes.OK)}\nAddress Successfully updated`)
+      .status(StatusCodes.OK);
     return;
-  }
-  try {
-    await updateAddressById(req.body);
-    res.send("Address Successfully updated").status(200);
-    return;
-  } catch (updateError) {
-    console.log(updateError);
-    res.send("Internal Server Error").status(500);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
-export const addressDeleteById = async (
-  req: Request<IAddress["id"]>,
-  res: Response
-) => {
+export const addressDeleteById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    const body = req.body as IAddress;
+    if (!body.id) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing id in the request body`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+      return;
+    }
+    if (body.id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
+            body.id
+          } in the request body. Id should be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+      return;
+    }
+    const { id } = body;
+    await deleteAddressById(id);
+    res
+      .send(
+        `${getReasonPhrase(
+          StatusCodes.NO_CONTENT
+        )}\nAddress Successfully deleted from the database`
+      )
+      .status(StatusCodes.NO_CONTENT);
     return;
-  }
-  try {
-    await deleteAddressById(req.body);
-    res.send("Address Successfully deleted").status(200);
-    return;
-  } catch (deleteError) {
-    console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
 export const addressesDeleteByUserId = async (
@@ -121,39 +298,91 @@ export const addressesDeleteByUserId = async (
   res: Response
 ) => {
   try {
-    const { user_id } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    const body = req.body as IAddress;
+    if (!body.user_id) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing required parameter user_id in the request body`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    if (body.user_id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid user_id ${
+            body.user_id
+          } in the request body. User_Id should be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const { user_id } = body;
+    await deleteAllAddressesByUserId(user_id);
+    res
+      .send(
+        `${getReasonPhrase(
+          StatusCodes.NO_CONTENT
+        )}\nUser Addresses Successfully deleted`
+      )
+      .status(StatusCodes.NO_CONTENT);
     return;
-  }
-  try {
-    await deleteAllAddressesByUserId(req.body);
-    res.send("User Addresses Successfully deleted").status(200);
-    return;
-  } catch (deleteError) {
-    console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
 
 export const addressesDelete = async (req: Request, res: Response) => {
   try {
     await deleteAllAddresses();
-    res.send("All Addresses Successfully deleted").status(200);
+    res
+      .send(
+        `${getReasonPhrase(
+          StatusCodes.NO_CONTENT
+        )}\nAll Addresses Successfully deleted`
+      )
+      .status(StatusCodes.NO_CONTENT);
     return;
-  } catch (deleteError) {
-    console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
-
-async function createAddress({
-  user_id,
-  country,
-  city,
-  street,
-}: IAddressCreationRequest) {
+async function createAddress(
+  user_id: IAddress["user_id"],
+  country: IAddress["country"],
+  city: IAddress["city"],
+  street: IAddress["street"]
+) {
   await sqlPool.query("CALL sp_createAddress(?,?,?,?)", [
     user_id,
     country,
@@ -183,12 +412,12 @@ async function getAddresses() {
   return rows[0];
 }
 
-async function updateAddressById({
-  id,
-  country,
-  city,
-  street,
-}: Omit<IAddress, "user_id">) {
+async function updateAddressById(
+  id: IAddress["id"],
+  country: IAddress["country"],
+  city: IAddress["city"],
+  street: IAddress["street"]
+) {
   // @ts-ignore
   await sqlPool.query<IAddress>("CALL sp_UpdateAddressById(?,?,?,?)", [
     id,
