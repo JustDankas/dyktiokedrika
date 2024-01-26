@@ -27,7 +27,7 @@ app.use("/test", testRoute);
 app.use("/user", userRoute);
 app.use("/announcement", authenticateController, announcementRoute);
 app.use("/address", authenticateController, addressRoute);
-app.use("/program", authenticateController, programRoute);
+app.use("/program", programRoute);
 app.use("/slot", slotRouter);
 
 app.listen(port, () => {

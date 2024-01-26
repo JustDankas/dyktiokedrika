@@ -11,7 +11,7 @@ const router = express.Router();
 router.route("/create_program").post(programCreate);
 router.route("/delete_program").delete(programDeleteById);
 router.route("/view_all_programs").get(getAllPrograms);
-router.route("/view_program").get(getProgramById);
+router.route("/view_program").post(getProgramById);
 router.route("/update_program").put(updateProgram);
 
 export default router;

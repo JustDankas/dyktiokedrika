@@ -343,7 +343,9 @@ export const slotDeleteById = async (req: Request, res: Response) => {
     await deleteSlotById(id);
     res
       .send(
-        `Slot Successfully deleted\n${getReasonPhrase(StatusCodes.NO_CONTENT)}`
+        `${getReasonPhrase(
+          StatusCodes.NO_CONTENT
+        )}\nSlot Successfully deleted with id: ${id}}`
       )
       .status(StatusCodes.NO_CONTENT);
     return;
@@ -372,7 +374,7 @@ export const deleteAllSlots = async (req: Request, res: Response) => {
     await slotsDelete();
     res
       .send(
-        `Slots Successfully deleted\n${getReasonPhrase(StatusCodes.NO_CONTENT)}`
+        `${getReasonPhrase(StatusCodes.NO_CONTENT)}\nSlots Successfully deleted`
       )
       .status(StatusCodes.NO_CONTENT);
     return;

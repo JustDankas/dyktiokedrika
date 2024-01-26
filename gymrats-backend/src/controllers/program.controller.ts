@@ -2,155 +2,413 @@ import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
 import { IProgram, IProgramCreationRequest } from "../models/program";
 import { IUser } from "../models/user";
+import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { SqlError, isSqlError } from "../models/errorHandlingHelpers";
 
 export const programCreate = async (req: Request, res: Response) => {
   try {
     const body = req.body as IProgramCreationRequest;
-    const { trainer_id, title, description, type, price, is_group, max_size } =
-      body;
-
-    try {
-      // @ts-ignore
-      const userRole = await sqlPool.query<IUser["role"]>(
-        `SELECT role FROM user WHERE id = ? LIMIT 1`,
-        [trainer_id]
-      );
-
-      if (userRole[0] !== "trainer") {
-        res.status(400).send("User that was provided is not a trainer");
-        return;
-      }
-    } catch (getError) {
-      console.log(getError);
-      res.send("Internal Server Error").status(500);
+    if (
+      !body.trainer_id ||
+      !body.title ||
+      !body.description ||
+      !body.type ||
+      !body.price ||
+      !body.is_group ||
+      !body.max_size ||
+      !body.image
+    ) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing at least one of the required parameters in the request body: 'trainer_id', 'title', 'description', 'type', 'price', 'is_group', 'max_size', 'image' `
+        )
+        .status(StatusCodes.BAD_REQUEST);
       return;
     }
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.status(400).send("Invalid fields in the request form");
-    return;
-  }
+    if (body.trainer_id <= 0 || body.price < 0 || body.max_size <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nAt least one invalid parameter in the request body: 'trainer_id','max_size','price'\n(They should be positive integers or the price should at least be 0)`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const {
+      trainer_id,
+      title,
+      description,
+      type,
+      price,
+      is_group,
+      max_size,
+      image,
+    } = body;
 
-  try {
-    await createProgram(req.body);
-    res.status(200).send("Program Successfully created");
+    // @ts-ignore
+    const userRole = await sqlPool.query<IUser["role"]>(
+      `SELECT role FROM user WHERE id = ? LIMIT 1`,
+      [trainer_id]
+    );
+
+    if (!userRole[0][0]) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nUser that was provided with id: ${trainer_id} does not exist`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const trainer = "trainer";
+    if (userRole[0][0] !== trainer) {
+      res
+        .status(StatusCodes.UNAUTHORIZED)
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.UNAUTHORIZED
+          )}\nUser that was provided is not authorized to be a trainer`
+        );
+      return;
+    }
+
+    await createProgram(
+      trainer_id,
+      title,
+      description,
+      type,
+      price,
+      is_group,
+      max_size,
+      image
+    );
+    res
+      .status(StatusCodes.CREATED)
+      .send(
+        `${getReasonPhrase(StatusCodes.CREATED)}\nProgram Successfully created`
+      );
     return;
-  } catch (createError) {
-    console.log(createError);
-    res.status(500).send("Internal Server Error");
-    return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
-export const getProgramById = async (
-  req: Request<IProgram["id"]>,
-  res: Response
-) => {
+export const getProgramById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    const body = req.body as IProgram;
+    if (!body.id) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing required parameter in the request body: 'id' `
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+
+    if (body.id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
+            body.id
+          } in the request body. Id should be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const { id } = body;
+    const program = await getSpecificProgramById(id);
+    if (!program) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nProgram not found with id: ${id}`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    res.send(program).status(StatusCodes.OK);
     return;
-  }
-  try {
-    const program = await getSpecificProgramById(req.body);
-    res.send(program).status(200);
-    return;
-  } catch (getError) {
-    console.log(getError);
-    res.send("Internal Server Error").status(500);
-    return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
+
 export const getAllPrograms = async (req: Request, res: Response) => {
   try {
     const programList = await getPrograms();
-    res.send(programList).status(200);
+    if (!programList) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.NOT_FOUND
+          )}\nNo programs found in the database`
+        )
+        .status(StatusCodes.NOT_FOUND);
+    }
+    res.send(programList).status(StatusCodes.OK);
     return;
-  } catch (getError) {
-    console.log(getError);
-    res.send("Internal Server Error").status(500);
-    return;
-  }
-};
-export const updateProgram = async (req: Request<IProgram>, res: Response) => {
-  try {
-    const { trainer_id, title, description, type, price, is_group, max_size } =
-      req.body;
-
-    try {
-      // @ts-ignore
-      const userRole = await sqlPool.query<IUser["role"]>(
-        `SELECT role FROM user WHERE id = ? LIMIT 1`,
-        [trainer_id]
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
       );
-
-      if (userRole[0] !== "trainer") {
-        res.status(400).send("User that was provided is not a trainer");
-        return;
-      }
-    } catch (getError) {
-      console.log(getError);
-      res.send("Internal Server Error").status(500);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.status(400).send("Invalid fields in the request form");
-    return;
-  }
-  try {
-    await updateProgramById(req.body);
-    res.send("Program Successfully updated").status(200);
-    return;
-  } catch (updateError) {
-    console.log(updateError);
-    res.send("Internal Server Error").status(500);
   }
 };
-export const programDeleteById = async (
-  req: Request<IProgram["id"]>,
-  res: Response
-) => {
+
+export const updateProgram = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
-  } catch (deconstructionError) {
-    console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    const body = req.body as IProgram;
+
+    if (
+      !body.id ||
+      !body.trainer_id ||
+      !body.title ||
+      !body.description ||
+      !body.type ||
+      !body.price ||
+      !body.is_group ||
+      !body.max_size ||
+      !body.image
+    ) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing at least one of the required parameters in the request body: 'id','trainer_id', 'title', 'description', 'type', 'price', 'is_group', 'max_size', 'image' `
+        )
+        .status(StatusCodes.BAD_REQUEST);
+      return;
+    }
+    if (
+      body.id <= 0 ||
+      body.trainer_id <= 0 ||
+      body.price < 0 ||
+      body.max_size <= 0
+    ) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nAt least one invalid parameter in the request body: 'id', 'trainer_id','max_size','price'\n(They should be positive integers or the price should at least be 0)`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const {
+      id,
+      trainer_id,
+      title,
+      description,
+      type,
+      price,
+      is_group,
+      max_size,
+      image,
+    } = body;
+
+    // @ts-ignore
+    const userRole = await sqlPool.query<IUser["role"]>(
+      `SELECT role FROM user WHERE id = ? LIMIT 1`,
+      [trainer_id]
+    );
+
+    if (!userRole) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nUser that was provided does not exist`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+
+    if (userRole[0][0] !== "trainer") {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nUser that was provided is not authorised to be a trainer`
+        );
+      return;
+    }
+
+    await updateProgramById(
+      id,
+      trainer_id,
+      title,
+      description,
+      type,
+      price,
+      is_group,
+      max_size,
+      image
+    );
+    res
+      .send(
+        `${getReasonPhrase(
+          StatusCodes.OK
+        )}\nProgram with id ${id} Successfully updated`
+      )
+      .status(StatusCodes.OK);
     return;
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
+};
+
+export const programDeleteById = async (req: Request, res: Response) => {
   try {
-    await deleteProgramById(req.body);
-    res.send("Program Successfully deleted").status(200);
+    const body = req.body as IProgram;
+    if (!body.id) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nMissing requiered parameter: 'id' from the request body`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    if (body.id <= 0) {
+      res
+        .send(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\nInvalid parameter: 'id' should be a positive integer`
+        )
+        .status(StatusCodes.BAD_REQUEST);
+    }
+    const { id } = body;
+
+    await deleteProgramById(id);
+    res
+      .send(
+        `${getReasonPhrase(
+          StatusCodes.NO_CONTENT
+        )}\nProgram with id: ${id} Successfully deleted`
+      )
+      .status(StatusCodes.NO_CONTENT);
     return;
-  } catch (deleteError) {
-    console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
 
 export const deleteAllPrograms = async (req: Request, res: Response) => {
   try {
     await programsDelete();
-    res.send("All Programs Successfully deleted").status(200);
+    res
+      .send(
+        `${getReasonPhrase(
+          StatusCodes.NO_CONTENT
+        )}\nAll Programs Successfully deleted`
+      )
+      .status(StatusCodes.NO_CONTENT);
     return;
-  } catch (deleteError) {
-    console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
 
-async function createProgram({
-  trainer_id,
-  title,
-  description,
-  type,
-  price,
-  is_group,
-  max_size,
-}: IProgramCreationRequest) {
+async function createProgram(
+  trainer_id: IProgram["trainer_id"],
+  title: IProgram["title"],
+  description: IProgram["description"],
+  type: IProgram["type"],
+  price: IProgram["price"],
+  is_group: IProgram["is_group"],
+  max_size: IProgram["max_size"],
+  image: IProgram["image"]
+) {
   // @ts-ignore
-  await sqlPool.query<IProgram>("CALL sp_CreateProgram(?,?,?,?,?,?,?)", [
+  await sqlPool.query<IProgram>("CALL sp_CreateProgram(?,?,?,?,?,?,?,?)", [
     trainer_id,
     title,
     description,
@@ -158,6 +416,7 @@ async function createProgram({
     price,
     is_group,
     max_size,
+    image,
   ]);
 }
 
@@ -166,35 +425,31 @@ async function getSpecificProgramById(id: IProgram["id"]) {
   const [row] = await sqlPool.query<IProgram>("CALL sp_GetProgramByID(?)", [
     id,
   ]);
-  return row;
+  //@ts-ignore
+  return row[0][0];
 }
 
 async function getPrograms() {
   // @ts-ignore
   const [rows] = await sqlPool.query<IProgram[]>("CALL sp_GetPrograms()");
-  return rows;
+  return rows[0];
 }
-async function updateProgramById({
-  id,
-  trainer_id,
-  title,
-  description,
-  type,
-  price,
-  is_group,
-  max_size,
-}: IProgram) {
+async function updateProgramById(
+  id: IProgram["id"],
+  trainer_id: IProgram["trainer_id"],
+  title: IProgram["title"],
+  description: IProgram["description"],
+  type: IProgram["type"],
+  price: IProgram["price"],
+  is_group: IProgram["is_group"],
+  max_size: IProgram["max_size"],
+  image: IProgram["image"]
+) {
   // @ts-ignore
-  await sqlPool.query<IProgram>("CALL sp_UpdateProgramByID(?,?,?,?,?,?,?,?)", [
-    id,
-    trainer_id,
-    title,
-    description,
-    type,
-    price,
-    is_group,
-    max_size,
-  ]);
+  await sqlPool.query<IProgram>(
+    "CALL sp_UpdateProgramByID(?,?,?,?,?,?,?,?,?)",
+    [id, trainer_id, title, description, type, price, is_group, max_size, image]
+  );
 }
 
 async function deleteProgramById(id: IProgram["id"]) {

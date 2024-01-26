@@ -7,6 +7,7 @@ export interface IProgram {
   price: number;
   is_group: boolean;
   max_size: number;
+  image: string;
 }
 
 export interface IProgramCreationRequest extends Omit<IProgram, "id"> {
