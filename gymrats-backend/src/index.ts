@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:4200",
+    origin: ["http://localhost:4200", "http://83.212.75.182:4242"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
