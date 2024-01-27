@@ -1,0 +1,15 @@
+<section class="section announcements-page" id="call-to-action">
+  <div class="section-heading dark-bg">
+    <h2>Classes <em>Schedule</em></h2>
+    <img src="assets/images/line-dec.png" alt="" />
+  </div>
+  <ngb-carousel #carousel [interval]="5000" class="carousel">
+    <ng-template ngbSlide *ngFor="let img of images; let i = index">
+      <a [href]="img" target="_blank" rel="nofollow noopener noreferrer">
+        <div class="picsum-img-wrapper">
+          <img [src]="img" alt="My image {{ i + 1 }} description" />
+        </div>
+      </a>
+    </ng-template>
+  </ngb-carousel>
+</section>

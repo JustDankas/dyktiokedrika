@@ -1,3 +1,5 @@
+@use "../../../../styles/variables" as *;
+
 .features-items {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -16,4 +18,17 @@
   .feature-item:nth-child(6) {
     justify-self: start;
   }
+
+  .left-icon {
+    padding: 10px;
+    img {
+      background-color: $primary-400;
+      padding: 15px;
+      width: 120px;
+      border-radius: 10px;
+    }
+  }
+}
+.waves-icon {
+  width: 20px;
 }

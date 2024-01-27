@@ -23,6 +23,8 @@ import { SelectBoxComponent } from './components/select-box/select-box.component
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { CalendarComponent } from './pages/profile/calendar/calendar.component';
 import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.component';
+import { AnnouncementsComponent } from './components/announcements/announcements.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -45,6 +47,7 @@ import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.co
     ClickOutsideDirective,
     CalendarComponent,
     AdminProgramsComponent,
+    AnnouncementsComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +55,7 @@ import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.co
     ReactiveFormsModule,
     HttpClientModule,
     FormsModule,
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
