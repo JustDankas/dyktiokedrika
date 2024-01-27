@@ -422,20 +422,20 @@ header
   color: #fff;
 }
 
-.header-area .main-nav .nav li:last-child a {
-  display: inline-block;
-  font-size: 13px;
-  padding: 11px 17px;
-  background-color: $primary-400;
-  color: #fff;
-  text-align: center;
-  font-weight: 400;
-  letter-spacing: 0px;
-  text-transform: uppercase;
-  transition: all 0.3s;
-  height: auto;
-  line-height: 20px;
-}
+// .header-area .main-nav .nav li:last-child a {
+//   display: inline-block;
+//   font-size: 13px;
+//   padding: 11px 17px;
+//   background-color: $primary-400;
+//   color: #fff;
+//   text-align: center;
+//   font-weight: 400;
+//   letter-spacing: 0px;
+//   text-transform: uppercase;
+//   transition: all 0.3s;
+//   height: auto;
+//   line-height: 20px;
+// }
 
 .header-area .main-nav .nav li:last-child a:hover {
   background-color: $primary-300;

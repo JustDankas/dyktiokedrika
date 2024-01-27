@@ -4,12 +4,17 @@
       <div class="col-6 profile-c">
         <app-user-info></app-user-info>
       </div>
-      <div class="col-6"></div>
+      <div class="col-6">
+        <h3>About Me</h3>
+        <p class="description" *ngIf="user$ | async as user">
+          {{ user.about ? user.about : defaultDescription }}
+        </p>
+      </div>
     </div>
     <div class="row">
       <div class="col-8">
         <h3>This Week</h3>
-        <ul>
+        <ul class="user-programs-list">
           <app-program-item
             *ngFor="let item of programs"
             [description]="item.description"
@@ -18,7 +23,10 @@
           ></app-program-item>
         </ul>
       </div>
-      <div class="col-4"></div>
+      <div class="col-4">
+        <h3>Calendar</h3>
+        <app-calendar></app-calendar>
+      </div>
     </div>
   </section>
 </main>

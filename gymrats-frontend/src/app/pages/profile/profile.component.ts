@@ -8,14 +8,16 @@ import { IUser, UserService } from 'src/app/services/user.service';
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
-  user: IUser | null = null;
   programs: IProgram[] = [];
+  user$;
+  readonly defaultDescription = 'User has no description';
   constructor(
     private userSrv: UserService,
     private programSrv: ProgramService
-  ) {}
+  ) {
+    this.user$ = userSrv.user$;
+  }
   ngOnInit(): void {
-    this.user = this.userSrv.user;
     this.programs = this.programSrv.programs;
   }
 }

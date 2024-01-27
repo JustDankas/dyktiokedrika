@@ -1,8 +1,20 @@
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { inject } from '@angular/core';
+import { map, of, switchMap, tap } from 'rxjs';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const userSrv: UserService = inject(UserService);
-  return !!userSrv.user;
+  const router = inject(Router);
+  return userSrv.getPermission().pipe(
+    switchMap((res) => {
+      console.log(res, 'guard');
+      if (res) {
+        return of(true);
+      } else {
+        router.navigate(['/']);
+        return of(false);
+      }
+    })
+  );
 };

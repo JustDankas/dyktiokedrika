@@ -23,9 +23,7 @@ export class LoginModalComponent {
   onSubmit() {
     // console.log(this.loginForm);
 
-    this.userSrv.login(this.loginForm.value).subscribe((data) => {
-      console.log(data);
-    });
+    this.userSrv.login(this.loginForm.value);
   }
 
   get nameControl() {
