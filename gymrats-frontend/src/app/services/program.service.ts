@@ -37,6 +37,70 @@ export class ProgramService {
       price: 20,
       max_size: 20,
     },
+    {
+      id: 1,
+      trainer: {
+        name: 'Mixalhs',
+        surname: 'Fillipakhs',
+      },
+      image:
+        'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
+
+      is_group: true,
+      title: 'Some title',
+      description: 'Some description',
+      type: 'Pilates',
+      price: 20,
+      max_size: 20,
+    },
+    {
+      id: 1,
+      trainer: {
+        name: 'Mixalhs',
+        surname: 'Fillipakhs',
+      },
+      image:
+        'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
+
+      is_group: true,
+      title: 'Some title',
+      description: 'Some description',
+      type: 'Pilates',
+      price: 20,
+      max_size: 20,
+    },
+    {
+      id: 1,
+      trainer: {
+        name: 'Mixalhs',
+        surname: 'Fillipakhs',
+      },
+      image:
+        'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
+
+      is_group: true,
+      title: 'Some title',
+      description: 'Some description',
+      type: 'Pilates',
+      price: 20,
+      max_size: 20,
+    },
+    {
+      id: 1,
+      trainer: {
+        name: 'Mixalhs',
+        surname: 'Fillipakhs',
+      },
+      image:
+        'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
+
+      is_group: true,
+      title: 'Some title',
+      description: 'Some description',
+      type: 'Pilates',
+      price: 20,
+      max_size: 20,
+    },
   ];
   constructor() {}
 }

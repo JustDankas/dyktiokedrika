@@ -3,6 +3,10 @@ import { sqlPool } from "../mysqlPool";
 import { IUser, ILoginRequest, IAuth } from "../models/user";
 import jwt from "jsonwebtoken";
 import { ICreateUser } from "../interfaces/user.interface";
+import {
+  getAddressByUserId,
+  getAllAddressByUserId,
+} from "./address.controller";
 
 export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
   try {
@@ -11,33 +15,50 @@ export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
     if (!user) {
       throw new Error("Incorrect credentials");
     }
-    console.log(user);
-    const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
-    res.cookie("token", token, {
-      path: "/",
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
-    });
-    res.json(user).status(200);
+    const { id } = user;
+    const address = await getAllAddressByUserId(id);
+    if (address) {
+      const token = jwt.sign({ id }, "secret", { expiresIn: "1d" });
+      res.cookie("auth", token, {
+        path: "/",
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      });
+      res.json({ ...user, ...address }).status(200);
+    } else {
+      throw new Error("No address found");
+    }
   } catch (error) {
     console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
-export const userAuth = async (req: Request<IAuth>, res: Response) => {
+export const userAuth = async (req: Request, res: Response) => {
   try {
-    const { token } = req.body;
-    console.log(token);
-    jwt.verify(token as string, "secret", (err, decoded) => {
-      if (err) {
-        console.error(err);
-      }
-      console.log(decoded);
-    });
+    // const { token } = req.body;
+    // console.log(token);
+    if ("auth" in req.cookies) {
+      const { auth } = req.cookies;
+      jwt.verify(auth as string, "secret", async (err, decoded) => {
+        if (err) {
+          console.error(err);
+        }
+        //@ts-ignore
+        const { id } = decoded;
+        const user = await getUserById(id);
+        const address = await getAllAddressByUserId(id);
+        if (user && address) {
+          res.json({ ...user, ...address }).status(200);
+        } else {
+          throw new Error("User not found");
+        }
+      });
+    } else {
+      res.status(404).json("No auth");
+    }
     // console.log(id);
     // const user = await getUserByUsernameAndPassword(username, password);
     // const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
     // res.cookie("token", token, { httpOnly: true });
-    res.json("OK").status(200);
   } catch (error) {
     console.log(error);
     res.json("Internal Server Error").status(500);
@@ -168,10 +189,11 @@ async function getUserById(id: number) {
 
   const [rows] = await sqlPool.query<IUser[]>(
     `CALL sp_GetUserById(?)
-     `,
+    `,
     [id]
   );
-  return rows[0];
+  // @ts-ignore
+  return rows[0][0];
 }
 
 async function getUsersByTheirRole(role: IUser["role"]) {

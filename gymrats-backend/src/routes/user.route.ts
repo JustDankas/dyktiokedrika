@@ -14,7 +14,7 @@ import {
 
 const router = express.Router();
 router.route("/login").post(userLogin);
-router.route("/auth").post(userAuth);
+router.route("/auth").get(userAuth);
 router.route("/register").post(userRegister);
 router.route("/update_user/").put(userUpdate);
 router.route("/delete_user/").delete(userDeleteById);

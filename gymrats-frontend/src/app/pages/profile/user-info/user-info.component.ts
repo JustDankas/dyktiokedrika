@@ -7,9 +7,9 @@ import { IUser, UserService } from 'src/app/services/user.service';
   styleUrls: ['./user-info.component.scss'],
 })
 export class UserInfoComponent {
-  user: IUser | null = null;
-  constructor(private userSrv: UserService) {}
-  ngOnInit(): void {
-    this.user = this.userSrv.user;
+  // user: IUser | null = null;
+  user$;
+  constructor(private userSrv: UserService) {
+    this.user$ = userSrv.user$;
   }
 }

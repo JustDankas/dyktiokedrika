@@ -1,15 +1,18 @@
-<div class="profile-c">
-  <img [src]="user?.image" [alt]="user?.surname" />
+<div class="profile-c" *ngIf="user$ | async as user">
+  <img
+    [src]="user.image ? user.image : 'assets/default-profile.png'"
+    [alt]="user.surname"
+  />
   <div class="profile-info-c ms-2">
     <div class="profile-name-badge-c">
-      <h2 class="name me-auto">{{ user?.name }}</h2>
-      <span class="badge bg-primary ms-2">{{ user?.role }}</span>
+      <h2 class="name me-auto">{{ user.name }}</h2>
+      <span class="badge bg-primary ms-2">{{ user.role }}</span>
       <button class="btn settings-btn ms-1">
         <i class="bi bi-gear-fill"></i>
       </button>
     </div>
-    <h2>{{ user?.surname }}</h2>
-    <p>Email: {{ user?.email }}</p>
-    <p>Address: {{ user?.street }}</p>
+    <h2>{{ user.surname }}</h2>
+    <p><i class="bi bi-envelope-at-fill"></i> {{ user.email }}</p>
+    <p><i class="bi bi-geo-alt-fill"></i> {{ user.street }}</p>
   </div>
 </div>

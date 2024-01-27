@@ -15,6 +15,7 @@
             <li class="scroll-to-section"><a href="#schedule">Schedules</a></li>
             <li class="scroll-to-section"><a href="#contact-us">Contact</a></li>
             <button
+              *ngIf="!(user$ | async)"
               type="button"
               class="button me-3"
               data-bs-toggle="modal"
@@ -23,6 +24,7 @@
               Login
             </button>
             <button
+              *ngIf="!(user$ | async)"
               type="button"
               class="button"
               data-bs-toggle="modal"

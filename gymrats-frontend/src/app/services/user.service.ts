@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config.service';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export enum Role {
   user,
@@ -19,6 +20,7 @@ export interface IUser {
   country: string;
   city: string;
   street: string;
+  about: string;
 }
 
 type ILoginForm = Partial<{
@@ -41,41 +43,46 @@ type IRegisterForm = Partial<{
   providedIn: 'root',
 })
 export class UserService {
-  user: IUser | null = {
-    id: 1,
-    name: 'Mixalhs',
-    surname: 'Fillipakhs',
-    email: 'sex@example.com',
-    username: 'makemecum',
-    image:
-      'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
-    registration_date: new Date().toISOString(),
-    role: Role[Role.user],
-    country: 'Greece',
-    city: 'Athens',
-    street: 'Some Street 11',
-  };
+  // user: IUser | null = {
+  //   id: 1,
+  //   name: 'Mixalhs',
+  //   surname: 'Fillipakhs',
+  //   email: 'sex@example.com',
+  //   username: 'makemecum',
+  //   image:
+  //     'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
+  //   registration_date: new Date().toISOString(),
+  //   role: Role[Role.user],
+  //   country: 'Greece',
+  //   city: 'Athens',
+  //   street: 'Some Street 11',
+  //   description: '',
+  //   // 'Το Lorem Ipsum είναι απλά ένα κείμενο χωρίς νόημα για τους επαγγελματίες της τυπογραφίας και στοιχειοθεσίας. Το Lorem Ipsum είναι το επαγγελματικό πρότυπο όσον αφορά το κείμενο χωρίς νόημα, από τον 15ο αιώνα, όταν ένας ανώνυμος τυπογράφος πήρε ένα δοκίμιο και ανακάτεψε τις λέξεις για να δημιουργήσει ένα δείγμα βιβλίου. Όχι μόνο επιβίωσε πέντε αιώνες, αλλά κυριάρχησε στην ηλεκτρονική στοιχειοθεσία, παραμένοντας με κάθε τρόπο αναλλοίωτο',
+  // };
+
+  _user$ = new BehaviorSubject<IUser | null>(null);
+  user$ = this._user$.asObservable();
   constructor(private http: HttpClient, private configSrv: ConfigService) {
     this.loginFromToken();
   }
 
   loginFromToken() {
-    console.log(document.cookie);
-    const token = document.cookie.split(';').find((c) => /auth=.+/.test(c));
-    if (token) {
-      console.log(token.split('=')[1]);
-      this.http
-        .post(
-          this.configSrv.url + 'user/auth',
-          { token: token.split('=')[1] },
-          {
-            headers: {
-              credentials: 'include',
-            },
-          }
-        )
-        .subscribe((data) => console.log(data));
-    }
+    this.http
+      .get(this.configSrv.url + 'user/auth', {
+        withCredentials: true,
+      })
+      .subscribe((data) => {
+        console.log(data);
+        //@ts-ignore
+        this._user$.next(data);
+        // this.user = data.user[0];
+      });
+  }
+
+  getPermission() {
+    return this.http.get(this.configSrv.url + 'user/auth', {
+      withCredentials: true,
+    });
   }
 
   login({ nameControl, passwordControl }: ILoginForm) {
@@ -83,7 +90,15 @@ export class UserService {
       username: nameControl,
       password: passwordControl,
     };
-    return this.http.post(this.configSrv.url + 'user/login', body);
+    this.http
+      .post(this.configSrv.url + 'user/login', body, {
+        withCredentials: true,
+      })
+      .subscribe((data) => {
+        console.log(data);
+        //@ts-ignore
+        this._user$.next(data);
+      });
   }
 
   register({
