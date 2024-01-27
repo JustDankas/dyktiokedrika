@@ -1,4 +1,14 @@
 import { Injectable } from '@angular/core';
+import { ConfigService } from './config.service';
+import { HttpClient } from '@angular/common/http';
+import { IUser } from './user.service';
+
+export type ProgramTypes =
+  | 'pilates'
+  | 'weights'
+  | 'fitness'
+  | 'advanced'
+  | 'yoga';
 
 export interface ITrainer {
   name: string;
@@ -102,5 +112,12 @@ export class ProgramService {
       max_size: 20,
     },
   ];
-  constructor() {}
+  constructor(private configSrv: ConfigService, private http: HttpClient) {}
+
+  getTrainers() {
+    return this.http.post<IUser[]>(
+      this.configSrv.url + 'user/view/users_by_requested_role',
+      { role: 'trainer' }
+    );
+  }
 }

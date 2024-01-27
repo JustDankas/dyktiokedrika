@@ -22,6 +22,7 @@ import { ProgramItemComponent } from './pages/profile/program-item/program-item.
 import { SelectBoxComponent } from './components/select-box/select-box.component';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { CalendarComponent } from './pages/profile/calendar/calendar.component';
+import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { CalendarComponent } from './pages/profile/calendar/calendar.component';
     SelectBoxComponent,
     ClickOutsideDirective,
     CalendarComponent,
+    AdminProgramsComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,13 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config.service';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
 
-export enum Role {
-  user,
-  trainer,
-  admin,
-}
+export type Role = 'notAssigned' | 'admin' | 'trainer' | 'user';
 export interface IUser {
   id: number;
   name: string;
@@ -16,7 +14,7 @@ export interface IUser {
   username: string;
   image: string;
   registration_date: string;
-  role: string;
+  role: Role;
   country: string;
   city: string;
   street: string;
@@ -60,9 +58,14 @@ export class UserService {
   //   // 'Το Lorem Ipsum είναι απλά ένα κείμενο χωρίς νόημα για τους επαγγελματίες της τυπογραφίας και στοιχειοθεσίας. Το Lorem Ipsum είναι το επαγγελματικό πρότυπο όσον αφορά το κείμενο χωρίς νόημα, από τον 15ο αιώνα, όταν ένας ανώνυμος τυπογράφος πήρε ένα δοκίμιο και ανακάτεψε τις λέξεις για να δημιουργήσει ένα δείγμα βιβλίου. Όχι μόνο επιβίωσε πέντε αιώνες, αλλά κυριάρχησε στην ηλεκτρονική στοιχειοθεσία, παραμένοντας με κάθε τρόπο αναλλοίωτο',
   // };
 
-  _user$ = new BehaviorSubject<IUser | null>(null);
+  private _user$ = new BehaviorSubject<IUser | null>(null);
   user$ = this._user$.asObservable();
-  constructor(private http: HttpClient, private configSrv: ConfigService) {
+  constructor(
+    private http: HttpClient,
+    private configSrv: ConfigService,
+    private cookieService: CookieService,
+    private router: Router
+  ) {
     this.loginFromToken();
   }
 
@@ -125,6 +128,17 @@ export class UserService {
       registration_date: new Date().toISOString(),
     };
     // console.log(body);
-    return this.http.post(this.configSrv.url + 'user/register', body);
+    this.http
+      .post(this.configSrv.url + 'user/register', body)
+      .subscribe((data) => {
+        console.log(data);
+        window.location.reload();
+      });
+  }
+
+  logout() {
+    this._user$.next(null);
+    this.cookieService.delete('auth', '/');
+    this.router.navigate(['/']);
   }
 }

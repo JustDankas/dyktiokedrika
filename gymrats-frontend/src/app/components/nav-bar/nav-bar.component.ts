@@ -12,4 +12,8 @@ export class NavBarComponent {
   constructor(private userSrv: UserService) {
     this.user$ = userSrv.user$;
   }
+
+  logout() {
+    this.userSrv.logout();
+  }
 }
