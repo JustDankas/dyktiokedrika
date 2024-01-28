@@ -44,9 +44,8 @@ export const userAuth = async (req: Request, res: Response) => {
         }
         //@ts-ignore
         const { id } = decoded;
-        const user = await getUserById(id);
+        const user = await getUserByIdQuery(id);
         const address = await getAllAddressByUserId(id);
-        console.log(user);
         if (user && address) {
           res.json({ ...user, ...address }).status(200);
         } else {
@@ -176,9 +175,7 @@ export const updateUserPfp = async (
 ) => {
   try {
     const { image, id } = req.body;
-    console.log(id);
     const newUser = await updateUserPfpById(image, id);
-    console.log(newUser);
     //@ts-ignore
     if (newUser.affectedRows > 0) {
       res.status(200).json("OK");
@@ -206,7 +203,7 @@ async function getUserByUsernameAndPassword(
   return rows[0][0];
 }
 
-async function getUserById(id: number) {
+export async function getUserByIdQuery(id: number) {
   // @ts-ignore
 
   const [rows] = await sqlPool.query<IUser[]>(

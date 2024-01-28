@@ -3,8 +3,6 @@ import { ConfigService } from './config.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IUser } from './user.service';
 import { BehaviorSubject } from 'rxjs';
-import { FileService } from './file.service';
-
 export type ProgramTypes =
   | 'pilates'
   | 'weights'
@@ -12,6 +10,13 @@ export type ProgramTypes =
   | 'advanced'
   | 'yoga';
 
+export interface ISlot {
+  id: number;
+  program_id: number;
+  seats_available: number;
+  start: string;
+  end: string;
+}
 export interface ITrainer {
   name: string;
   surname: string;
@@ -28,6 +33,7 @@ export interface IProgram {
   price: number;
   is_group: boolean;
   max_size: number;
+  slots: ISlot[];
 }
 
 @Injectable({
@@ -38,11 +44,7 @@ export class ProgramService {
   programs$ = this._programs$.asObservable();
   editingProgram$ = new BehaviorSubject(-1);
   private programUrl = 'program/';
-  constructor(
-    private configSrv: ConfigService,
-    private http: HttpClient,
-    private fileService: FileService
-  ) {
+  constructor(private configSrv: ConfigService, private http: HttpClient) {
     this.getPrograms();
   }
 
@@ -61,7 +63,9 @@ export class ProgramService {
       blob = reader.result as string;
       data.image = blob;
       this.http
-        .post(this.configSrv.url + this.programUrl + 'create_program', data)
+        .post(this.configSrv.url + this.programUrl + 'create_program', data, {
+          withCredentials: true,
+        })
         .subscribe((data) => {
           console.log(data);
         });
@@ -70,11 +74,11 @@ export class ProgramService {
 
   getPrograms() {
     this.http
-      .get(this.configSrv.url + this.programUrl + 'view_all_programs')
+      .get(this.configSrv.url + this.programUrl + 'view_all_programs', {
+        withCredentials: true,
+      })
       .subscribe((data: any) => {
-        for (let program of data) {
-          program.image = this.fileService.blobToB64(program.image.data);
-        }
+        console.log(data);
         this._programs$.next(data);
       });
   }
@@ -84,9 +88,39 @@ export class ProgramService {
   }
 
   addProgramSlot(data: any) {
-    this.http.post(this.configSrv.url + this.programUrl + '', {
-      ...data,
-      program_id: this.editingProgram$.getValue(),
-    });
+    this.http
+      .post(
+        this.configSrv.url + this.programUrl + 'create_slot',
+        {
+          ...data,
+          program_id: this.editingProgram$.getValue(),
+        },
+        { withCredentials: true }
+      )
+      .subscribe((data) => {
+        console.log(data);
+      });
+  }
+
+  deleteProgram(id: number) {
+    this.http
+      .delete(
+        this.configSrv.url + this.programUrl + 'delete_program' + '?id=' + id,
+        { withCredentials: true }
+      )
+      .subscribe((data) => {
+        window.location.reload();
+      });
+  }
+
+  deleteSlot(id: number) {
+    this.http
+      .delete(
+        this.configSrv.url + this.programUrl + 'delete_slot' + '?id=' + id,
+        { withCredentials: true }
+      )
+      .subscribe((data) => {
+        window.location.reload();
+      });
   }
 }

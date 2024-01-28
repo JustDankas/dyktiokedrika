@@ -53,4 +53,12 @@ export class AdminProgramsComponent {
   setEditingProgram(id: number) {
     this.programService.setEditingProgram(id);
   }
+
+  deleteProgram(id: number) {
+    this.programService.deleteProgram(id);
+  }
+
+  deleteSlot(id: number) {
+    this.programService.deleteSlot(id);
+  }
 }

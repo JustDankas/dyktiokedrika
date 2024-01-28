@@ -46,12 +46,14 @@ form {
     align-items: center;
     cursor: pointer;
     i {
+      font-size: 32px;
+      color: white;
       transition: opacity 0.2s ease;
       opacity: 0;
     }
   }
   .profile-image-input:hover {
-    background-color: rgba($color: #000000, $alpha: 0.5);
+    background-color: rgba($color: $primary-400, $alpha: 0.5);
   }
   .profile-image-input:hover i {
     opacity: 1;

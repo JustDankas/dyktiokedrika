@@ -1,34 +1,36 @@
 import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
 import { ISlot, ISlotCreationRequest } from "../models/slot";
+import { getSpecificProgramById } from "./program.controller";
 
 export const slotCreate = async (
   req: Request<ISlotCreationRequest>,
   res: Response
 ) => {
   try {
-    const { program_id, seats_available, start, end } = req.body;
+    const { program_id, start, end } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
-    const { program_id, seats_available, start, end } = req.body;
+    const { program_id, start, end, day } = req.body;
 
-    const parsedStartDate = new Date(start);
-    const parsedEndDate = new Date(end);
-    await createSlot(
-      program_id,
-      seats_available,
-      parsedStartDate,
-      parsedEndDate
-    );
-    res.status(200).send("Slot Successfully created");
+    // const parsedStartDate = new Date(start);
+    // const parsedEndDate = new Date(end);
+    // const [program] = await sqlPool.query<any>(
+    //   `SELECT max_size FROM program WHERE id = ?`,
+    //   [program_id]
+    // );
+    // console.log(program);
+
+    await createSlot(program_id, start, end, day);
+    res.status(200).json("Slot Successfully created");
     return;
   } catch (createError) {
     console.log(createError);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json("Internal Server Error");
     return;
   }
 };
@@ -37,16 +39,16 @@ export const getSlotById = async (req: Request<ISlot["id"]>, res: Response) => {
     const { id } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
     const slot = await getSpecificSlotById(req.body);
-    res.send(slot).status(200);
+    res.json(slot).status(200);
     return;
   } catch (getError) {
     console.log(getError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
     return;
   }
 };
@@ -58,29 +60,29 @@ export const getSlotsByProgramId = async (
     const { program_id } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
     const { program_id } = req.body;
 
-    const programSlots = await getSlotsByProgramID(program_id);
-    res.send(programSlots).status(200);
+    const programSlots = await getSlotsByProgramIDQuery(program_id);
+    res.json(programSlots).status(200);
     return;
   } catch (getError) {
     console.log(getError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
     return;
   }
 };
 export const getAllSlots = async (req: Request, res: Response) => {
   try {
-    const SlotList = await getSlots();
-    res.send(SlotList).status(200);
+    const SlotList = await getSlotsQuery();
+    res.json(SlotList).status(200);
     return;
   } catch (getError) {
     console.log(getError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
     return;
   }
 };
@@ -89,62 +91,61 @@ export const updateSlot = async (req: Request<ISlot["id"]>, res: Response) => {
     const { id } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
     await updateSlotById(req.body);
-    res.send("Slot Successfully updated").status(200);
+    res.json("Slot Successfully updated").status(200);
     return;
   } catch (updateError) {
     console.log(updateError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
-export const SlotDeleteById = async (
-  req: Request<ISlot["id"]>,
-  res: Response
-) => {
+export const SlotDeleteById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
+    const { id } = req.query;
   } catch (deconstructionError) {
     console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
-    await deleteSlotById(req.body);
-    res.send("Slot Successfully deleted").status(200);
+    const { id } = req.query;
+
+    await deleteSlotById(Number(id));
+    res.json("Slot Successfully deleted").status(200);
     return;
   } catch (deleteError) {
     console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
 export const deleteAllSlots = async (req: Request, res: Response) => {
   try {
     await SlotsDelete();
-    res.send("All Slots Successfully deleted").status(200);
+    res.json("All Slots Successfully deleted").status(200);
     return;
   } catch (deleteError) {
     console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
 async function createSlot(
   program_id: ISlot["program_id"],
-  seats_available: ISlot["seats_available"],
   start: ISlot["start"],
-  end: ISlot["end"]
+  end: ISlot["end"],
+  day: ISlot["day"]
 ) {
   // @ts-ignore
   await sqlPool.query<ISlot>("CALL sp_CreateSlot(?,?,?,?)", [
     program_id,
-    seats_available,
     start,
     end,
+    day,
   ]);
 }
 
@@ -154,7 +155,7 @@ async function getSpecificSlotById(id: ISlot["id"]) {
   return row;
 }
 
-async function getSlots() {
+export async function getSlotsQuery() {
   // @ts-ignore
   const [rows] = await sqlPool.query<ISlot[]>("CALL sp_GetSlots()");
   return rows;
@@ -174,7 +175,7 @@ async function SlotsDelete() {
   await sqlPool.query<ISlot[]>("CALL sp_DeleteAllSlots()");
 }
 
-async function getSlotsByProgramID(id: ISlot["program_id"]) {
+export async function getSlotsByProgramIDQuery(id: ISlot["program_id"]) {
   // @ts-ignore
   const [rows] = await sqlPool.query<ISlot[]>(
     "CALL sp_GetSlotsByProgramID(?)",

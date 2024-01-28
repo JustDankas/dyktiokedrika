@@ -4,6 +4,7 @@ export interface ISlot {
   seats_available: number;
   start: Date;
   end: Date;
+  day: number;
 }
 export interface ISlotCreationRequest {
   program_id: number;

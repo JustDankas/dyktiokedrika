@@ -6,6 +6,8 @@ import {
   IProgramTrainer,
 } from "../models/program";
 import { IUser } from "../models/user";
+import { ISlot } from "../models/slot";
+import { getSlotsQuery } from "./slot.controller";
 
 export const programCreate = async (
   req: Request<IProgramCreationRequest>,
@@ -71,6 +73,14 @@ export const getProgramById = async (
 export const getAllPrograms = async (req: Request, res: Response) => {
   try {
     const programList = await getPrograms();
+    const [slots] = await getSlotsQuery();
+    programList.forEach((p) => {
+      const _slots = (slots as any).filter((slot: any) => {
+        return slot.program_id == p.id;
+      });
+      //@ts-ignore
+      p["slots"] = _slots;
+    });
     res.send(programList).status(200);
     return;
   } catch (getError) {
@@ -114,19 +124,18 @@ export const updateProgram = async (req: Request<IProgram>, res: Response) => {
     res.send("Internal Server Error").status(500);
   }
 };
-export const programDeleteById = async (
-  req: Request<IProgram["id"]>,
-  res: Response
-) => {
+export const programDeleteById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
   } catch (deconstructionError) {
     console.log(deconstructionError);
     res.send("Invalid fields in the request form").status(400);
     return;
   }
   try {
-    await deleteProgramById(req.body);
+    const { id } = req.query;
+    console.log(id);
+    await deleteProgramById(Number(id));
     res.send("Program Successfully deleted").status(200);
     return;
   } catch (deleteError) {
@@ -164,7 +173,7 @@ async function createProgram({
   return rows;
 }
 
-async function getSpecificProgramById(id: IProgram["id"]) {
+export async function getSpecificProgramById(id: IProgram["id"]) {
   // @ts-ignore
   const [row] = await sqlPool.query<IProgram>("CALL sp_GetProgramByID(?)", [
     id,

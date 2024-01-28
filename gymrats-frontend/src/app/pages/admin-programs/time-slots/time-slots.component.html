@@ -2,6 +2,8 @@
 <div
   class="modal fade"
   id="slotModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
   tabindex="-1"
   aria-labelledby="slotModalLabel"
   aria-hidden="true"
@@ -22,7 +24,7 @@
           <div class="mb-3">
             <label for="start" class="form-label">Start Time</label>
             <input
-              type="datetime-local"
+              type="time"
               class="form-control"
               id="start"
               formControlName="start"
@@ -31,11 +33,26 @@
           <div class="mb-3">
             <label for="end" class="form-label">End Time</label>
             <input
-              type="datetime-local"
+              type="time"
               class="form-control"
               id="end"
               formControlName="end"
             />
+          </div>
+          <div class="mb-3">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              formControlName="day"
+            >
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+              <!-- <option value="5">Saturday</option>
+              <option value="6">Sunday</option> -->
+            </select>
           </div>
 
           <div class="modal-footer">
