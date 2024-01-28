@@ -8,19 +8,29 @@ export const programCreate = async (
   res: Response
 ) => {
   try {
-    const { trainer_id, title, description, type, price, is_group, max_size } =
-      req.body;
+    const {
+      trainer_id,
+      title,
+      description,
+      type,
+      price,
+      is_group,
+      max_size,
+      image,
+    } = req.body;
 
     try {
       // @ts-ignore
-      const userRole = await sqlPool.query<IUser["role"]>(
+      const userRole = await sqlPool.query<any>(
         `SELECT role FROM user WHERE id = ? LIMIT 1`,
-        [trainer_id]
+        [Number(trainer_id)]
       );
-
-      if (userRole[0] !== "trainer") {
+      if (userRole[0][0].role !== "trainer") {
         res.status(400).send("User that was provided is not a trainer");
         return;
+      } else {
+        const newProgram = await createProgram(req.body);
+        res.status(200).json("OK");
       }
     } catch (getError) {
       console.log(getError);
@@ -30,16 +40,6 @@ export const programCreate = async (
   } catch (deconstructionError) {
     console.log(deconstructionError);
     res.status(400).send("Invalid fields in the request form");
-    return;
-  }
-
-  try {
-    await createProgram(req.body);
-    res.status(200).send("Program Successfully created");
-    return;
-  } catch (createError) {
-    console.log(createError);
-    res.status(500).send("Internal Server Error");
     return;
   }
 };
@@ -150,17 +150,14 @@ async function createProgram({
   price,
   is_group,
   max_size,
+  image,
 }: IProgramCreationRequest) {
   // @ts-ignore
-  await sqlPool.query<IProgram>("CALL sp_CreateProgram(?,?,?,?,?,?,?)", [
-    trainer_id,
-    title,
-    description,
-    type,
-    price,
-    is_group,
-    max_size,
-  ]);
+  const [rows] = await sqlPool.query<IProgram>(
+    "CALL sp_CreateProgram(?,?,?,?,?,?,?,?)",
+    [trainer_id, title, description, type, price, is_group, max_size, image]
+  );
+  return rows;
 }
 
 async function getSpecificProgramById(id: IProgram["id"]) {
@@ -174,7 +171,7 @@ async function getSpecificProgramById(id: IProgram["id"]) {
 async function getPrograms() {
   // @ts-ignore
   const [rows] = await sqlPool.query<IProgram[]>("CALL sp_GetPrograms()");
-  return rows;
+  return rows[0];
 }
 async function updateProgramById({
   id,

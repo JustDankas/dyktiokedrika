@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IUser } from './user.service';
+import { BehaviorSubject } from 'rxjs';
 
 export type ProgramTypes =
   | 'pilates'
@@ -30,94 +31,60 @@ export interface IProgram {
   providedIn: 'root',
 })
 export class ProgramService {
-  programs: IProgram[] = [
-    {
-      id: 1,
-      trainer: {
-        name: 'Mixalhs',
-        surname: 'Fillipakhs',
-      },
-      image:
-        'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
-
-      is_group: true,
-      title: 'Some title',
-      description: 'Some description',
-      type: 'Pilates',
-      price: 20,
-      max_size: 20,
-    },
-    {
-      id: 1,
-      trainer: {
-        name: 'Mixalhs',
-        surname: 'Fillipakhs',
-      },
-      image:
-        'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
-
-      is_group: true,
-      title: 'Some title',
-      description: 'Some description',
-      type: 'Pilates',
-      price: 20,
-      max_size: 20,
-    },
-    {
-      id: 1,
-      trainer: {
-        name: 'Mixalhs',
-        surname: 'Fillipakhs',
-      },
-      image:
-        'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
-
-      is_group: true,
-      title: 'Some title',
-      description: 'Some description',
-      type: 'Pilates',
-      price: 20,
-      max_size: 20,
-    },
-    {
-      id: 1,
-      trainer: {
-        name: 'Mixalhs',
-        surname: 'Fillipakhs',
-      },
-      image:
-        'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
-
-      is_group: true,
-      title: 'Some title',
-      description: 'Some description',
-      type: 'Pilates',
-      price: 20,
-      max_size: 20,
-    },
-    {
-      id: 1,
-      trainer: {
-        name: 'Mixalhs',
-        surname: 'Fillipakhs',
-      },
-      image:
-        'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
-
-      is_group: true,
-      title: 'Some title',
-      description: 'Some description',
-      type: 'Pilates',
-      price: 20,
-      max_size: 20,
-    },
-  ];
-  constructor(private configSrv: ConfigService, private http: HttpClient) {}
+  private _programs$ = new BehaviorSubject<IProgram[]>([]);
+  programs$ = this._programs$.asObservable();
+  private programUrl = 'program/';
+  constructor(private configSrv: ConfigService, private http: HttpClient) {
+    this.getPrograms();
+  }
 
   getTrainers() {
     return this.http.post<IUser[]>(
       this.configSrv.url + 'user/view/users_by_requested_role',
       { role: 'trainer' }
     );
+  }
+
+  createProgram(data: any) {
+    console.log(data);
+    let blob: string;
+    const reader = new FileReader();
+    reader.readAsDataURL(data.image);
+    reader.onload = () => {
+      blob = (reader.result as string).replace(/^data\:image.*base64\,/, '');
+      data.image = blob;
+      console.log(blob);
+      this.http
+        .post(this.configSrv.url + this.programUrl + 'create_program', data)
+        .subscribe((res) => {
+          console.log(res);
+        });
+    };
+  }
+
+  getPrograms() {
+    this.http
+      .get(this.configSrv.url + this.programUrl + 'view_all_programs')
+      .subscribe((data: any) => {
+        console.log(data);
+        for (let program of data) {
+          const bd = new Uint8Array(program.image.data);
+          const b64 = btoa(String.fromCharCode(...program.image.data));
+          console.log(b64);
+          program.image = `data:image/jpg;base64,${b64}`;
+          // const uint8Array = new Uint8Array(program.image.data);
+          // let binaryString = '';
+          // for (let tmp of uint8Array) {
+          //   binaryString += String.fromCharCode(tmp);
+          // }
+          // program.image = btoa(binaryString);
+          // console.log(
+          //   btoa(
+          //     String.fromCharCode.apply(null, new Uint8Array(data.image.data))
+          //   )
+          // );
+        }
+        this._programs$.next(data);
+      });
   }
 }

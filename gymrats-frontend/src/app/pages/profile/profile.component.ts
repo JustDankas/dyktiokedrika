@@ -18,6 +18,6 @@ export class ProfileComponent implements OnInit {
     this.user$ = userSrv.user$;
   }
   ngOnInit(): void {
-    this.programs = this.programSrv.programs;
+    // this.programs = this.programSrv.programs;
   }
 }
