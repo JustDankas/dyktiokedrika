@@ -35,6 +35,7 @@ export const programCreate = async (req: Request, res: Response) => {
           )}\nAt least one invalid parameter in the request body: 'trainer_id','max_size','price'\n(They should be positive integers or the price should at least be 0)`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const {
       trainer_id,
@@ -61,6 +62,7 @@ export const programCreate = async (req: Request, res: Response) => {
           )}\nUser that was provided with id: ${trainer_id} does not exist`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const trainer = "trainer";
     if (userRole[0][0] !== trainer) {
@@ -120,6 +122,7 @@ export const getProgramById = async (req: Request, res: Response) => {
           )}\nMissing required parameter in the request body: 'id' `
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
 
     if (body.id <= 0) {
@@ -130,6 +133,7 @@ export const getProgramById = async (req: Request, res: Response) => {
           } in the request body. Id should be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const { id } = body;
     const program = await getSpecificProgramById(id);
@@ -141,6 +145,7 @@ export const getProgramById = async (req: Request, res: Response) => {
           )}\nProgram not found with id: ${id}`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     res.send(program).status(StatusCodes.OK);
     return;
@@ -175,6 +180,7 @@ export const getAllPrograms = async (req: Request, res: Response) => {
           )}\nNo programs found in the database`
         )
         .status(StatusCodes.NOT_FOUND);
+      return;
     }
     res.send(programList).status(StatusCodes.OK);
     return;
@@ -235,6 +241,7 @@ export const updateProgram = async (req: Request, res: Response) => {
           )}\nAt least one invalid parameter in the request body: 'id', 'trainer_id','max_size','price'\n(They should be positive integers or the price should at least be 0)`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const {
       id,
@@ -262,6 +269,7 @@ export const updateProgram = async (req: Request, res: Response) => {
           )}\nUser that was provided does not exist`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
 
     if (userRole[0][0] !== "trainer") {
@@ -325,6 +333,7 @@ export const programDeleteById = async (req: Request, res: Response) => {
           )}\nMissing requiered parameter: 'id' from the request body`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     if (body.id <= 0) {
       res
@@ -334,6 +343,7 @@ export const programDeleteById = async (req: Request, res: Response) => {
           )}\nInvalid parameter: 'id' should be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const { id } = body;
 

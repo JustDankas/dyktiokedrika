@@ -8,6 +8,7 @@ import announcementRoute from "./routes/announcement.route";
 import addressRoute from "./routes/address.route";
 import programRoute from "./routes/program.route";
 import slotRouter from "./routes/slot.route";
+import appointmentRouter from "./routes/appointment.route";
 import { authenticateController } from "./controllers/authenticate.controller";
 //For env File
 dotenv.config();
@@ -29,6 +30,7 @@ app.use("/announcement", authenticateController, announcementRoute);
 app.use("/address", authenticateController, addressRoute);
 app.use("/program", programRoute);
 app.use("/slot", slotRouter);
+app.use("/appointment", appointmentRouter);
 
 app.listen(port, () => {
   console.log(`Server is Fire at http://localhost:${port}`);

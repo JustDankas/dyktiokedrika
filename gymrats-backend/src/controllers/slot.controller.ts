@@ -34,17 +34,19 @@ export const slotCreate = async (req: Request, res: Response) => {
 
     const parsedStartDate = new Date(start);
     const parsedEndDate = new Date(end);
+    const currentDate = new Date();
 
     if (
       isNaN(parsedStartDate.getTime()) ||
       isNaN(parsedEndDate.getTime()) ||
-      parsedStartDate >= parsedEndDate
+      parsedStartDate >= parsedEndDate ||
+      parsedStartDate < currentDate
     ) {
       res
         .send(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
-          )}\nInvalid date in start or end parameter or start date is after end date`
+          )}\nInvalid date in start or end parameter, or start date is either before current time or after end date`
         )
         .status(StatusCodes.BAD_REQUEST);
       return;
@@ -266,17 +268,19 @@ export const updateSlot = async (req: Request, res: Response) => {
 
     const parsedStartDate = new Date(start);
     const parsedEndDate = new Date(end);
+    const currentDate = new Date();
 
     if (
       isNaN(parsedStartDate.getTime()) ||
       isNaN(parsedEndDate.getTime()) ||
-      parsedStartDate >= parsedEndDate
+      parsedStartDate >= parsedEndDate ||
+      parsedStartDate < currentDate
     ) {
       res
         .send(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
-          )}\nInvalid start or end date in the request or end date is before start date`
+          )}\nInvalid date in start or end parameter, or start date is either before current time or after end date`
         )
         .status(StatusCodes.BAD_REQUEST);
       return;
@@ -411,9 +415,9 @@ async function createSlot(
   ]);
 }
 
-async function getSpecificSlotById(id: ISlot["id"]) {
+export async function getSpecificSlotById(id: ISlot["id"]) {
   // @ts-ignore
-  const [rows] = await sqlPool.query<ISlot>("CALL sp_GetSlotByID(?)", [id]);
+  const [rows] = await sqlPool.query<ISlot[]>("CALL sp_GetSlotByID(?)", [id]);
   //@ts-ignore
   return rows[0][0];
 }

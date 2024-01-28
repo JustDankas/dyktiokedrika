@@ -15,6 +15,7 @@ export const addressCreate = async (req: Request, res: Response) => {
           )}\nMissing at least one required parameter in the request body from the following: 'user_id', 'country', 'city', 'street'`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     if (body.user_id <= 0) {
       res
@@ -24,6 +25,7 @@ export const addressCreate = async (req: Request, res: Response) => {
           )}\nUser_id must be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const { user_id, country, city, street } = body;
 
@@ -65,6 +67,7 @@ export const getAddressById = async (req: Request, res: Response) => {
           )}\nMissing required parameter from request body:'id'`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     if (body.id <= 0) {
       res
@@ -74,6 +77,7 @@ export const getAddressById = async (req: Request, res: Response) => {
           )}\nId must be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const { id } = body;
     const address = await getSpecificAddressById(id);
@@ -88,6 +92,7 @@ export const getAddressById = async (req: Request, res: Response) => {
       return;
     }
     res.send(address).status(StatusCodes.OK);
+    return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
       const sqlError = error as SqlError;
@@ -118,6 +123,7 @@ export const getAddressesByUserId = async (req: Request, res: Response) => {
           )}\nMissing required parameter in the request body: 'user_id' `
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     if (body.user_id <= 0) {
       res
@@ -127,6 +133,7 @@ export const getAddressesByUserId = async (req: Request, res: Response) => {
           } in the request body. Id should be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const userAddresses = await getAllAddressByUserId(req.body);
     if (!userAddresses) {
@@ -139,6 +146,7 @@ export const getAddressesByUserId = async (req: Request, res: Response) => {
           } in the database`
         )
         .status(StatusCodes.NOT_FOUND);
+      return;
     }
     res.send(userAddresses).status(StatusCodes.OK);
     return;
@@ -172,6 +180,7 @@ export const getAllAddresses = async (req: Request, res: Response) => {
           )}\nNo addresses in the database`
         )
         .status(StatusCodes.NOT_FOUND);
+      return;
     }
     res.send(addressList).status(StatusCodes.OK);
     return;
@@ -206,6 +215,7 @@ export const updateAddress = async (req: Request, res: Response) => {
           )}\nMissing at least one required parameter from the following in the request body: 'id', 'country', 'city', 'street'`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     if (body.id <= 0) {
       res
@@ -215,6 +225,7 @@ export const updateAddress = async (req: Request, res: Response) => {
           } in the request body. Id should be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const { id, country, city, street } = body;
     await updateAddressById(id, country, city, street);
@@ -307,6 +318,7 @@ export const addressesDeleteByUserId = async (
           )}\nMissing required parameter user_id in the request body`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     if (body.user_id <= 0) {
       res
@@ -316,6 +328,7 @@ export const addressesDeleteByUserId = async (
           } in the request body. User_Id should be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const { user_id } = body;
     await deleteAllAddressesByUserId(user_id);

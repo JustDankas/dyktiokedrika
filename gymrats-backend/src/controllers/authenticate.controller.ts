@@ -1,6 +1,7 @@
 import { NextFunction } from "express";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { StatusCodes, getReasonPhrase } from "http-status-codes";
 
 export const authenticateController = async (
   req: Request,
@@ -18,9 +19,15 @@ export const authenticateController = async (
       req.body.cookie_user_id = user_id;
       next();
     } else {
-      res.status(500).send("Token expired");
+      res
+        .status(StatusCodes.UNAUTHORIZED)
+        .send(`${getReasonPhrase(StatusCodes.UNAUTHORIZED)}\nToken expired`);
+      return;
     }
   } catch (error) {
-    res.status(500).send("Token expired");
+    res
+      .status(StatusCodes.UNAUTHORIZED)
+      .send(`${getReasonPhrase(StatusCodes.UNAUTHORIZED)}\nToken expired`);
+    return;
   }
 };

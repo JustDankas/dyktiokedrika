@@ -22,6 +22,7 @@ export const announcementCreate = async (req: Request, res: Response) => {
           )}\nMissing at least one of the required parameters in the request body: 'title', 'text', 'image' `
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
 
     const { title, text, image } = body;
@@ -64,6 +65,7 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
           )}\nMissing required parameter in the request body: 'id' `
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     if (body.id <= 0) {
       res
@@ -73,6 +75,7 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
           }. Id should be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     const { id } = body;
 
@@ -85,6 +88,7 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
           )}\nAnnouncement not found with id: ${id}`
         )
         .status(StatusCodes.NOT_FOUND);
+      return;
     }
     res.send(announcement).status(StatusCodes.OK);
     return;
@@ -119,6 +123,7 @@ export const getAllAnnouncements = async (req: Request, res: Response) => {
           )}\nNo announcements found in the database`
         )
         .status(StatusCodes.NOT_FOUND);
+      return;
     }
     res.send(announcementList).status(StatusCodes.OK);
     return;
@@ -150,6 +155,7 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
           StatusCodes.BAD_REQUEST
         )}\nMissing at least one required parameter in the request body of the following: 'id', 'title', 'text', 'image'`
       );
+      return;
     }
     if (body.id <= 0) {
       res.send(
@@ -157,6 +163,7 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
           body.id
         }. Id should be a positive integer`
       );
+      return;
     }
     const { id, title, text, image } = body;
 
@@ -200,6 +207,7 @@ export const announcementDeleteById = async (req: Request, res: Response) => {
           )}\nMissing required parameter 'id' in the request body`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
     if (body.id <= 0) {
       res
@@ -209,6 +217,7 @@ export const announcementDeleteById = async (req: Request, res: Response) => {
           }. Id should be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
+      return;
     }
 
     const { id } = body;
@@ -218,6 +227,7 @@ export const announcementDeleteById = async (req: Request, res: Response) => {
         StatusCodes.NO_CONTENT
       )}\nAnnouncement with id: ${id} Successfully deleted`
     );
+    return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
       const sqlError = error as SqlError;
@@ -291,17 +301,19 @@ export const announcementsDeleteByDateRange = async (
 
     const parsedStartDate = new Date(start);
     const parsedEndDate = new Date(end);
+    const currentDate = new Date();
 
     if (
       isNaN(parsedStartDate.getTime()) ||
       isNaN(parsedEndDate.getTime()) ||
-      parsedStartDate >= parsedEndDate
+      parsedStartDate >= parsedEndDate ||
+      currentDate <= parsedStartDate
     ) {
       res
         .send(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
-          )}\nInvalid date in start or end parameter or start date is after end date`
+          )}\nInvalid date in start or end parameter or start date is after end date or start date is in the future`
         )
         .status(StatusCodes.BAD_REQUEST);
       return;

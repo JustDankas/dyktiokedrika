@@ -572,7 +572,8 @@ async function getUserByUsernameAndPassword(
 ) {
   // @ts-ignore
   console.log(username, password);
-  const [rows] = await sqlPool.query(
+  // @ts-ignore
+  const [rows] = await sqlPool.query<IUser[]>(
     `CALL sp_GetUserByUsernameAndPassword(?,?)
      `,
     [username, password]
@@ -582,7 +583,7 @@ async function getUserByUsernameAndPassword(
   return rows[0][0];
 }
 
-async function getUserByID(id: number) {
+export async function getUserByID(id: IUser["id"]) {
   // @ts-ignore
 
   const [rows] = await sqlPool.query<IUser[]>(
@@ -655,7 +656,7 @@ async function updateExistingUser(
 
 async function deleteUserById(id: IUser["id"]) {
   // @ts-ignore
-  const [row] = await sqlPool.query<IUser>(
+  const [row] = await sqlPool.query<IUser[]>(
     `CALL sp_DeleteUserByID(?)
      `,
     [id]
