@@ -10,6 +10,12 @@ export interface IProgram {
   image: Blob;
 }
 
+export interface IProgramTrainer {
+  id: number;
+  name: string;
+  surname: string;
+}
+
 export interface IProgramCreationRequest extends Omit<IProgram, "id"> {
   trainer_id: number;
 }

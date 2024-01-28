@@ -46,6 +46,7 @@ export const userAuth = async (req: Request, res: Response) => {
         const { id } = decoded;
         const user = await getUserById(id);
         const address = await getAllAddressByUserId(id);
+        console.log(user);
         if (user && address) {
           res.json({ ...user, ...address }).status(200);
         } else {
@@ -163,6 +164,27 @@ export const userDeleteById = async (
     const { id } = req.body;
     const user = await deleteUserById(id);
     res.json("Deletion Successful").status(200);
+  } catch (error) {
+    console.log(error);
+    res.json("Internal Server Error").status(500);
+  }
+};
+
+export const updateUserPfp = async (
+  req: Request<IUser["image"] & IUser["id"]>,
+  res: Response
+) => {
+  try {
+    const { image, id } = req.body;
+    console.log(id);
+    const newUser = await updateUserPfpById(image, id);
+    console.log(newUser);
+    //@ts-ignore
+    if (newUser.affectedRows > 0) {
+      res.status(200).json("OK");
+    } else {
+      throw new Error("Uknown error");
+    }
   } catch (error) {
     console.log(error);
     res.json("Internal Server Error").status(500);
@@ -290,4 +312,11 @@ async function massUpdateRoles(updatedRoles: Record<number, IUser["role"]>) {
 
     await sqlPool.query(`CALL sp_UpdateUserRole(?, ?)`, [userId, newRole]);
   }
+}
+async function updateUserPfpById(image: IUser["image"], id: IUser["id"]) {
+  const [rows] = await sqlPool.query(`CALL sp_UpdateUserPfp(?, ?)`, [
+    image,
+    id,
+  ]);
+  return rows;
 }

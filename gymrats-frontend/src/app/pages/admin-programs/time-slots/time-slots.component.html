@@ -1,0 +1,61 @@
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="slotModal"
+  tabindex="-1"
+  aria-labelledby="slotModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="slotModalLabel">Manage Time Slots</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="start" class="form-label">Start Time</label>
+            <input
+              type="datetime-local"
+              class="form-control"
+              id="start"
+              formControlName="start"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="end" class="form-label">End Time</label>
+            <input
+              type="datetime-local"
+              class="form-control"
+              id="end"
+              formControlName="end"
+            />
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="form.invalid"
+            >
+              Create
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

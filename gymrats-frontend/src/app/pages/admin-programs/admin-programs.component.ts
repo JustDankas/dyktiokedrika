@@ -29,8 +29,6 @@ export class AdminProgramsComponent {
   });
 
   onSubmit() {
-    // console.log(this.programForm.value);
-    // console.log(this.programForm.get('image')?.value);
     this.programService.createProgram(this.programForm.value);
   }
   showValidity() {
@@ -47,9 +45,12 @@ export class AdminProgramsComponent {
 
   onFileChange(event: any) {
     const file = (event.target as HTMLInputElement).files?.[0];
-    console.log(file);
     this.programForm.patchValue({
       image: file,
     });
+  }
+
+  setEditingProgram(id: number) {
+    this.programService.setEditingProgram(id);
   }
 }

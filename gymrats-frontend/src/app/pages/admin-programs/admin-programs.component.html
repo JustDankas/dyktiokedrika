@@ -2,7 +2,7 @@
   <section class="container-md">
     <h1>Manage Programs</h1>
     <button
-      class="btn btn-primary"
+      class="btn btn-success"
       type="button"
       data-bs-toggle="modal"
       data-bs-target="#exampleModal"
@@ -11,10 +11,60 @@
     </button>
 
     <div class="row">
-      <ul class="accordion">
+      <ul class="programs-list">
+        <li
+          *ngFor="let program of programs$ | async"
+          class="card"
+          style="width: 21rem"
+        >
+          <img [src]="program.image" class="card-img-top" alt="..." />
+          <div class="card-body">
+            <h5 class="card-title">{{ program.title }}</h5>
+            <p class="card-text">{{ program.description }}</p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              Type:
+              <span class="badge bg-primary">{{ program.type }}</span>
+              Price:
+              <span class="badge bg-secondary">{{ program.price + "$" }}</span>
+            </li>
+            <li *ngIf="!program.is_group" class="list-group-item">Non-Group</li>
+            <li *ngIf="program.is_group" class="list-group-item">
+              Group <i class="bi bi-people-fill"></i>
+            </li>
+            <li class="list-group-item">
+              Trainer:
+              {{ program.trainer_name + " " + program.trainer_surname }}
+            </li>
+          </ul>
+          <div class="card-body card-actions">
+            <button class="btn btn-warning">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button
+              class="btn btn-info"
+              data-bs-toggle="modal"
+              data-bs-target="#slotModal"
+              (click)="setEditingProgram(program.id)"
+            >
+              <i class="bi bi-clock-fill"></i>
+            </button>
+            <button class="btn btn-danger">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </div>
+        </li>
+      </ul>
+      <!-- <ul class="accordion">
         <li *ngFor="let program of programs$ | async" class="accordion-item">
-          <h2 class="accordion-header">
-            <img [src]="program.image" alt="" width="100" height="100" />
+          <div class="accordion-header">
+            <img
+              [src]="program.image"
+              [alt]="program.title"
+              width="100"
+              height="100"
+            />
             <button
               class="accordion-button"
               type="button"
@@ -25,19 +75,21 @@
             >
               {{ program.title }}
             </button>
-          </h2>
+          </div>
           <div
             [id]="'accordion-item-' + program.id"
             class="accordion-collapse collapse"
             data-bs-parent="#accordionExample"
           >
-            <div class="accordion-body">asdasdas</div>
+            <div class="accordion-body"></div>
           </div>
         </li>
-      </ul>
+      </ul> -->
     </div>
   </section>
 </main>
+
+<app-time-slots></app-time-slots>
 
 <!-- Form Create Modal -->
 <div

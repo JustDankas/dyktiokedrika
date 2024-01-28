@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
-import { IProgram, IProgramCreationRequest } from "../models/program";
+import {
+  IProgram,
+  IProgramCreationRequest,
+  IProgramTrainer,
+} from "../models/program";
 import { IUser } from "../models/user";
 
 export const programCreate = async (
@@ -170,7 +174,9 @@ async function getSpecificProgramById(id: IProgram["id"]) {
 
 async function getPrograms() {
   // @ts-ignore
-  const [rows] = await sqlPool.query<IProgram[]>("CALL sp_GetPrograms()");
+  const [rows] = await sqlPool.query<[(IProgram & IProgramTrainer)[], any]>(
+    "CALL sp_GetPrograms()"
+  );
   return rows[0];
 }
 async function updateProgramById({

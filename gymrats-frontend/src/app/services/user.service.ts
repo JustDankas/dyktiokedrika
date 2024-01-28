@@ -4,6 +4,7 @@ import { ConfigService } from './config.service';
 import { BehaviorSubject } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import { FileService } from './file.service';
 
 export type Role = 'notAssigned' | 'admin' | 'trainer' | 'user';
 export interface IUser {
@@ -64,7 +65,8 @@ export class UserService {
     private http: HttpClient,
     private configSrv: ConfigService,
     private cookieService: CookieService,
-    private router: Router
+    private router: Router,
+    private fileService: FileService
   ) {
     this.loginFromToken();
   }
@@ -74,11 +76,11 @@ export class UserService {
       .get(this.configSrv.url + 'user/auth', {
         withCredentials: true,
       })
-      .subscribe((data) => {
-        console.log(data);
+      .subscribe((data: any) => {
+        //@ts-ignore
+        data.image = this.fileService.blobToB64(data.image.data);
         //@ts-ignore
         this._user$.next(data);
-        // this.user = data.user[0];
       });
   }
 
@@ -140,5 +142,22 @@ export class UserService {
     this._user$.next(null);
     this.cookieService.delete('auth', '/');
     this.router.navigate(['/']);
+  }
+
+  changePfp(file: File) {
+    let blob: string;
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      blob = reader.result as string;
+      this.http
+        .patch(this.configSrv.url + 'user/' + 'update_pfp', {
+          image: blob,
+          id: this._user$.getValue()?.id,
+        })
+        .subscribe((data) => {
+          console.log(data);
+        });
+    };
   }
 }
