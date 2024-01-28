@@ -3,7 +3,7 @@ CREATE PROCEDURE sp_CreateAnnouncement(
     IN p_title VARCHAR(255),
     IN p_text TEXT,
     IN p_created_at TIMESTAMP,
-    IN p_image longblob
+    IN p_image LONGTEXT
 )
 BEGIN
     INSERT INTO announcements (title, text, created_at, image)

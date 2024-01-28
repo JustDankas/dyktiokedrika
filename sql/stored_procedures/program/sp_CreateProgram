@@ -6,7 +6,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `sp_CreateProgram`(
     IN p_price DECIMAL(8,2),
     IN p_is_group TINYINT(1),
     IN p_max_size INT,
-    IN p_image longblob
+    IN p_image LONGTEXT
 )
 BEGIN
     INSERT INTO program (trainer_id, title, description, type, price, is_group, max_size, p_image)
