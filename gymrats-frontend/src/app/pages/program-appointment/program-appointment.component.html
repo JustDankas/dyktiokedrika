@@ -1,0 +1,70 @@
+<main>
+  <section class="container-md">
+    <ng-container *ngIf="program$ | async as program">
+      <div class="row reserve-c">
+        <img
+          class="program-image"
+          [src]="program.image"
+          [alt]="program.title"
+        />
+        <div class="col-8">
+          <h1>{{ program.title }}</h1>
+          <div class="date-time mb-2">
+            <i class="bi bi-calendar3-week-fill"></i>{{ days[program.day] }},
+            {{ program.start | formatTime }} - {{ program.end | formatTime }}
+          </div>
+          <div class="seats-info">
+            <i class="bi bi-people-fill"></i>Size:
+            <span class="dotted">{{ program.max_size }}</span> Seats Left:
+            <span class="dotted">{{ program.seats_available }}</span>
+          </div>
+          <hr />
+          <p class="desc mb-3">
+            Το Lorem Ipsum είναι απλά ένα κείμενο χωρίς νόημα για τους
+            επαγγελματίες της τυπογραφίας και στοιχειοθεσίας. Το Lorem Ipsum
+            είναι το επαγγελματικό πρότυπο όσον αφορά το κείμενο χωρίς νόημα,
+            από τον 15ο αιώνα, όταν ένας ανώνυμος τυπογράφος πήρε ένα δοκίμιο
+            και ανακάτεψε τις λέξεις για να δημιουργήσει ένα δείγμα βιβλίου. Όχι
+            μόνο επιβίωσε πέντε αιώνες, αλλά κυριάρχησε στην ηλεκτρονική
+            στοιχειοθεσία, παραμένοντας με κάθε τρόπο αναλλοίωτο.
+          </p>
+          <div class="badges mb-3">
+            <span class="badge bg-primary">{{ program.price }}$</span>
+            <span class="badge bg-primary">{{ program.type }}</span>
+          </div>
+        </div>
+        <div class="col-4 trainer-info">
+          <img
+            class="trainer-image"
+            [src]="program.trainer_image"
+            alt="trainer"
+          />
+          <h2 class="mt-3">
+            {{ program.trainer_name + " " + program.trainer_surname }}
+          </h2>
+          <p class="trainer-bio">
+            {{
+              program.trainer_about
+                ? program.trainer_about
+                : "Trainer has no bio"
+            }}
+          </p>
+        </div>
+        <div class="row">
+          <button
+            type="button"
+            (click)="makeAppointment()"
+            class="btn btn-primary"
+            [disabled]="program.seats_available <= 0"
+          >
+            {{
+              program.seats_available <= 0
+                ? "No more seats available"
+                : "Book Slot"
+            }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </section>
+</main>

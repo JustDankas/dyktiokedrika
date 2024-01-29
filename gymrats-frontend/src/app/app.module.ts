@@ -24,6 +24,10 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { CalendarComponent } from './pages/profile/calendar/calendar.component';
 import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.component';
 import { TimeSlotsComponent } from './pages/admin-programs/time-slots/time-slots.component';
+import { FormatTimePipe } from './pipes/format-time.pipe';
+import { ProgramAppointmentComponent } from './pages/program-appointment/program-appointment.component';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -47,8 +51,12 @@ import { TimeSlotsComponent } from './pages/admin-programs/time-slots/time-slots
     CalendarComponent,
     AdminProgramsComponent,
     TimeSlotsComponent,
+    FormatTimePipe,
+    ProgramAppointmentComponent,
   ],
   imports: [
+    CommonModule,
+    RouterModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,

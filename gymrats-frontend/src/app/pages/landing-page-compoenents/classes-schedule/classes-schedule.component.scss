@@ -1,0 +1,19 @@
+@use "../../../../styles/variables" as *;
+.ts-item {
+  position: relative;
+  min-width: 250px;
+}
+.reserve-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+.reserve-link:hover {
+  background-color: rgba($color: $primary-300, $alpha: 0.3);
+}

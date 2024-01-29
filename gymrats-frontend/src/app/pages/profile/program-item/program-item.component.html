@@ -2,9 +2,22 @@
   <img [src]="image" class="card-img-top" [alt]="title" />
   <div class="card-body">
     <h5 class="card-title">{{ title }}</h5>
+    <div class="badges">
+      <span class="badge bg-primary">{{ type }}</span>
+      <span class="badge bg-primary">{{ isGroup ? "Group" : "Solo" }}</span>
+      <span class="badge bg-secondary">{{ price }}$</span>
+    </div>
     <p class="card-text">
       {{ description }}
     </p>
-    <button href="#" class="btn btn-primary">Cancel</button>
+    <div class="center">
+      <button
+        class="btn btn-primary"
+        [disabled]="cancelled"
+        (click)="onClick()"
+      >
+        {{ cancelled ? "Cancelled" : "Cancel" }}
+      </button>
+    </div>
   </div>
 </li>

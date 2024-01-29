@@ -16,6 +16,7 @@ import { IUser } from 'src/app/services/user.service';
 })
 export class AdminProgramsComponent {
   trainers: IUser[] = [];
+  readonly days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   programs$;
   programForm = new FormGroup({
     title: new FormControl('', Validators.required),
@@ -37,7 +38,6 @@ export class AdminProgramsComponent {
 
   constructor(private programService: ProgramService) {
     programService.getTrainers().subscribe((trainers) => {
-      console.log(trainers);
       this.trainers = trainers;
     });
     this.programs$ = programService.programs$;

@@ -39,7 +39,13 @@
             </li>
             <li class="list-group-item">Time Slots:</li>
             <li *ngFor="let slot of program.slots" class="list-group-item">
-              {{ slot.start + " - " + slot.end }}
+              {{
+                (slot.start | formatTime) +
+                  " - " +
+                  (slot.end | formatTime) +
+                  " " +
+                  days[slot.day]
+              }}
               <button class="btn" (click)="deleteSlot(slot.id)">
                 <i class="bi bi-x-lg"></i>
               </button>
