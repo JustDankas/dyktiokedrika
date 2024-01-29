@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 
 interface ICalendarDate {
   day: number;
@@ -10,13 +16,19 @@ interface ICalendarDate {
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnChanges {
   days: ICalendarDate[] = [];
   readonly year: number = new Date().getFullYear();
   month: number = new Date().getMonth() + 1;
   date!: string;
 
+  @Input() appointmentDays: number[] = [];
+
   constructor() {
+    this.updateCalendar();
+    console.log(this.appointmentDays);
+  }
+  ngOnChanges(changes: SimpleChanges): void {
     this.updateCalendar();
   }
 
@@ -31,7 +43,6 @@ export class CalendarComponent {
     });
     const nDays = new Date(this.year, this.month, 0).getDate(); // 29
     let firstDay = new Date(this.year, this.month - 1, 1).getDay(); // 4
-    console.log(firstDay);
     if (firstDay === 1) {
       this.days = Array(nDays)
         .fill(0)
@@ -60,8 +71,26 @@ export class CalendarComponent {
               event: false,
             };
           } else {
+            const insertDay = index + 1 - firstDay + 1;
+            console.log(
+              new Date(this.year, this.month - 1, insertDay).getDay()
+            );
+            if (
+              this.appointmentDays.includes(
+                (new Date(this.year, this.month - 1, insertDay).getDay() - 1) %
+                  7
+              ) &&
+              new Date(this.year, this.month - 1, insertDay).getTime() >=
+                Date.now()
+            ) {
+              return {
+                day: insertDay,
+                muted: false,
+                event: true,
+              };
+            }
             return {
-              day: index + 1 - firstDay + 1,
+              day: insertDay,
               muted: false,
               event: false,
             };

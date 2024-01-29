@@ -79,6 +79,7 @@ export class UserService {
       })
       .subscribe((data: any) => {
         this._user$.next(data);
+        window.location.reload();
       });
   }
 

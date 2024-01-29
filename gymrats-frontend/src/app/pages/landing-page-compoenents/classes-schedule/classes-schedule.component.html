@@ -16,11 +16,13 @@
       <div class="col-lg-12">
         <div class="filters">
           <ul class="schedule-filter">
-            <li class="active" data-tsfilter="monday">Monday</li>
-            <li data-tsfilter="tuesday">Tuesday</li>
-            <li data-tsfilter="wednesday">Wednesday</li>
-            <li data-tsfilter="thursday">Thursday</li>
-            <li data-tsfilter="friday">Friday</li>
+            <li
+              *ngFor="let day of days; index as i"
+              (click)="changeSelectedDay(i)"
+              [ngClass]="{ active: (selectedDay$ | async) === i }"
+            >
+              {{ day }}
+            </li>
           </ul>
         </div>
       </div>
@@ -28,17 +30,39 @@
         <div class="schedule-table filtering">
           <table>
             <tbody>
-              <tr>
-                <td class="day-time">Fitness Class</td>
-                <td class="monday ts-item show" data-tsmeta="monday">
-                  10:00AM - 11:30AM
-                </td>
-                <td class="tuesday ts-item" data-tsmeta="tuesday">
+              <tr *ngFor="let program of programs">
+                <td class="day-time">{{ program.title }}</td>
+                <ng-container *ngFor="let slot of program.slots; index as i">
+                  <td
+                    class="monday ts-item show"
+                    *ngIf="slot.day === (selectedDay$ | async)"
+                  >
+                    <a
+                      class="reserve-link"
+                      [routerLink]="['/program-reserve']"
+                      [queryParams]="{
+                        program_id: program.id,
+                        slot_id: slot.id
+                      }"
+                      >{{
+                        (slot.start | formatTime) +
+                          " - " +
+                          (slot.end | formatTime)
+                      }}</a
+                    >
+                  </td>
+                </ng-container>
+                <ng-container *ngFor="let ex of program.dummies">
+                  <td class="monday ts-item show"></td>
+                </ng-container>
+                <!-- <td class="tuesday ts-item" data-tsmeta="tuesday">
                   2:00PM - 3:30PM
+                </td> -->
+                <td>
+                  {{ program.trainer_name + " " + program.trainer_surname }}
                 </td>
-                <td>William G. Stewart</td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <td class="day-time">Muscle Training</td>
                 <td class="friday ts-item" data-tsmeta="friday">
                   10:00AM - 11:30AM
@@ -50,7 +74,7 @@
                 >
                   2:00PM - 3:30PM
                 </td>
-                <td>Paul D. Newman</td>
+                <td></td>
               </tr>
               <tr>
                 <td class="day-time">Body Building</td>
@@ -81,7 +105,7 @@
                   2:00PM - 3:30PM
                 </td>
                 <td>Bret D. Bowers</td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
         </div>

@@ -26,11 +26,14 @@ export class RegisterModalComponent implements OnInit {
   countries: ICountry[] = [];
   cities: string[] = [];
   selectedCountry: string | null = null;
+  user$;
   constructor(
     private countriesSrv: CountriesService,
     private userSrv: UserService,
     private router: Router
-  ) {}
+  ) {
+    this.user$ = this.userSrv.user$;
+  }
   ngOnInit(): void {
     this.countriesSrv.getCountries().subscribe((res) => {
       this.countries = res.data;

@@ -3,6 +3,7 @@ import { ConfigService } from './config.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IUser } from './user.service';
 import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 export type ProgramTypes =
   | 'pilates'
   | 'weights'
@@ -16,6 +17,7 @@ export interface ISlot {
   seats_available: number;
   start: string;
   end: string;
+  day: number;
 }
 export interface ITrainer {
   name: string;
@@ -44,7 +46,11 @@ export class ProgramService {
   programs$ = this._programs$.asObservable();
   editingProgram$ = new BehaviorSubject(-1);
   private programUrl = 'program/';
-  constructor(private configSrv: ConfigService, private http: HttpClient) {
+  constructor(
+    private configSrv: ConfigService,
+    private http: HttpClient,
+    private router: Router
+  ) {
     this.getPrograms();
   }
 
@@ -67,7 +73,7 @@ export class ProgramService {
           withCredentials: true,
         })
         .subscribe((data) => {
-          console.log(data);
+          window.location.reload();
         });
     };
   }
@@ -78,9 +84,20 @@ export class ProgramService {
         withCredentials: true,
       })
       .subscribe((data: any) => {
-        console.log(data);
         this._programs$.next(data);
       });
+  }
+
+  getProgramAndSlotBySlotId(slotId: string) {
+    return this.http.get(
+      this.configSrv.url + this.programUrl + 'get_program_slot_trainer',
+      {
+        withCredentials: true,
+        params: {
+          slotId,
+        },
+      }
+    );
   }
 
   setEditingProgram(id: number) {
@@ -98,7 +115,7 @@ export class ProgramService {
         { withCredentials: true }
       )
       .subscribe((data) => {
-        console.log(data);
+        window.location.reload();
       });
   }
 
@@ -122,5 +139,46 @@ export class ProgramService {
       .subscribe((data) => {
         window.location.reload();
       });
+  }
+  createAppointment(slot_id: number) {
+    this.http
+      .post(
+        this.configSrv.url + this.programUrl + 'create_appointment',
+        {
+          slot_id,
+        },
+        { withCredentials: true }
+      )
+      .subscribe((data) => {
+        // console.log(data);
+        this.router.navigate(['/profile']);
+      });
+  }
+
+  cancelAppointment(id: number) {
+    this.http
+      .patch(
+        this.configSrv.url + this.programUrl + 'cancel_appointment',
+        {
+          id,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .subscribe((data) => {
+        window.location.reload();
+      });
+  }
+
+  getAllAppointmentsWithPrograms() {
+    return this.http.get(
+      this.configSrv.url +
+        this.programUrl +
+        'get_all_appointments_with_programs',
+      {
+        withCredentials: true,
+      }
+    );
   }
 }

@@ -20,12 +20,18 @@
             [description]="item.description"
             [title]="item.title"
             [image]="item.image"
+            [cancelled]="item.cancelled"
+            [isGroup]="item.is_group"
+            [id]="item.appointment_id"
+            [type]="item.type"
+            [isGroup]="item.is_group"
+            [price]="item.price"
           ></app-program-item>
         </ul>
       </div>
       <div class="col-4">
         <h3>Calendar</h3>
-        <app-calendar></app-calendar>
+        <app-calendar [appointmentDays]="appointmentDays"></app-calendar>
       </div>
     </div>
   </section>
