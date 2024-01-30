@@ -14,6 +14,8 @@ services:
       MYSQL_USER: "papeiravloi"
       MYSQL_PASSWORD: "d1kti0k3ntrik@"
       MYSQL_ROOT_PASSWORD: "d1kti0k3ntrik@"
+      TZ: Europe/Athens
+
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -24,3 +26,4 @@ services:
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
+      TZ: Europe/Athens
