@@ -35,18 +35,21 @@ export const slotCreate = async (req: Request, res: Response) => {
     const parsedStartDate = new Date(start);
     const parsedEndDate = new Date(end);
     const currentDate = new Date();
+    const twoHoursLater = new Date(
+      currentDate.getTime() + (2 * 60 * 60 * 1000 - 60 * 1000)
+    );
 
     if (
       isNaN(parsedStartDate.getTime()) ||
       isNaN(parsedEndDate.getTime()) ||
       parsedStartDate >= parsedEndDate ||
-      parsedStartDate < currentDate
+      parsedStartDate <= twoHoursLater
     ) {
       res
         .send(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
-          )}\nInvalid date in start or end parameter, or start date is either before current time or after end date`
+          )}\nInvalid date in start or end parameter\nOr start date is before 2 hours from now\nOr start date is after end date`
         )
         .status(StatusCodes.BAD_REQUEST);
       return;
@@ -68,7 +71,9 @@ export const slotCreate = async (req: Request, res: Response) => {
     res
       .status(StatusCodes.CREATED)
       .send(
-        `${getReasonPhrase(StatusCodes.CREATED)}\nSlot Successfully created`
+        `${getReasonPhrase(
+          StatusCodes.CREATED
+        )}\nSlot Successfully created and added to program with start date ${start} and end date ${end}`
       );
     return;
   } catch (error: unknown) {
@@ -269,18 +274,21 @@ export const updateSlot = async (req: Request, res: Response) => {
     const parsedStartDate = new Date(start);
     const parsedEndDate = new Date(end);
     const currentDate = new Date();
+    const twoHoursLater = new Date(
+      currentDate.getTime() + 2 * 60 * 60 * 1000 - 1 * 60 * 1000
+    );
 
     if (
       isNaN(parsedStartDate.getTime()) ||
       isNaN(parsedEndDate.getTime()) ||
       parsedStartDate >= parsedEndDate ||
-      parsedStartDate < currentDate
+      parsedStartDate < twoHoursLater
     ) {
       res
         .send(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
-          )}\nInvalid date in start or end parameter, or start date is either before current time or after end date`
+          )}\nInvalid date in start or end parameter\nOr start date is before 2 hours from now\nOr start date is after end date`
         )
         .status(StatusCodes.BAD_REQUEST);
       return;
@@ -307,9 +315,11 @@ export const updateSlot = async (req: Request, res: Response) => {
 
     res
       .send(
-        `Slot Successfully updated\n${getReasonPhrase(StatusCodes.NO_CONTENT)}`
+        `${getReasonPhrase(
+          StatusCodes.OK
+        )}\nSlot Successfully updated with new seats available: ${seats_available} and new start date: ${start} and new end date: ${end}`
       )
-      .status(StatusCodes.NO_CONTENT);
+      .status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {

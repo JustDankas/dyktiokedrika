@@ -84,7 +84,7 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
       res
         .send(
           `${getReasonPhrase(
-            StatusCodes.BAD_REQUEST
+            StatusCodes.NOT_FOUND
           )}\nAnnouncement not found with id: ${id}`
         )
         .status(StatusCodes.NOT_FOUND);
@@ -313,7 +313,7 @@ export const announcementsDeleteByDateRange = async (
         .send(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
-          )}\nInvalid date in start or end parameter or start date is after end date or start date is in the future`
+          )}\nInvalid date in start or end parameter\nOr start date is after end date\nOr start date for deletion refers to the future`
         )
         .status(StatusCodes.BAD_REQUEST);
       return;
