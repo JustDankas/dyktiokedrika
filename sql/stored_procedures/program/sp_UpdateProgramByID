@@ -8,7 +8,7 @@ CREATE PROCEDURE sp_UpdateProgramByID(
     IN p_price DECIMAL(8,2),
     IN p_is_group TINYINT(1),
     IN p_max_size INT,
-    IN p_image BLOB
+    IN p_image LONGTEXT
 )
 BEGIN
     UPDATE program
