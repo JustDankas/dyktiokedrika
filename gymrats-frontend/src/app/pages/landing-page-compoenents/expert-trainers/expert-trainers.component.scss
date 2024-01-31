@@ -1,0 +1,8 @@
+@use "../../../../styles/variables" as *;
+.image-thumb {
+  object-fit: cover;
+}
+i {
+  font-size: larger;
+  color: $primary-300;
+}
