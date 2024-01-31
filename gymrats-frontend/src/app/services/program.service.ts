@@ -15,9 +15,8 @@ export interface ISlot {
   id: number;
   program_id: number;
   seats_available: number;
-  start: string;
-  end: string;
-  day: number;
+  start: Date;
+  end: Date;
 }
 export interface ITrainer {
   name: string;
@@ -78,6 +77,33 @@ export class ProgramService {
     };
   }
 
+  editProgram(data: any) {
+    if (data.image) {
+      let blob: string;
+      const reader = new FileReader();
+      reader.readAsDataURL(data.image);
+      reader.onload = () => {
+        blob = reader.result as string;
+        data.image = blob;
+        this.http
+          .put(this.configSrv.url + this.programUrl + 'edit_program', data, {
+            withCredentials: true,
+          })
+          .subscribe((data) => {
+            window.location.reload();
+          });
+      };
+    } else {
+      this.http
+        .put(this.configSrv.url + this.programUrl + 'edit_program', data, {
+          withCredentials: true,
+        })
+        .subscribe((data) => {
+          window.location.reload();
+        });
+    }
+  }
+
   getPrograms() {
     this.http
       .get(this.configSrv.url + this.programUrl + 'view_all_programs', {
@@ -86,6 +112,18 @@ export class ProgramService {
       .subscribe((data: any) => {
         this._programs$.next(data);
       });
+  }
+
+  getProgramById(id: number) {
+    return this.http.get(
+      this.configSrv.url + this.programUrl + 'view_program',
+      {
+        params: {
+          id,
+        },
+        withCredentials: true,
+      }
+    );
   }
 
   getProgramAndSlotBySlotId(slotId: string) {
@@ -105,11 +143,21 @@ export class ProgramService {
   }
 
   addProgramSlot(data: any) {
+    const [year, month, day]: number[] = data.day.split('-');
+    const [start_hh, start_mm] = data.start.split(':');
+    const [end_hh, end_mm] = data.end.split(':');
     this.http
       .post(
         this.configSrv.url + this.programUrl + 'create_slot',
         {
-          ...data,
+          start: new Date(year, month - 1, day, start_hh, start_mm)
+            .toISOString()
+            .slice(0, 19)
+            .replace('T', ' '),
+          end: new Date(year, month - 1, day, end_hh, end_mm)
+            .toISOString()
+            .slice(0, 19)
+            .replace('T', ' '),
           program_id: this.editingProgram$.getValue(),
         },
         { withCredentials: true }

@@ -25,10 +25,14 @@ export class ProfileComponent implements OnInit {
   ) {
     this.user$ = userSrv.user$;
     programSrv.getAllAppointmentsWithPrograms().subscribe((data: any) => {
-      console.log(data);
       this.programs = data;
       this.appointmentDays = data.map((a: any) => {
-        return a.day;
+        const date = new Date(a.start);
+        return new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate()
+        ).getTime();
       });
     });
   }

@@ -26,7 +26,6 @@ export class CalendarComponent implements OnChanges {
 
   constructor() {
     this.updateCalendar();
-    console.log(this.appointmentDays);
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.updateCalendar();
@@ -50,49 +49,35 @@ export class CalendarComponent implements OnChanges {
           return {
             day: index + 1,
             muted: false,
-            event: false,
+            event: this.appointmentDays.includes(
+              new Date(this.year, this.month - 1, index + 1).getTime()
+            ),
           };
         });
     } else {
       let calendarDays: ICalendarDate[] = Array(nDays + firstDay - 1)
         .fill(0)
         .map((day, index) => {
-          // console.log(index);
           if (index < firstDay - 1) {
-            // let prevNDays = new Date(
-            //   this.month - 1 > 0 ? year : year - 1,
-            //   (this.month - 1) % 12,
-            //   0
-            // ).getDate();
             let prevNDays = new Date(this.year, this.month - 1, 0).getDate();
+            let insertDay = prevNDays - firstDay + index + 1 + 1;
+
             return {
-              day: prevNDays - firstDay + index + 1 + 1,
+              day: insertDay,
               muted: true,
-              event: false,
+              event: this.appointmentDays.includes(
+                new Date(this.year, this.month - 2, insertDay).getTime()
+              ),
             };
           } else {
             const insertDay = index + 1 - firstDay + 1;
-            console.log(
-              new Date(this.year, this.month - 1, insertDay).getDay()
-            );
-            if (
-              this.appointmentDays.includes(
-                (new Date(this.year, this.month - 1, insertDay).getDay() - 1) %
-                  7
-              ) &&
-              new Date(this.year, this.month - 1, insertDay).getTime() >=
-                Date.now()
-            ) {
-              return {
-                day: insertDay,
-                muted: false,
-                event: true,
-              };
-            }
+
             return {
               day: insertDay,
               muted: false,
-              event: false,
+              event: this.appointmentDays.includes(
+                new Date(this.year, this.month - 1, insertDay).getTime()
+              ),
             };
           }
         });

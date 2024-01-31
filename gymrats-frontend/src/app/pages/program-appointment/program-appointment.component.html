@@ -10,7 +10,8 @@
         <div class="col-8">
           <h1>{{ program.title }}</h1>
           <div class="date-time mb-2">
-            <i class="bi bi-calendar3-week-fill"></i>{{ days[program.day] }},
+            <i class="bi bi-calendar3-week-fill"></i
+            >{{ days[getDay(program.start)] }},
             {{ program.start | formatTime }} - {{ program.end | formatTime }}
           </div>
           <div class="seats-info">
