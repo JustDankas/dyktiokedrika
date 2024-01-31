@@ -4,6 +4,7 @@ import { ConfigService } from './config.service';
 import { BehaviorSubject } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import { LoaderService } from './loader.service';
 
 export type Role = 'notAssigned' | 'admin' | 'trainer' | 'user';
 export interface IUser {
@@ -47,7 +48,8 @@ export class UserService {
     private http: HttpClient,
     private configSrv: ConfigService,
     private cookieService: CookieService,
-    private router: Router
+    private router: Router,
+    private loaderService: LoaderService
   ) {
     this.loginFromToken();
   }
@@ -73,12 +75,14 @@ export class UserService {
       username: nameControl,
       password: passwordControl,
     };
+    this.loaderService.toggleLoading();
     this.http
       .post(this.configSrv.url + 'user/login', body, {
         withCredentials: true,
       })
       .subscribe((data: any) => {
-        this._user$.next(data);
+        this.loaderService.toggleLoading();
+        // this._user$.next(data);
         window.location.reload();
       });
   }
@@ -107,6 +111,7 @@ export class UserService {
       registration_date: new Date().toISOString(),
     };
     // console.log(body);
+
     this.http
       .post(this.configSrv.url + 'user/register', body)
       .subscribe((data) => {
@@ -127,12 +132,15 @@ export class UserService {
     reader.readAsDataURL(file);
     reader.onload = () => {
       blob = reader.result as string;
+      this.loaderService.toggleLoading();
+
       this.http
         .patch(this.configSrv.url + 'user/' + 'update_pfp', {
           image: blob,
           id: this._user$.getValue()?.id,
         })
         .subscribe((data) => {
+          this.loaderService.toggleLoading();
           window.location.reload();
         });
     };

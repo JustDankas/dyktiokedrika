@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { ConfigService } from './config.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IUser } from './user.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, pipe, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { LoaderService } from './loader.service';
 export type ProgramTypes =
   | 'pilates'
   | 'weights'
@@ -48,7 +49,8 @@ export class ProgramService {
   constructor(
     private configSrv: ConfigService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private loaderService: LoaderService
   ) {
     this.getPrograms();
   }
@@ -67,11 +69,13 @@ export class ProgramService {
     reader.onload = () => {
       blob = reader.result as string;
       data.image = blob;
+      this.loaderService.toggleLoading();
       this.http
         .post(this.configSrv.url + this.programUrl + 'create_program', data, {
           withCredentials: true,
         })
         .subscribe((data) => {
+          this.loaderService.toggleLoading();
           window.location.reload();
         });
     };
