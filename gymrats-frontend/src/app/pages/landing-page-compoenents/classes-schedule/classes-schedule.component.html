@@ -30,12 +30,12 @@
         <div class="schedule-table filtering">
           <table>
             <tbody>
-              <tr *ngFor="let program of programs">
+              <tr *ngFor="let program of filteredPrograms$ | async">
                 <td class="day-time">{{ program.title }}</td>
                 <ng-container *ngFor="let slot of program.slots; index as i">
                   <td
                     class="monday ts-item show"
-                    *ngIf="slot.day === (selectedDay$ | async)"
+                    *ngIf="isSlotThisWeek(slot.start)"
                   >
                     <a
                       class="reserve-link"
@@ -55,57 +55,11 @@
                 <ng-container *ngFor="let ex of program.dummies">
                   <td class="monday ts-item show"></td>
                 </ng-container>
-                <!-- <td class="tuesday ts-item" data-tsmeta="tuesday">
-                  2:00PM - 3:30PM
-                </td> -->
+
                 <td>
                   {{ program.trainer_name + " " + program.trainer_surname }}
                 </td>
               </tr>
-              <!-- <tr>
-                <td class="day-time">Muscle Training</td>
-                <td class="friday ts-item" data-tsmeta="friday">
-                  10:00AM - 11:30AM
-                </td>
-                <td
-                  class="thursday friday ts-item"
-                  data-tsmeta="thursday"
-                  data-tsmeta="friday"
-                >
-                  2:00PM - 3:30PM
-                </td>
-                <td></td>
-              </tr>
-              <tr>
-                <td class="day-time">Body Building</td>
-                <td class="tuesday ts-item" data-tsmeta="tuesday">
-                  10:00AM - 11:30AM
-                </td>
-                <td class="monday ts-item show" data-tsmeta="monday">
-                  2:00PM - 3:30PM
-                </td>
-                <td>Boyd C. Harris</td>
-              </tr>
-              <tr>
-                <td class="day-time">Yoga Training Class</td>
-                <td class="wednesday ts-item" data-tsmeta="wednesday">
-                  10:00AM - 11:30AM
-                </td>
-                <td class="friday ts-item" data-tsmeta="friday">
-                  2:00PM - 3:30PM
-                </td>
-                <td>Hector T. Daigle</td>
-              </tr>
-              <tr>
-                <td class="day-time">Advanced Training</td>
-                <td class="thursday ts-item" data-tsmeta="thursday">
-                  10:00AM - 11:30AM
-                </td>
-                <td class="wednesday ts-item" data-tsmeta="wednesday">
-                  2:00PM - 3:30PM
-                </td>
-                <td>Bret D. Bowers</td>
-              </tr> -->
             </tbody>
           </table>
         </div>

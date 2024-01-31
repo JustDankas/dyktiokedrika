@@ -32,9 +32,6 @@ export class AdminProgramsComponent {
   onSubmit() {
     this.programService.createProgram(this.programForm.value);
   }
-  showValidity() {
-    console.log(this.programForm);
-  }
 
   constructor(private programService: ProgramService) {
     programService.getTrainers().subscribe((trainers) => {
@@ -55,10 +52,14 @@ export class AdminProgramsComponent {
   }
 
   deleteProgram(id: number) {
-    this.programService.deleteProgram(id);
+    if (confirm(`Are you sure you want to delete this program?`)) {
+      this.programService.deleteProgram(id);
+    }
   }
 
   deleteSlot(id: number) {
-    this.programService.deleteSlot(id);
+    if (confirm(`Are you sure you want to delete this slot?`)) {
+      this.programService.deleteSlot(id);
+    }
   }
 }

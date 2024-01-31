@@ -15,7 +15,7 @@ export const slotCreate = async (
     return;
   }
   try {
-    const { program_id, start, end, day } = req.body;
+    const { program_id, start, end } = req.body;
 
     // const parsedStartDate = new Date(start);
     // const parsedEndDate = new Date(end);
@@ -25,7 +25,7 @@ export const slotCreate = async (
     // );
     // console.log(program);
 
-    await createSlot(program_id, start, end, day);
+    await createSlot(program_id, start, end);
     res.status(200).json("Slot Successfully created");
     return;
   } catch (createError) {
@@ -137,15 +137,13 @@ export const deleteAllSlots = async (req: Request, res: Response) => {
 async function createSlot(
   program_id: ISlot["program_id"],
   start: ISlot["start"],
-  end: ISlot["end"],
-  day: ISlot["day"]
+  end: ISlot["end"]
 ) {
   // @ts-ignore
-  await sqlPool.query<ISlot>("CALL sp_CreateSlot(?,?,?,?)", [
+  await sqlPool.query<ISlot>("CALL sp_CreateSlot(?,?,?)", [
     program_id,
     start,
     end,
-    day,
   ]);
 }
 

@@ -28,6 +28,7 @@ import { FormatTimePipe } from './pipes/format-time.pipe';
 import { ProgramAppointmentComponent } from './pages/program-appointment/program-appointment.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { EditProgramComponent } from './pages/admin-programs/edit-program/edit-program.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { CommonModule } from '@angular/common';
     TimeSlotsComponent,
     FormatTimePipe,
     ProgramAppointmentComponent,
+    EditProgramComponent,
   ],
   imports: [
     CommonModule,

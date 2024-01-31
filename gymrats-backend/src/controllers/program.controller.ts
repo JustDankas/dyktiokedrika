@@ -73,15 +73,17 @@ export const getProgramById = async (
   res: Response
 ) => {
   try {
-    const { id } = req.body;
+    const { id } = req.query;
   } catch (deconstructionError) {
     console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
-    const program = await getSpecificProgramById(req.body);
-    res.json(program).status(200);
+    const { id } = req.query;
+    //@ts-ignore
+    const [program] = await getSpecificProgramById(Number(id));
+    res.json(program[0]).status(200);
     return;
   } catch (getError) {
     console.log(getError);
@@ -139,17 +141,25 @@ export const getAllAppointmentsAndPrograms = async (
 };
 export const updateProgram = async (req: Request<IProgram>, res: Response) => {
   try {
-    const { trainer_id, title, description, type, price, is_group, max_size } =
-      req.body;
+    const {
+      trainer_id,
+      title,
+      description,
+      type,
+      price,
+      is_group,
+      max_size,
+      id,
+      image,
+    } = req.body;
 
     try {
       // @ts-ignore
-      const userRole = await sqlPool.query<IUser["role"]>(
+      const [[{ role }]] = await sqlPool.query<IUser["role"]>(
         `SELECT role FROM user WHERE id = ? LIMIT 1`,
-        [trainer_id]
+        [Number(trainer_id)]
       );
-
-      if (userRole[0] !== "trainer") {
+      if (role !== "trainer") {
         res.status(400).json("User that was provided is not a trainer");
         return;
       }
@@ -281,18 +291,13 @@ async function updateProgramById({
   price,
   is_group,
   max_size,
+  image,
 }: IProgram) {
   // @ts-ignore
-  await sqlPool.query<IProgram>("CALL sp_UpdateProgramByID(?,?,?,?,?,?,?,?)", [
-    id,
-    trainer_id,
-    title,
-    description,
-    type,
-    price,
-    is_group,
-    max_size,
-  ]);
+  await sqlPool.query<IProgram>(
+    "CALL sp_UpdateProgramByID(?,?,?,?,?,?,?,?,?)",
+    [id, trainer_id, title, description, type, price, is_group, max_size, image]
+  );
 }
 
 async function deleteProgramById(id: IProgram["id"]) {

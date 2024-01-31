@@ -4,14 +4,19 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'formatTime',
 })
 export class FormatTimePipe implements PipeTransform {
-  transform(value: string, ...args: unknown[]): string {
-    value = value.slice(0, -3);
-    const [hh, ss] = value.split(':');
-    if (Number(hh) >= 12) {
-      if (Number(hh) == 12) return `${hh}:${ss}PM`;
-      return `${Number(hh) - 12}:${ss}PM`;
+  transform(value: Date | string, type?: string): string {
+    const date = new Date(value);
+    if (!type || type === 'time') {
+      const [hh, ss] = [date.getHours(), date.getMinutes()];
+      if (Number(hh) >= 12) {
+        if (Number(hh) == 12) return `${hh}:${ss}PM`;
+        return `${Number(hh) - 12}:${ss}PM`;
+      } else {
+        return `${hh}:${ss}AM`;
+      }
     } else {
-      return `${hh}:${ss}AM`;
+      // return `${date.getDate()}-${date.getMonth()}`;
+      return date.getDate() + ' ' + date.toDateString().split(' ')[1];
     }
   }
 }

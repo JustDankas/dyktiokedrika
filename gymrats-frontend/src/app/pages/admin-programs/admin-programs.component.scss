@@ -32,3 +32,10 @@ section {
   flex-wrap: wrap;
   padding: 16px;
 }
+.card {
+  max-height: 400px;
+  overflow-y: auto;
+  img {
+    object-fit: cover;
+  }
+}

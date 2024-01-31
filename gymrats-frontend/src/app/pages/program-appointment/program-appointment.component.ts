@@ -31,7 +31,15 @@ interface IprogramAppointment extends Omit<ISlot, ISlot['id']> {
   styleUrls: ['./program-appointment.component.scss'],
 })
 export class ProgramAppointmentComponent {
-  readonly days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  readonly days = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
   program$ = new BehaviorSubject<IprogramAppointment | null>(null);
   slotId!: number;
   constructor(
@@ -45,7 +53,6 @@ export class ProgramAppointmentComponent {
         programService
           .getProgramAndSlotBySlotId(slot_id)
           .subscribe((data: any) => {
-            console.log(data);
             this.program$.next(data);
             this.slotId = slot_id;
           });
@@ -57,5 +64,8 @@ export class ProgramAppointmentComponent {
 
   makeAppointment() {
     this.programService.createAppointment(this.slotId);
+  }
+  getDay(date: Date) {
+    return (new Date(date).getDay() - 1) % 7;
   }
 }

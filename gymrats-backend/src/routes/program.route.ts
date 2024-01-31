@@ -21,7 +21,7 @@ router
   .route("/get_all_appointments_with_programs")
   .get(getAllAppointmentsAndPrograms);
 router.route("/cancel_appointment").patch(cancelAppointment);
-router.route("/update_program").put(updateProgram);
+router.route("/edit_program").put(updateProgram);
 router.route("/create_slot").post(slotCreate);
 router.route("/create_appointment").post(createAppointment);
 router.route("/delete_slot").delete(SlotDeleteById);

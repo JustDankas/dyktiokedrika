@@ -17,7 +17,12 @@
           class="card"
           style="width: 21rem"
         >
-          <img [src]="program.image" class="card-img-top" alt="..." />
+          <img
+            [src]="program.image"
+            class="card-img-top"
+            height="125"
+            alt="..."
+          />
           <div class="card-body">
             <h5 class="card-title">{{ program.title }}</h5>
             <p class="card-text">{{ program.description }}</p>
@@ -44,7 +49,7 @@
                   " - " +
                   (slot.end | formatTime) +
                   " " +
-                  days[slot.day]
+                  (slot.start | formatTime : "date")
               }}
               <button class="btn" (click)="deleteSlot(slot.id)">
                 <i class="bi bi-x-lg"></i>
@@ -52,14 +57,18 @@
             </li>
           </ul>
           <div class="card-body card-actions">
-            <button class="btn btn-warning">
+            <button
+              class="btn btn-warning"
+              (click)="setEditingProgram(program.id)"
+              data-bs-toggle="modal"
+              data-bs-target="#editProgramModal"
+            >
               <i class="bi bi-pencil-fill"></i>
             </button>
             <button
               class="btn btn-info"
               data-bs-toggle="modal"
               data-bs-target="#slotModal"
-              (click)="setEditingProgram(program.id)"
             >
               <i class="bi bi-clock-fill"></i>
             </button>
@@ -103,6 +112,7 @@
 </main>
 
 <app-time-slots></app-time-slots>
+<app-edit-program></app-edit-program>
 
 <!-- Form Create Modal -->
 <div
