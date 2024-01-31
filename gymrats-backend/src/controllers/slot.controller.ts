@@ -21,7 +21,7 @@ export const slotCreate = async (req: Request, res: Response) => {
 
     if (!body.program_id || !body.start || !body.end) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing at least one of the required parameters in the request body: program_id, start, end `
@@ -46,7 +46,7 @@ export const slotCreate = async (req: Request, res: Response) => {
       parsedStartDate <= twoHoursLater
     ) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid date in start or end parameter\nOr start date is before 2 hours from now\nOr start date is after end date`
@@ -57,7 +57,7 @@ export const slotCreate = async (req: Request, res: Response) => {
 
     if (!isValidIsoDate(start) || !isValidIsoDate(end)) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid date format in start or end parameter. Use full ISO date format.`
@@ -70,7 +70,7 @@ export const slotCreate = async (req: Request, res: Response) => {
 
     res
       .status(StatusCodes.CREATED)
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.CREATED
         )}\nSlot Successfully created and added to program with start date ${start} and end date ${end}`
@@ -84,13 +84,13 @@ export const slotCreate = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -100,7 +100,7 @@ export const getSlotById = async (req: Request, res: Response) => {
     const body = req.body as ISlot;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter: id`
@@ -113,7 +113,7 @@ export const getSlotById = async (req: Request, res: Response) => {
     const slot = await getSpecificSlotById(id);
     if (!slot) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nSlot not found with the given id: ${id}`
@@ -121,7 +121,7 @@ export const getSlotById = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.status(StatusCodes.OK).send(slot);
+    res.status(StatusCodes.OK).json(slot);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -131,13 +131,13 @@ export const getSlotById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -148,7 +148,7 @@ export const getSlotsByProgramId = async (req: Request, res: Response) => {
 
     if (!body.program_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter: program_id`
@@ -158,7 +158,7 @@ export const getSlotsByProgramId = async (req: Request, res: Response) => {
     }
     if (body.program_id <= 0) {
       res
-        .send(
+        .json(
           `
         ${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid program_id: ${
             body.program_id
@@ -174,7 +174,7 @@ export const getSlotsByProgramId = async (req: Request, res: Response) => {
 
     if (!programSlots) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nNo slots found for the specified program_id: ${program_id}`
@@ -183,7 +183,7 @@ export const getSlotsByProgramId = async (req: Request, res: Response) => {
       return;
     }
 
-    res.send(programSlots).status(StatusCodes.OK);
+    res.json(programSlots).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -193,13 +193,13 @@ export const getSlotsByProgramId = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -209,7 +209,7 @@ export const getAllSlots = async (req: Request, res: Response) => {
     const programSlots = await getSlots();
     if (!programSlots) {
       res
-        .send(
+        .json(
           `There are no slots in the database\n${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}`
@@ -217,7 +217,7 @@ export const getAllSlots = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(programSlots).status(StatusCodes.OK);
+    res.json(programSlots).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -227,13 +227,13 @@ export const getAllSlots = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -250,7 +250,7 @@ export const updateSlot = async (req: Request, res: Response) => {
       !body.end
     ) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing at least one required parameter of the following: id, program_id, seats_available, start, end`
@@ -262,7 +262,7 @@ export const updateSlot = async (req: Request, res: Response) => {
 
     if (seats_available < 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nSeats available can't be less than 0`
@@ -285,7 +285,7 @@ export const updateSlot = async (req: Request, res: Response) => {
       parsedStartDate < twoHoursLater
     ) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid date in start or end parameter\nOr start date is before 2 hours from now\nOr start date is after end date`
@@ -296,7 +296,7 @@ export const updateSlot = async (req: Request, res: Response) => {
 
     if (!isValidIsoDate(start) || !isValidIsoDate(end)) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid date format in start or end parameter. Use full ISO date format.`
@@ -314,7 +314,7 @@ export const updateSlot = async (req: Request, res: Response) => {
     );
 
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.OK
         )}\nSlot Successfully updated with new seats available: ${seats_available} and new start date: ${start} and new end date: ${end}`
@@ -329,13 +329,13 @@ export const updateSlot = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -345,7 +345,7 @@ export const slotDeleteById = async (req: Request, res: Response) => {
     const body = req.body as ISlot;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter 'id' in the request body`
@@ -356,7 +356,7 @@ export const slotDeleteById = async (req: Request, res: Response) => {
     const { id } = body;
     await deleteSlotById(id);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nSlot Successfully deleted with id: ${id}}`
@@ -371,13 +371,13 @@ export const slotDeleteById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -387,7 +387,7 @@ export const deleteAllSlots = async (req: Request, res: Response) => {
   try {
     await slotsDelete();
     res
-      .send(
+      .json(
         `${getReasonPhrase(StatusCodes.NO_CONTENT)}\nSlots Successfully deleted`
       )
       .status(StatusCodes.NO_CONTENT);
@@ -400,13 +400,13 @@ export const deleteAllSlots = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }

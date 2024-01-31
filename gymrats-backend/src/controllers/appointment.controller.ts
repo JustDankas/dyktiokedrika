@@ -11,73 +11,78 @@ import { getSpecificSlotById } from "./slot.controller";
 
 export const appointmentCreate = async (req: Request, res: Response) => {
   try {
+    const now = new Date();
+
     const body = req.body as IAppointmentCreationRequest;
     if (!body.user_id || !body.slot_id) {
-      res
-        .send(
-          `${getReasonPhrase(
-            StatusCodes.BAD_REQUEST
-          )}\nMissing at least one of the required parameters in the request body: 'user_id', 'slot_id' `
-        )
-        .status(StatusCodes.BAD_REQUEST);
+      res.status(StatusCodes.BAD_REQUEST).json(
+        `${getReasonPhrase(StatusCodes.BAD_REQUEST)}!
+          Missing at least one of the required parameters in the request body: 'user_id', 'slot_id'.`
+      );
+
       return;
     }
     if (body.user_id <= 0 || body.slot_id <= 0) {
-      res
-        .send(
-          `${getReasonPhrase(
-            StatusCodes.BAD_REQUEST
-          )}\nInvalid parameters in the request body: 'user_id', 'slot_id' \n(They should be positive integers)`
-        )
-        .status(StatusCodes.BAD_REQUEST);
+      res.status(StatusCodes.BAD_REQUEST).json(
+        `${getReasonPhrase(StatusCodes.BAD_REQUEST)}!
+          Invalid parameters in the request body: 'user_id', 'slot_id' \n(They should be positive integers)`
+      );
     }
 
     const { user_id, slot_id } = body;
     const user = await getUserByID(user_id);
     if (!user) {
-      res
-        .status(StatusCodes.NOT_FOUND)
-        .send(`User with ID ${user_id} not found`);
+      res.status(StatusCodes.NOT_FOUND).json(`${getReasonPhrase(
+        StatusCodes.NOT_FOUND
+      )}!
+        User with ID ${user_id} not found`);
       return;
     }
 
     const slot = await getSpecificSlotById(slot_id);
     if (!slot) {
-      res
-        .send(
-          `${getReasonPhrase(
-            StatusCodes.NOT_FOUND
-          )}\nSlot with ID ${slot_id} not found`
-        )
-        .status(StatusCodes.NOT_FOUND);
+      res.status(StatusCodes.NOT_FOUND).json(
+        `${getReasonPhrase(StatusCodes.NOT_FOUND)}!
+          Slot with ID ${slot_id} not found`
+      );
+      return;
+    }
+
+    if (now.getTime() >= slot.start.getTime()) {
+      if (now.getTime() <= slot.end.getTime()) {
+        res.status(StatusCodes.BAD_REQUEST).json(
+          `${getReasonPhrase(StatusCodes.BAD_REQUEST)}!
+                Cannot make an appointment now since the slot has already started at ${
+                  slot.start
+                }`
+        );
+      }
+      res.status(StatusCodes.BAD_REQUEST).json(
+        `${getReasonPhrase(StatusCodes.BAD_REQUEST)}!
+        Cannot make an appointment now since the slot has already ended at ${
+          slot.end
+        }`
+      );
       return;
     }
 
     if (slot.seats_available <= 0) {
-      res
-        .send(
-          `${getReasonPhrase(
-            StatusCodes.CONFLICT
-          )}\nNo seats available for this slot with id ${slot_id}`
-        )
-        .status(StatusCodes.CONFLICT);
+      res.status(StatusCodes.CONFLICT).json(
+        `${getReasonPhrase(StatusCodes.CONFLICT)}!
+          No seats available for this slot with id ${slot_id}`
+      );
       return;
     }
     const alreadyBookedAppointment =
       await checkIfUserHasAlreadyBookedForASpecificSlot(user_id, slot_id);
 
     if (alreadyBookedAppointment) {
-      res
-        .send(
-          `${getReasonPhrase(
-            StatusCodes.CONFLICT
-          )}\nUser has already booked for this slot that starts at ${
-            slot.start
-          } and ends at ${
-            slot.end
-          }\n Cannot book again the same slot, try maybe another slot`
-        )
-        .status(StatusCodes.CONFLICT);
+      res.status(StatusCodes.CONFLICT).json(
+        `${getReasonPhrase(StatusCodes.CONFLICT)}!
+          User has already booked for this slot that
+          starts at ${slot.start} and ends at ${slot.end}.
+          Cannot book again the same slot, try maybe another slot`
+      );
       return;
     }
     const oldest_of_the_two = true;
@@ -91,16 +96,22 @@ export const appointmentCreate = async (req: Request, res: Response) => {
         hasAlreadyCancelledAppointmentTwiceThisWeek.cancelled_on.getTime() +
           7 * 24 * 60 * 60 * 1000
       );
+      console.log(
+        dateWhenUserCanMakeAnAppointmentAgain,
+        "dateWhenUserCanMakeAnAppointmentAgain"
+      );
       res
-        .send(
-          `User ${user.username} has already cancelled two appointments this week\nThey can make an appointment again in ${dateWhenUserCanMakeAnAppointmentAgain}`
+        .json(
+          `User ${user.username} has already cancelled two appointments this week!
+          They can make an appointment again in ${dateWhenUserCanMakeAnAppointmentAgain}!`
         )
         .status(StatusCodes.CONFLICT);
       return;
     }
+
     await createAppointment(user_id, slot_id);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.CREATED
         )}\nAppointment Successfully created of user ${
@@ -117,13 +128,13 @@ export const appointmentCreate = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -135,7 +146,7 @@ export const appointmentCancelById = async (req: Request, res: Response) => {
     const body = req.body as IAppointment;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing one required parameter in the request body: 'id' `
@@ -145,7 +156,7 @@ export const appointmentCancelById = async (req: Request, res: Response) => {
     }
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid parameter in the request body: 'id'\n(Id should be a positive integer)`
@@ -159,7 +170,7 @@ export const appointmentCancelById = async (req: Request, res: Response) => {
 
     if (!appointment) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nAppointment not found with id: ${id}`
@@ -168,7 +179,7 @@ export const appointmentCancelById = async (req: Request, res: Response) => {
     }
     if (appointment.cancelled) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.CONFLICT
           )}\nAppointment is already cancelled`
@@ -179,7 +190,7 @@ export const appointmentCancelById = async (req: Request, res: Response) => {
     const slot = await getSpecificSlotById(appointment.slot_id);
     if (!slot) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.NOT_FOUND)}\nSlot not found with id: ${
             appointment.slot_id
           }.\nIt has been deleted so there is no need to cancel it`
@@ -193,7 +204,7 @@ export const appointmentCancelById = async (req: Request, res: Response) => {
     if (currentDate > twoHoursBeforeAppointmentDate) {
       if (currentDate > slot.start) {
         res
-          .send(
+          .json(
             `${getReasonPhrase(
               StatusCodes.CONFLICT
             )}\nCannot cancel an appointment in after 2 hours before the start of the slot\nThe slot started at ${
@@ -209,7 +220,7 @@ export const appointmentCancelById = async (req: Request, res: Response) => {
       const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
       const seconds = Math.floor((timeLeft / 1000) % 60);
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.CONFLICT
           )}\nCannot cancel an appointment in less than 2 hours before the start of the slot\nThe slot starts at ${
@@ -222,7 +233,7 @@ export const appointmentCancelById = async (req: Request, res: Response) => {
 
     await cancelAppointmentByID(id);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.OK
         )}\nAppointment Successfully cancelled for the slot time ${
@@ -239,13 +250,13 @@ export const appointmentCancelById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -260,7 +271,7 @@ export const appointmentsCancelBySlotId = async (
     const body = req.body as IAppointment;
     if (!body.slot_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing one required parameter in the request body: 'slot_id' `
@@ -270,7 +281,7 @@ export const appointmentsCancelBySlotId = async (
     }
     if (isNaN(body.slot_id) || body.slot_id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid parameter in the request body: 'slot_id'\n(Id should be a positive integer)`
@@ -289,7 +300,7 @@ export const appointmentsCancelBySlotId = async (
 
     if (!activeAppointmentsOfSlotId) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nNo active appointments to cancel found for slot with id: ${slot_id}`
@@ -308,7 +319,7 @@ export const appointmentsCancelBySlotId = async (
     if (currentDate > fortyFiveMinutesBeforeAppointmentDate) {
       if (slot.start <= currentDate <= slot.end) {
         res
-          .send(
+          .json(
             `${getReasonPhrase(
               StatusCodes.CONFLICT
             )}\nCannot cancel the appointments since the slot has already started\nThe slot started at ${
@@ -319,7 +330,7 @@ export const appointmentsCancelBySlotId = async (
         return;
       } else if (currentDate >= slot.end) {
         res
-          .send(
+          .json(
             `${getReasonPhrase(
               StatusCodes.CONFLICT
             )}\nCannot cancel the appointments since the slot has already finished\nThe slot started at ${
@@ -335,10 +346,10 @@ export const appointmentsCancelBySlotId = async (
         const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
         const seconds = Math.floor((timeLeft / 1000) % 60);
         res
-          .send(
+          .json(
             `${getReasonPhrase(
               StatusCodes.CONFLICT
-            )}\nCannot cancel the appointments since the slot wii start in less than 45 minutesn\nand the users need to be notified at least 45 minutes before the slot's start\nThe slot starts at ${
+            )}\nCannot cancel the appointments since the slot will start in less than 45 minutesn\nand the users need to be notified at least 45 minutes before the slot's start\nThe slot starts at ${
               slot.start
             }\nand when you tried to cancel the appointments for that slot it was ${currentDate}\nThe slot starts at ${hours} hours, ${minutes} minutes, ${seconds} seconds ! Hurry up!`
           )
@@ -353,7 +364,7 @@ export const appointmentsCancelBySlotId = async (
       (appointment) => appointment.user_id
     );
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.OK
         )}\nAppointments Successfully cancelled for the slot time ${
@@ -370,13 +381,13 @@ export const appointmentsCancelBySlotId = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -386,7 +397,7 @@ export const getAppointmentById = async (req: Request, res: Response) => {
     const body = req.body as IAppointment;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'id' `
@@ -396,7 +407,7 @@ export const getAppointmentById = async (req: Request, res: Response) => {
     }
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
             body.id
           }. Id should be a positive integer`
@@ -409,7 +420,7 @@ export const getAppointmentById = async (req: Request, res: Response) => {
     const appointment = await getSpecificAppointmentByID(id);
     if (!appointment) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nAppointment not found with id: ${id}`
@@ -417,7 +428,7 @@ export const getAppointmentById = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointment).status(StatusCodes.OK);
+    res.json(appointment).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -427,13 +438,13 @@ export const getAppointmentById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -444,7 +455,7 @@ export const getAppointmentsBySlotId = async (req: Request, res: Response) => {
     const body = req.body as IAppointment;
     if (!body.slot_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'slot_id' `
@@ -454,7 +465,7 @@ export const getAppointmentsBySlotId = async (req: Request, res: Response) => {
     }
     if (body.slot_id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid slot_id ${
             body.slot_id
           }. Id should be a positive integer`
@@ -467,7 +478,7 @@ export const getAppointmentsBySlotId = async (req: Request, res: Response) => {
     const appointment = await getAppointmentsBySlotID(slot_id, get_all);
     if (!appointment) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nThere are no appointments yet for slot with id: ${slot_id} or they have been removed due to inactivity`
@@ -475,7 +486,7 @@ export const getAppointmentsBySlotId = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointment).status(StatusCodes.OK);
+    res.json(appointment).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -485,13 +496,13 @@ export const getAppointmentsBySlotId = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -505,7 +516,7 @@ export const getInactiveAppointmentsBySlotId = async (
     const body = req.body as IAppointment;
     if (!body.slot_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'slot_id' `
@@ -515,7 +526,7 @@ export const getInactiveAppointmentsBySlotId = async (
     }
     if (body.slot_id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid slot_id ${
             body.slot_id
           }. Id should be a positive integer`
@@ -533,7 +544,7 @@ export const getInactiveAppointmentsBySlotId = async (
     );
     if (!appointment) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nThere are no inactive appointments yet for slot with id: ${slot_id} or they have been removed due to inactivity`
@@ -541,7 +552,7 @@ export const getInactiveAppointmentsBySlotId = async (
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointment).status(StatusCodes.OK);
+    res.json(appointment).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -551,13 +562,13 @@ export const getInactiveAppointmentsBySlotId = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -570,7 +581,7 @@ export const getActiveAppointmentsBySlotId = async (
     const body = req.body as IAppointment;
     if (!body.slot_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'slot_id' `
@@ -580,7 +591,7 @@ export const getActiveAppointmentsBySlotId = async (
     }
     if (body.slot_id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid slot_id ${
             body.slot_id
           }. Id should be a positive integer`
@@ -598,7 +609,7 @@ export const getActiveAppointmentsBySlotId = async (
     );
     if (!appointment) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nThere are no active appointments yet for slot with id: ${slot_id} or they have been removed due to inactivity`
@@ -606,7 +617,7 @@ export const getActiveAppointmentsBySlotId = async (
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointment).status(StatusCodes.OK);
+    res.json(appointment).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -616,13 +627,13 @@ export const getActiveAppointmentsBySlotId = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -633,7 +644,7 @@ export const getAppointmentsByUserId = async (req: Request, res: Response) => {
     const body = req.body as IAppointment;
     if (!body.user_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'user_id' `
@@ -643,7 +654,7 @@ export const getAppointmentsByUserId = async (req: Request, res: Response) => {
     }
     if (body.user_id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid user_id ${
             body.user_id
           }. Id should be a positive integer`
@@ -656,7 +667,7 @@ export const getAppointmentsByUserId = async (req: Request, res: Response) => {
     const appointment = await getAppointmentsByUserID(user_id, get_all);
     if (!appointment) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nThere are no appointments yet for user with id: ${user_id} or they have been removed due to inactivity`
@@ -664,7 +675,7 @@ export const getAppointmentsByUserId = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointment).status(StatusCodes.OK);
+    res.json(appointment).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -674,13 +685,13 @@ export const getAppointmentsByUserId = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -693,7 +704,7 @@ export const getActiveAppointmentsByUserId = async (
     const body = req.body as IAppointment;
     if (!body.user_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'user_id' `
@@ -703,7 +714,7 @@ export const getActiveAppointmentsByUserId = async (
     }
     if (body.user_id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid user_id ${
             body.user_id
           }. Id should be a positive integer`
@@ -721,7 +732,7 @@ export const getActiveAppointmentsByUserId = async (
     );
     if (!appointment) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nThere are no appointments yet for user with id: ${user_id} or they have been removed due to inactivity`
@@ -729,7 +740,7 @@ export const getActiveAppointmentsByUserId = async (
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointment).status(StatusCodes.OK);
+    res.json(appointment).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -739,13 +750,13 @@ export const getActiveAppointmentsByUserId = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -758,7 +769,7 @@ export const getInactiveAppointmentsByUserId = async (
     const body = req.body as IAppointment;
     if (!body.user_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'user_id' `
@@ -768,7 +779,7 @@ export const getInactiveAppointmentsByUserId = async (
     }
     if (body.user_id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid user_id ${
             body.user_id
           }. Id should be a positive integer`
@@ -786,7 +797,7 @@ export const getInactiveAppointmentsByUserId = async (
     );
     if (!appointment) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nThere are no inactive appointments yet for user with id: ${user_id} or they have been removed due to inactivity`
@@ -794,7 +805,7 @@ export const getInactiveAppointmentsByUserId = async (
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointment).status(StatusCodes.OK);
+    res.json(appointment).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -804,13 +815,13 @@ export const getInactiveAppointmentsByUserId = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -821,7 +832,7 @@ export const getAllAppointments = async (req: Request, res: Response) => {
     const appointmentList = await getAppointments(get_all);
     if (!appointmentList) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nNo appointments found in the database`
@@ -829,7 +840,7 @@ export const getAllAppointments = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointmentList).status(StatusCodes.OK);
+    res.json(appointmentList).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -839,13 +850,13 @@ export const getAllAppointments = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -860,7 +871,7 @@ export const getAllInactiveAppointments = async (
     const appointmentList = await getAppointments(get_all, inactive);
     if (!appointmentList) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nNo inactive appointments found in the database`
@@ -868,7 +879,7 @@ export const getAllInactiveAppointments = async (
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointmentList).status(StatusCodes.OK);
+    res.json(appointmentList).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -878,13 +889,13 @@ export const getAllInactiveAppointments = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -896,7 +907,7 @@ export const getAllActiveAppointments = async (req: Request, res: Response) => {
     const appointmentList = await getAppointments(get_all, inactive);
     if (!appointmentList) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nNo active appointments found in the database`
@@ -904,7 +915,7 @@ export const getAllActiveAppointments = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(appointmentList).status(StatusCodes.OK);
+    res.json(appointmentList).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -914,13 +925,13 @@ export const getAllActiveAppointments = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -933,7 +944,7 @@ export const deleteAppointmentsThatAreOlderThanXdays = async (
     const body = req.body;
     if (!body.days) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'days' `
@@ -944,7 +955,7 @@ export const deleteAppointmentsThatAreOlderThanXdays = async (
 
     if (isNaN(body.days) || body.days <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid days ${
             body.days
           }. Days should be a positive integer`
@@ -955,7 +966,7 @@ export const deleteAppointmentsThatAreOlderThanXdays = async (
 
     if (body.days < 182) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid days ${
             body.days
           }. Days should be at least more than 6 months (182 days)`
@@ -967,7 +978,7 @@ export const deleteAppointmentsThatAreOlderThanXdays = async (
     const { days } = body;
     await deleteAppointmentsThatAreOlderThanXDays(days);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nAppointments older than ${days} days successfully deleted`
@@ -982,13 +993,13 @@ export const deleteAppointmentsThatAreOlderThanXdays = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -1060,7 +1071,7 @@ async function getAppointmentsBySlotID(
 ) {
   // @ts-ignore
   const [rows] = await await sqlPool.query<IAppointment[]>(
-    `CALL sp_GetAppointmentBySlotID(?,?,?)`,
+    `CALL sp_GetAppointmentsBySlotID(?,?,?)`,
     [slot_id, get_all, inactive]
   );
   return rows[0];
@@ -1073,7 +1084,7 @@ async function getAppointmentsByUserID(
 ) {
   // @ts-ignore
   const [rows] = await await sqlPool.query<IAppointment[]>(
-    `CALL sp_GetAppointmentBySlotID(?,?,?)`,
+    `CALL sp_GetAppointmentByUserID(?,?,?)`,
     [slot_id, get_all, inactive]
   );
   return rows[0];

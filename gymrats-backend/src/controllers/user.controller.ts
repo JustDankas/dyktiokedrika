@@ -25,7 +25,7 @@ export const userRegister = async (req: Request, res: Response) => {
 
     await createNewUser(name, surname, email, username, password, image);
     res
-      .send(
+      .json(
         `New User ${username} Successfully created\n${getReasonPhrase(
           StatusCodes.CREATED
         )}`
@@ -39,12 +39,12 @@ export const userRegister = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };
@@ -67,7 +67,7 @@ export const userLogin = async (req: Request, res: Response) => {
 
     if (!user) {
       res
-        .send(
+        .json(
           `"Invalid username or password\n${getReasonPhrase(
             StatusCodes.UNAUTHORIZED
           )}`
@@ -85,7 +85,7 @@ export const userLogin = async (req: Request, res: Response) => {
     }
 
     res.cookie("token", token, { httpOnly: true });
-    res.status(StatusCodes.OK).send(user);
+    res.status(StatusCodes.OK).json(user);
   } catch (error: unknown) {
     if (isSqlError(error)) {
       const sqlError = error as SqlError;
@@ -94,12 +94,12 @@ export const userLogin = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };
@@ -110,14 +110,14 @@ export const getUserById = async (req: Request, res: Response) => {
     const { id } = body;
     if (!id) {
       res
-        .send(
+        .json(
           `${StatusCodes.BAD_REQUEST}\nMissing required parameter 'id' in the request body`
         )
         .status(StatusCodes.BAD_REQUEST);
     }
     if (id <= 0) {
       res
-        .send(
+        .json(
           `${StatusCodes.BAD_REQUEST}\n Parameter 'id' in the request body should be a positive integer`
         )
         .status(StatusCodes.BAD_REQUEST);
@@ -125,10 +125,10 @@ export const getUserById = async (req: Request, res: Response) => {
     const user = await getUserByID(id);
     if (!user) {
       res
-        .send(`${StatusCodes.NOT_FOUND}\nNo user found with that id: ${id}`)
+        .json(`${StatusCodes.NOT_FOUND}\nNo user found with that id: ${id}`)
         .status(StatusCodes.NOT_FOUND);
     }
-    res.send(user).status(StatusCodes.OK);
+    res.json(user).status(StatusCodes.OK);
   } catch (error: unknown) {
     if (isSqlError(error)) {
       const sqlError = error as SqlError;
@@ -137,12 +137,12 @@ export const getUserById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };
@@ -153,7 +153,7 @@ export const getUsersByRole = async (req: Request, res: Response) => {
     const { role } = body;
     if (!role) {
       res
-        .send(
+        .json(
           `${StatusCodes.BAD_REQUEST}\nMissing required parameter 'role' in the request body`
         )
         .status(StatusCodes.BAD_REQUEST);
@@ -166,7 +166,7 @@ export const getUsersByRole = async (req: Request, res: Response) => {
       role !== "notAssigned"
     ) {
       res
-        .send(
+        .json(
           `${StatusCodes.BAD_REQUEST}\nInvalid role: ${role}. Valid roles are: admin, user, trainer, notAssigned`
         )
         .status(StatusCodes.BAD_REQUEST);
@@ -175,13 +175,13 @@ export const getUsersByRole = async (req: Request, res: Response) => {
     const usersList = await getUsersByTheirRole(role);
     if (!usersList) {
       res
-        .send(
+        .json(
           `${StatusCodes.NOT_FOUND}\nNo users found with that role: ${role}`
         )
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(usersList).status(StatusCodes.OK);
+    res.json(usersList).status(StatusCodes.OK);
   } catch (error: unknown) {
     if (isSqlError(error)) {
       const sqlError = error as SqlError;
@@ -190,12 +190,12 @@ export const getUsersByRole = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };
@@ -204,9 +204,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const usersList = await getUsers();
     if (!usersList) {
-      res.send("No users found").status(StatusCodes.NOT_FOUND);
+      res.json("No users found").status(StatusCodes.NOT_FOUND);
     }
-    res.send(usersList).status(StatusCodes.OK);
+    res.json(usersList).status(StatusCodes.OK);
   } catch (error: unknown) {
     if (isSqlError(error)) {
       const sqlError = error as SqlError;
@@ -215,12 +215,12 @@ export const getAllUsers = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };
@@ -238,14 +238,14 @@ export const userUpdate = async (req: Request, res: Response) => {
       !body.image
     ) {
       res
-        .send(
+        .json(
           `Missing at least one of the following required parameters in the request body: id, name, surname, email, username, password, image`
         )
         .status(StatusCodes.BAD_REQUEST);
     }
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nUser id must be a positive integer instead of ${body.id}`
@@ -264,7 +264,7 @@ export const userUpdate = async (req: Request, res: Response) => {
       image
     );
     res
-      .send(
+      .json(
         `User ${username} Successfully updated\n${getReasonPhrase(
           StatusCodes.OK
         )}`
@@ -278,7 +278,7 @@ export const userUpdate = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(
+        .json(
           getReasonPhrase(
             `${StatusCodes.INTERNAL_SERVER_ERROR}\nMaybe try a different username or email or both?`
           )
@@ -287,7 +287,7 @@ export const userUpdate = async (req: Request, res: Response) => {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };
@@ -297,7 +297,7 @@ export const updateUserRoleById = async (req: Request, res: Response) => {
     const body = req.body as IUser;
     if (!body.id || !body.role) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing at least one required parameter of the following: id, role `
@@ -312,7 +312,7 @@ export const updateUserRoleById = async (req: Request, res: Response) => {
       role !== "notAssigned"
     ) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid role in the request body: ${role}`
@@ -322,7 +322,7 @@ export const updateUserRoleById = async (req: Request, res: Response) => {
     }
     if (id <= 0) {
       res
-        .send(
+        .json(
           `
         ${getReasonPhrase(
           StatusCodes.BAD_REQUEST
@@ -333,7 +333,7 @@ export const updateUserRoleById = async (req: Request, res: Response) => {
     }
     await updateUserRole(id, role);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.OK
         )}\nUser role successfully updated to ${role}`
@@ -348,12 +348,12 @@ export const updateUserRoleById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };
@@ -370,7 +370,7 @@ export const massUpdateUserRoles = async (req: Request, res: Response) => {
         const { user_id, role } = entry;
         if (!user_id || !role) {
           res
-            .send(
+            .json(
               `${getReasonPhrase(
                 StatusCodes.BAD_REQUEST
               )}\n Missing required parameters in this ${
@@ -387,7 +387,7 @@ export const massUpdateUserRoles = async (req: Request, res: Response) => {
           role !== "notAssigned"
         ) {
           res
-            .send(
+            .json(
               `${getReasonPhrase(
                 StatusCodes.BAD_REQUEST
               )}\nInvalid role in this ${i + 1}th entry: ${entry}`
@@ -400,7 +400,7 @@ export const massUpdateUserRoles = async (req: Request, res: Response) => {
       }
     } else {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid or empty list format in the request body`
@@ -410,7 +410,7 @@ export const massUpdateUserRoles = async (req: Request, res: Response) => {
     }
 
     res
-      .send(
+      .json(
         `${getReasonPhrase(StatusCodes.OK)}\nUsers' roles updated successfully`
       )
       .status(StatusCodes.OK);
@@ -422,13 +422,13 @@ export const massUpdateUserRoles = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -440,7 +440,7 @@ export const userDeleteById = async (req: Request, res: Response) => {
     const { id } = body;
     if (!id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter id in the request body`
@@ -450,7 +450,7 @@ export const userDeleteById = async (req: Request, res: Response) => {
 
     if (id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nUser ID must be a positive integer instead of ${id}`
@@ -459,7 +459,7 @@ export const userDeleteById = async (req: Request, res: Response) => {
     }
     await deleteUserById(id);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.OK
         )}\nDeletion of user with ID: ${id} was Successful`
@@ -473,12 +473,12 @@ export const userDeleteById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };
@@ -488,7 +488,7 @@ export const massDeleteUsersByRole = async (req: Request, res: Response) => {
     const body = req.body as IUser;
     if (!body.role) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter role from the request body `
@@ -498,7 +498,7 @@ export const massDeleteUsersByRole = async (req: Request, res: Response) => {
     const { role } = body;
     if (role !== "user" && role !== "trainer" && role !== "notAssigned") {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid role in the request body: ${role}.\nAlso admins cannot be deleted from the database through this route`
@@ -509,7 +509,7 @@ export const massDeleteUsersByRole = async (req: Request, res: Response) => {
 
     await massDeleteByRole(role);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nUsers with role ${role} successfully deleted`
@@ -524,12 +524,12 @@ export const massDeleteUsersByRole = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };
@@ -542,7 +542,7 @@ export const deleteAllUsersExceptAdmins = async (
     const admin = "admin";
     await deleteUsersExceptAdmins(admin);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nAll Users Successfully deleted`
@@ -556,12 +556,12 @@ export const deleteAllUsersExceptAdmins = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
     }
   }
 };

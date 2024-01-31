@@ -19,7 +19,7 @@ export const programCreate = async (req: Request, res: Response) => {
       !body.image
     ) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing at least one of the required parameters in the request body: 'trainer_id', 'title', 'description', 'type', 'price', 'is_group', 'max_size', 'image' `
@@ -29,7 +29,7 @@ export const programCreate = async (req: Request, res: Response) => {
     }
     if (body.trainer_id <= 0 || body.price < 0 || body.max_size <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nAt least one invalid parameter in the request body: 'trainer_id','max_size','price'\n(They should be positive integers or the price should at least be 0)`
@@ -56,7 +56,7 @@ export const programCreate = async (req: Request, res: Response) => {
 
     if (!userRole[0][0]) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nUser that was provided with id: ${trainer_id} does not exist`
@@ -68,7 +68,7 @@ export const programCreate = async (req: Request, res: Response) => {
     if (userRole[0][0] !== trainer) {
       res
         .status(StatusCodes.UNAUTHORIZED)
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.UNAUTHORIZED
           )}\nUser that was provided is not authorized to be a trainer`
@@ -88,7 +88,7 @@ export const programCreate = async (req: Request, res: Response) => {
     );
     res
       .status(StatusCodes.CREATED)
-      .send(
+      .json(
         `${getReasonPhrase(StatusCodes.CREATED)}\nProgram Successfully created`
       );
     return;
@@ -100,13 +100,13 @@ export const programCreate = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -116,7 +116,7 @@ export const getProgramById = async (req: Request, res: Response) => {
     const body = req.body as IProgram;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'id' `
@@ -127,7 +127,7 @@ export const getProgramById = async (req: Request, res: Response) => {
 
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
             body.id
           } in the request body. Id should be a positive integer`
@@ -139,7 +139,7 @@ export const getProgramById = async (req: Request, res: Response) => {
     const program = await getSpecificProgramById(id);
     if (!program) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nProgram not found with id: ${id}`
@@ -147,7 +147,7 @@ export const getProgramById = async (req: Request, res: Response) => {
         .status(StatusCodes.BAD_REQUEST);
       return;
     }
-    res.send(program).status(StatusCodes.OK);
+    res.json(program).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -157,13 +157,13 @@ export const getProgramById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -174,7 +174,7 @@ export const getAllPrograms = async (req: Request, res: Response) => {
     const programList = await getPrograms();
     if (!programList) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nNo programs found in the database`
@@ -182,7 +182,7 @@ export const getAllPrograms = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(programList).status(StatusCodes.OK);
+    res.json(programList).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -192,13 +192,13 @@ export const getAllPrograms = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -220,7 +220,7 @@ export const updateProgram = async (req: Request, res: Response) => {
       !body.image
     ) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing at least one of the required parameters in the request body: 'id','trainer_id', 'title', 'description', 'type', 'price', 'is_group', 'max_size', 'image' `
@@ -235,7 +235,7 @@ export const updateProgram = async (req: Request, res: Response) => {
       body.max_size <= 0
     ) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nAt least one invalid parameter in the request body: 'id', 'trainer_id','max_size','price'\n(They should be positive integers or the price should at least be 0)`
@@ -263,7 +263,7 @@ export const updateProgram = async (req: Request, res: Response) => {
 
     if (!userRole) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nUser that was provided does not exist`
@@ -275,7 +275,7 @@ export const updateProgram = async (req: Request, res: Response) => {
     if (userRole[0][0] !== "trainer") {
       res
         .status(StatusCodes.BAD_REQUEST)
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nUser that was provided is not authorised to be a trainer`
@@ -295,7 +295,7 @@ export const updateProgram = async (req: Request, res: Response) => {
       image
     );
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.OK
         )}\nProgram with id ${id} Successfully updated`
@@ -310,13 +310,13 @@ export const updateProgram = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -327,7 +327,7 @@ export const programDeleteById = async (req: Request, res: Response) => {
     const body = req.body as IProgram;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing requiered parameter: 'id' from the request body`
@@ -337,7 +337,7 @@ export const programDeleteById = async (req: Request, res: Response) => {
     }
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid parameter: 'id' should be a positive integer`
@@ -349,7 +349,7 @@ export const programDeleteById = async (req: Request, res: Response) => {
 
     await deleteProgramById(id);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nProgram with id: ${id} Successfully deleted`
@@ -364,13 +364,13 @@ export const programDeleteById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -380,7 +380,7 @@ export const deleteAllPrograms = async (req: Request, res: Response) => {
   try {
     await programsDelete();
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nAll Programs Successfully deleted`
@@ -395,13 +395,13 @@ export const deleteAllPrograms = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }

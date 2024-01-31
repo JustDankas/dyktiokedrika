@@ -21,13 +21,13 @@ export const authenticateController = async (
     } else {
       res
         .status(StatusCodes.UNAUTHORIZED)
-        .send(`${getReasonPhrase(StatusCodes.UNAUTHORIZED)}\nToken expired`);
+        .json(`${getReasonPhrase(StatusCodes.UNAUTHORIZED)}\nToken expired`);
       return;
     }
   } catch (error) {
     res
       .status(StatusCodes.UNAUTHORIZED)
-      .send(`${getReasonPhrase(StatusCodes.UNAUTHORIZED)}\nToken expired`);
+      .json(`${getReasonPhrase(StatusCodes.UNAUTHORIZED)}\nToken expired`);
     return;
   }
 };

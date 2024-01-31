@@ -16,7 +16,7 @@ export const announcementCreate = async (req: Request, res: Response) => {
     const body = req.body as IAnnouncementCreationRequest;
     if (!body.title || !body.text || !body.image) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing at least one of the required parameters in the request body: 'title', 'text', 'image' `
@@ -28,7 +28,7 @@ export const announcementCreate = async (req: Request, res: Response) => {
     const { title, text, image } = body;
     await createAnnouncement(title, text, image);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.CREATED
         )}\nAnnouncement Successfully created`
@@ -43,13 +43,13 @@ export const announcementCreate = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -59,7 +59,7 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
     const body = req.body as IAnnouncement;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'id' `
@@ -69,7 +69,7 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
     }
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
             body.id
           }. Id should be a positive integer`
@@ -82,7 +82,7 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
     const announcement = await getSpecificAnnouncementById(id);
     if (!announcement) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nAnnouncement not found with id: ${id}`
@@ -90,7 +90,7 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(announcement).status(StatusCodes.OK);
+    res.json(announcement).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -100,13 +100,13 @@ export const getAnnouncementById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -117,7 +117,7 @@ export const getAllAnnouncements = async (req: Request, res: Response) => {
     const announcementList = await getAnnouncements();
     if (!announcementList) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nNo announcements found in the database`
@@ -125,7 +125,7 @@ export const getAllAnnouncements = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(announcementList).status(StatusCodes.OK);
+    res.json(announcementList).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -135,13 +135,13 @@ export const getAllAnnouncements = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -150,7 +150,7 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
   try {
     const body = req.body as Omit<IAnnouncement, "created_at">;
     if (!body.id || !body.title || !body.text || !body.image) {
-      res.send(
+      res.json(
         `${getReasonPhrase(
           StatusCodes.BAD_REQUEST
         )}\nMissing at least one required parameter in the request body of the following: 'id', 'title', 'text', 'image'`
@@ -158,7 +158,7 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
       return;
     }
     if (body.id <= 0) {
-      res.send(
+      res.json(
         `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
           body.id
         }. Id should be a positive integer`
@@ -169,7 +169,7 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
 
     await updateAnnouncementById(id, title, text, image);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.OK
         )}\nAnnouncement with id: ${id} Successfully updated`
@@ -184,13 +184,13 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -201,7 +201,7 @@ export const announcementDeleteById = async (req: Request, res: Response) => {
     const body = req.body as IAnnouncement;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter 'id' in the request body`
@@ -211,7 +211,7 @@ export const announcementDeleteById = async (req: Request, res: Response) => {
     }
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
             body.id
           }. Id should be a positive integer`
@@ -222,7 +222,7 @@ export const announcementDeleteById = async (req: Request, res: Response) => {
 
     const { id } = body;
     await deleteAnnouncementById(id);
-    res.send(
+    res.json(
       `${getReasonPhrase(
         StatusCodes.NO_CONTENT
       )}\nAnnouncement with id: ${id} Successfully deleted`
@@ -236,13 +236,13 @@ export const announcementDeleteById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -252,7 +252,7 @@ export const announcementsDelete = async (req: Request, res: Response) => {
   try {
     await deleteAllAnnouncements();
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nAll Announcements Successfully deleted from the database`
@@ -267,13 +267,13 @@ export const announcementsDelete = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -288,7 +288,7 @@ export const announcementsDeleteByDateRange = async (
 
     if (!body.start || !body.end) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing at least one required parameter in the request body from the following: 'start' or 'end' `
@@ -310,7 +310,7 @@ export const announcementsDeleteByDateRange = async (
       currentDate <= parsedStartDate
     ) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid date in start or end parameter\nOr start date is after end date\nOr start date for deletion refers to the future`
@@ -321,7 +321,7 @@ export const announcementsDeleteByDateRange = async (
 
     if (!isValidIsoDate(start) || !isValidIsoDate(end)) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nInvalid date format in the request start or end parameter. Use full ISO date format.`
@@ -333,7 +333,7 @@ export const announcementsDeleteByDateRange = async (
     await deleteAnnouncementsByDateRange(parsedStartDate, parsedEndDate);
 
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nAnnouncements Successfully deleted within the date range ${parsedStartDate} to ${parsedEndDate}`
@@ -348,13 +348,13 @@ export const announcementsDeleteByDateRange = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }

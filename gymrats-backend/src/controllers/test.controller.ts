@@ -9,7 +9,7 @@ export const testFunction = async (req: Request<IUser>, res: Response) => {
     res.json(req.params.id).status(200);
   } catch (error) {
     console.log(error);
-    res.send("Server Error");
+    res.json("Server Error");
   }
 };
 async function getUser(id: string) {

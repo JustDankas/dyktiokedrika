@@ -9,22 +9,22 @@ export const addressCreate = async (req: Request, res: Response) => {
     const body = req.body as IAddressCreationRequest;
     if (!body.user_id || !body.country || !body.city || !body.street) {
       res
-        .send(
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing at least one required parameter in the request body from the following: 'user_id', 'country', 'city', 'street'`
-        )
-        .status(StatusCodes.BAD_REQUEST);
+        );
       return;
     }
     if (body.user_id <= 0) {
       res
-        .send(
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nUser_id must be a positive integer`
-        )
-        .status(StatusCodes.BAD_REQUEST);
+        );
       return;
     }
     const { user_id, country, city, street } = body;
@@ -32,10 +32,10 @@ export const addressCreate = async (req: Request, res: Response) => {
     await createAddress(user_id, country, city, street);
 
     res
-      .send(
+      .status(StatusCodes.CREATED)
+      .json(
         `${getReasonPhrase(StatusCodes.CREATED)}\nAddress Successfully created`
-      )
-      .status(StatusCodes.CREATED);
+      );
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -45,13 +45,13 @@ export const addressCreate = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -61,7 +61,7 @@ export const getAddressById = async (req: Request, res: Response) => {
     const body = req.body as IAddress;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter from request body:'id'`
@@ -71,7 +71,7 @@ export const getAddressById = async (req: Request, res: Response) => {
     }
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nId must be a positive integer`
@@ -83,7 +83,7 @@ export const getAddressById = async (req: Request, res: Response) => {
     const address = await getSpecificAddressById(id);
     if (!address) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nAddress not found with id: ${id} in the database`
@@ -91,7 +91,7 @@ export const getAddressById = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(address).status(StatusCodes.OK);
+    res.json(address).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -101,13 +101,13 @@ export const getAddressById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -117,7 +117,7 @@ export const getAddressesByUserId = async (req: Request, res: Response) => {
     const body = req.body as IAddress;
     if (!body.user_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter in the request body: 'user_id' `
@@ -127,7 +127,7 @@ export const getAddressesByUserId = async (req: Request, res: Response) => {
     }
     if (body.user_id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid user_id ${
             body.user_id
           } in the request body. Id should be a positive integer`
@@ -138,7 +138,7 @@ export const getAddressesByUserId = async (req: Request, res: Response) => {
     const userAddresses = await getAllAddressByUserId(req.body);
     if (!userAddresses) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nUser addresses not found of user with user id: ${
@@ -148,7 +148,7 @@ export const getAddressesByUserId = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(userAddresses).status(StatusCodes.OK);
+    res.json(userAddresses).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -158,13 +158,13 @@ export const getAddressesByUserId = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -174,7 +174,7 @@ export const getAllAddresses = async (req: Request, res: Response) => {
     const addressList = await getAddresses();
     if (!addressList) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.NOT_FOUND
           )}\nNo addresses in the database`
@@ -182,7 +182,7 @@ export const getAllAddresses = async (req: Request, res: Response) => {
         .status(StatusCodes.NOT_FOUND);
       return;
     }
-    res.send(addressList).status(StatusCodes.OK);
+    res.json(addressList).status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
     if (isSqlError(error)) {
@@ -192,13 +192,13 @@ export const getAllAddresses = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -209,7 +209,7 @@ export const updateAddress = async (req: Request, res: Response) => {
     const body = req.body as Omit<IAddress, "user_id">;
     if (!body.id || !body.country || !body.city || !body.street) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing at least one required parameter from the following in the request body: 'id', 'country', 'city', 'street'`
@@ -219,7 +219,7 @@ export const updateAddress = async (req: Request, res: Response) => {
     }
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
             body.id
           } in the request body. Id should be a positive integer`
@@ -230,7 +230,7 @@ export const updateAddress = async (req: Request, res: Response) => {
     const { id, country, city, street } = body;
     await updateAddressById(id, country, city, street);
     res
-      .send(`${getReasonPhrase(StatusCodes.OK)}\nAddress Successfully updated`)
+      .json(`${getReasonPhrase(StatusCodes.OK)}\nAddress Successfully updated`)
       .status(StatusCodes.OK);
     return;
   } catch (error: unknown) {
@@ -241,13 +241,13 @@ export const updateAddress = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -257,7 +257,7 @@ export const addressDeleteById = async (req: Request, res: Response) => {
     const body = req.body as IAddress;
     if (!body.id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing id in the request body`
@@ -267,7 +267,7 @@ export const addressDeleteById = async (req: Request, res: Response) => {
     }
     if (body.id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid id ${
             body.id
           } in the request body. Id should be a positive integer`
@@ -278,7 +278,7 @@ export const addressDeleteById = async (req: Request, res: Response) => {
     const { id } = body;
     await deleteAddressById(id);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nAddress Successfully deleted from the database`
@@ -293,13 +293,13 @@ export const addressDeleteById = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -312,7 +312,7 @@ export const addressesDeleteByUserId = async (
     const body = req.body as IAddress;
     if (!body.user_id) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
           )}\nMissing required parameter user_id in the request body`
@@ -322,7 +322,7 @@ export const addressesDeleteByUserId = async (
     }
     if (body.user_id <= 0) {
       res
-        .send(
+        .json(
           `${getReasonPhrase(StatusCodes.BAD_REQUEST)}\nInvalid user_id ${
             body.user_id
           } in the request body. User_Id should be a positive integer`
@@ -333,7 +333,7 @@ export const addressesDeleteByUserId = async (
     const { user_id } = body;
     await deleteAllAddressesByUserId(user_id);
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nUser Addresses Successfully deleted`
@@ -348,13 +348,13 @@ export const addressesDeleteByUserId = async (
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
@@ -364,7 +364,7 @@ export const addressesDelete = async (req: Request, res: Response) => {
   try {
     await deleteAllAddresses();
     res
-      .send(
+      .json(
         `${getReasonPhrase(
           StatusCodes.NO_CONTENT
         )}\nAll Addresses Successfully deleted`
@@ -379,13 +379,13 @@ export const addressesDelete = async (req: Request, res: Response) => {
       );
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     } else {
       console.error("Generic Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
       return;
     }
   }
