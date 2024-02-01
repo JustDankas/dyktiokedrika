@@ -30,6 +30,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EditProgramComponent } from './pages/admin-programs/edit-program/edit-program.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { EditUserComponent } from './pages/profile/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     ProgramAppointmentComponent,
     EditProgramComponent,
     LoaderComponent,
+    EditUserComponent,
   ],
   imports: [
     CommonModule,

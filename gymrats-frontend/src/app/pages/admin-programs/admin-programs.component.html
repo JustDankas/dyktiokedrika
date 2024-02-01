@@ -177,21 +177,23 @@
           <input
             type="checkbox"
             class="form-check-input"
-            id="group"
+            id="add-group"
             formControlName="is_group"
+            (input)="onGroupChanged($event)"
           />
-          <label class="form-check-label" for="group">Is Group</label>
+          <label class="form-check-label" for="add-group">Is Group</label>
         </div>
         <div class="mb-3">
           <label for="group-size" class="form-label">Max Group Size</label>
           <input
             formControlName="max_size"
             type="number"
-            min="0"
+            min="1"
             max="20"
             [defaultValue]="1"
             class="form-control"
             id="group-size"
+            (input)="onMaxSizeChanged()"
           />
         </div>
         <div class="mb-3">

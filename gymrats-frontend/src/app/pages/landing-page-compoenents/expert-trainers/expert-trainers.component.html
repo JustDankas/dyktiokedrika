@@ -27,7 +27,7 @@
             <span>Certified Trainer</span>
             <h4>{{ trainer.name + " " + trainer.surname }}</h4>
             <p>
-              {{ trainer.about ?? "No trainer bio" }}
+              {{ trainer.about === "" ? "No trainer bio" : trainer.about }}
             </p>
             <ul class="social-icons">
               <li>
