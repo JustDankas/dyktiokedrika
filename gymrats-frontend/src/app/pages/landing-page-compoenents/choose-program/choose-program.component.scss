@@ -5,7 +5,7 @@
   grid-template-columns: 1fr 1fr;
   justify-items: center;
   .feature-item {
-    width: 70%;
+    width: 500px;
     box-sizing: border-box;
   }
   .feature-item:nth-child(1),
@@ -17,16 +17,6 @@
   .feature-item:nth-child(4),
   .feature-item:nth-child(6) {
     justify-self: start;
-  }
-
-  .left-icon {
-    padding: 10px;
-    img {
-      background-color: $primary-400;
-      padding: 15px;
-      width: 120px;
-      border-radius: 10px;
-    }
   }
 }
 .waves-icon {
