@@ -4,6 +4,7 @@ import { ConfigService } from './config.service';
 import { BehaviorSubject } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import { LoaderService } from './loader.service';
 
 export type Role = 'notAssigned' | 'admin' | 'trainer' | 'user';
 export interface IUser {
@@ -41,30 +42,14 @@ type IRegisterForm = Partial<{
   providedIn: 'root',
 })
 export class UserService {
-  // user: IUser | null = {
-  //   id: 1,
-  //   name: 'Mixalhs',
-  //   surname: 'Fillipakhs',
-  //   email: 'sex@example.com',
-  //   username: 'makemecum',
-  //   image:
-  //     'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
-  //   registration_date: new Date().toISOString(),
-  //   role: Role[Role.user],
-  //   country: 'Greece',
-  //   city: 'Athens',
-  //   street: 'Some Street 11',
-  //   description: '',
-  //   // 'Το Lorem Ipsum είναι απλά ένα κείμενο χωρίς νόημα για τους επαγγελματίες της τυπογραφίας και στοιχειοθεσίας. Το Lorem Ipsum είναι το επαγγελματικό πρότυπο όσον αφορά το κείμενο χωρίς νόημα, από τον 15ο αιώνα, όταν ένας ανώνυμος τυπογράφος πήρε ένα δοκίμιο και ανακάτεψε τις λέξεις για να δημιουργήσει ένα δείγμα βιβλίου. Όχι μόνο επιβίωσε πέντε αιώνες, αλλά κυριάρχησε στην ηλεκτρονική στοιχειοθεσία, παραμένοντας με κάθε τρόπο αναλλοίωτο',
-  // };
-
   private _user$ = new BehaviorSubject<IUser | null>(null);
   user$ = this._user$.asObservable();
   constructor(
     private http: HttpClient,
     private configSrv: ConfigService,
     private cookieService: CookieService,
-    private router: Router
+    private router: Router,
+    private loaderService: LoaderService
   ) {
     this.loginFromToken();
   }
@@ -74,11 +59,8 @@ export class UserService {
       .get(this.configSrv.url + 'user/auth', {
         withCredentials: true,
       })
-      .subscribe((data) => {
-        console.log(data);
-        //@ts-ignore
+      .subscribe((data: any) => {
         this._user$.next(data);
-        // this.user = data.user[0];
       });
   }
 
@@ -93,14 +75,15 @@ export class UserService {
       username: nameControl,
       password: passwordControl,
     };
+    this.loaderService.toggleLoading();
     this.http
       .post(this.configSrv.url + 'user/login', body, {
         withCredentials: true,
       })
-      .subscribe((data) => {
-        console.log(data);
-        //@ts-ignore
-        this._user$.next(data);
+      .subscribe((data: any) => {
+        this.loaderService.toggleLoading();
+        // this._user$.next(data);
+        window.location.reload();
       });
   }
 
@@ -128,10 +111,10 @@ export class UserService {
       registration_date: new Date().toISOString(),
     };
     // console.log(body);
+
     this.http
       .post(this.configSrv.url + 'user/register', body)
       .subscribe((data) => {
-        console.log(data);
         window.location.reload();
       });
   }
@@ -139,6 +122,44 @@ export class UserService {
   logout() {
     this._user$.next(null);
     this.cookieService.delete('auth', '/');
-    this.router.navigate(['/']);
+    if (this.router.url === '/') {
+      window.location.reload();
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
+  changePfp(file: File) {
+    let blob: string;
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      blob = reader.result as string;
+      this.loaderService.toggleLoading();
+
+      this.http
+        .patch(this.configSrv.url + 'user/' + 'update_pfp', {
+          image: blob,
+          id: this._user$.getValue()?.id,
+        })
+        .subscribe((data) => {
+          this.loaderService.toggleLoading();
+          window.location.reload();
+        });
+    };
+  }
+
+  updatePfp(data: any) {
+    this.http
+      .patch(
+        this.configSrv.url + 'user/' + 'update_pfp_info',
+        { ...data, userId: this._user$.getValue()?.id },
+        {
+          withCredentials: true,
+        }
+      )
+      .subscribe((data) => {
+        window.location.reload();
+      });
   }
 }

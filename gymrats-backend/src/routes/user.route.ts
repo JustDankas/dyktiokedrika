@@ -10,6 +10,8 @@ import {
   massDeleteUsersByRole,
   deleteAllUsersExceptAdmins,
   userAuth,
+  updateUserPfp,
+  updateUserInfo,
 } from "../controllers/user.controller";
 
 const router = express.Router();
@@ -25,5 +27,7 @@ router.route("/delete_users_by_role").delete(massDeleteUsersByRole);
 router.route("/view/all_users").get(getAllUsers);
 router.route("/view/users_by_requested_role").post(getUsersByRole);
 router.route("/users/massUpdateRoles").put(massUpdateUserRoles);
+router.route("/update_pfp").patch(updateUserPfp);
+router.route("/update_pfp_info").patch(updateUserInfo);
 
 export default router;

@@ -25,6 +25,14 @@ import { CalendarComponent } from './pages/profile/calendar/calendar.component';
 import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.component';
 import { AnnouncementsComponent } from './components/announcements/announcements.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TimeSlotsComponent } from './pages/admin-programs/time-slots/time-slots.component';
+import { FormatTimePipe } from './pipes/format-time.pipe';
+import { ProgramAppointmentComponent } from './pages/program-appointment/program-appointment.component';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { EditProgramComponent } from './pages/admin-programs/edit-program/edit-program.component';
+import { LoaderComponent } from './components/loader/loader.component';
+import { EditUserComponent } from './pages/profile/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -48,8 +56,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     CalendarComponent,
     AdminProgramsComponent,
     AnnouncementsComponent,
+    TimeSlotsComponent,
+    FormatTimePipe,
+    ProgramAppointmentComponent,
+    EditProgramComponent,
+    LoaderComponent,
+    EditUserComponent,
   ],
   imports: [
+    CommonModule,
+    RouterModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,

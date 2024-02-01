@@ -1,0 +1,130 @@
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="editProgramModal"
+  tabindex="-1"
+  aria-labelledby="editProgramModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editProgramModalLabel">
+          Edit Program
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="modal-body"
+          [formGroup]="programForm"
+          (ngSubmit)="onSubmit()"
+        >
+          <div class="mb-3">
+            <label for="title" class="form-label">Program Title</label>
+            <input
+              type="text"
+              formControlName="title"
+              class="form-control"
+              id="title"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label"
+              >Program Description</label
+            >
+            <textarea
+              formControlName="description"
+              type="text"
+              class="form-control"
+              id="description"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Program Type</label>
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              formControlName="type"
+            >
+              <option value="pilates">Pilates</option>
+              <option value="weights">Weights</option>
+              <option value="yoga">Yoga</option>
+              <option value="advanced">Advanced</option>
+              <option value="fitness">Fitness</option>
+            </select>
+          </div>
+          <div class="mb-3 form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="group"
+              formControlName="is_group"
+            />
+            <label class="form-check-label" for="group">Is Group</label>
+          </div>
+          <div class="mb-3">
+            <label for="group-size" class="form-label">Max Group Size</label>
+            <input
+              formControlName="max_size"
+              type="number"
+              min="0"
+              max="20"
+              [defaultValue]="1"
+              class="form-control"
+              id="group-size"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Program Price</label>
+            <input
+              formControlName="price"
+              type="number"
+              step="0.01"
+              min="0"
+              [defaultValue]="0"
+              class="form-control"
+              id="price"
+            />
+          </div>
+          <div class="mb-3">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              formControlName="trainer_id"
+            >
+              <option value="undefined" selected>Select a trainer</option>
+              <option *ngFor="let trainer of trainers" [value]="trainer.id">
+                {{ trainer.name + " " + trainer.surname }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Program Image</label>
+            <input
+              type="file"
+              class="form-control"
+              id="image"
+              (change)="onFileChange($event)"
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

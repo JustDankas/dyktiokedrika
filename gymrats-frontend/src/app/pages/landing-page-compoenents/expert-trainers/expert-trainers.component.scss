@@ -1,3 +1,8 @@
-.section-heading img {
-  width: 20px;
+@use "../../../../styles/variables" as *;
+.image-thumb {
+  object-fit: cover;
+}
+i {
+  font-size: larger;
+  color: $primary-300;
 }

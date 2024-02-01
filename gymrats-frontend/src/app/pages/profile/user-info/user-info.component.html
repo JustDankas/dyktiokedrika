@@ -1,13 +1,30 @@
 <div class="profile-c" *ngIf="user$ | async as user">
-  <img
-    [src]="user.image ? user.image : 'assets/default-profile.png'"
-    [alt]="user.surname"
-  />
+  <form [formGroup]="form">
+    <img
+      [src]="user.image ? user.image : 'assets/default-profile.png'"
+      [alt]="user.surname"
+    />
+    <input
+      formControlName="image"
+      type="file"
+      class="d-none"
+      id="profile-input"
+      accept="image/png, image/jpeg"
+      (change)="onFileChange($event)"
+    />
+    <label for="profile-input" class="profile-image-input"
+      ><i class="bi bi-file-earmark-image"></i
+    ></label>
+  </form>
   <div class="profile-info-c ms-2">
     <div class="profile-name-badge-c">
       <h2 class="name me-auto">{{ user.name }}</h2>
       <span class="badge bg-primary ms-2">{{ user.role }}</span>
-      <button class="btn settings-btn ms-1">
+      <button
+        class="btn settings-btn ms-1"
+        data-bs-toggle="modal"
+        data-bs-target="#editUser"
+      >
         <i class="bi bi-gear-fill"></i>
       </button>
     </div>
