@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { IProgram, ProgramService } from 'src/app/services/program.service';
+import { IUser, UserService } from 'src/app/services/user.service';
 
 interface IClassPrograms extends IProgram {
   dummies: number[];
@@ -28,7 +29,13 @@ export class ClassesScheduleComponent {
   programs$;
   programs: IClassPrograms[] = [];
   filteredPrograms$ = new BehaviorSubject<IClassPrograms[]>([]);
-  constructor(private programService: ProgramService, private router: Router) {
+  user$!: Observable<IUser | null>;
+  constructor(
+    private programService: ProgramService,
+    private userService: UserService,
+    private router: Router
+  ) {
+    this.user$ = userService.user$;
     this.programs$ = programService.programs$.subscribe((programs) => {
       programs.forEach((program) => {
         //@ts-ignore
@@ -45,13 +52,10 @@ export class ClassesScheduleComponent {
     _programs.forEach((program) => {
       let tmp = 0;
       program.slots.forEach((slot) => {
-        console.log(new Date(slot.start));
         if (this.isSlotThisWeek(slot.start, selectedDay)) tmp++;
-        console.log(tmp);
       });
       if (tmp > max) max = tmp;
     });
-    console.log(max);
     _programs.forEach((program) => {
       let tmp = 0;
       program.slots.forEach((slot) => {

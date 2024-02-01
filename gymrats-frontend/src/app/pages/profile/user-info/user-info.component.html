@@ -20,7 +20,11 @@
     <div class="profile-name-badge-c">
       <h2 class="name me-auto">{{ user.name }}</h2>
       <span class="badge bg-primary ms-2">{{ user.role }}</span>
-      <button class="btn settings-btn ms-1">
+      <button
+        class="btn settings-btn ms-1"
+        data-bs-toggle="modal"
+        data-bs-target="#editUser"
+      >
         <i class="bi bi-gear-fill"></i>
       </button>
     </div>

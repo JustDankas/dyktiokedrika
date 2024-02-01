@@ -1,5 +1,12 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+
+export type ToastType = 'success' | 'warning' | 'danger' | 'info';
+
+export interface IToast {
+  message: string;
+  type: ToastType;
+}
 
 @Injectable({
   providedIn: 'root',

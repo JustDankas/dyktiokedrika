@@ -18,6 +18,7 @@ export class AdminProgramsComponent {
   trainers: IUser[] = [];
   readonly days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   programs$;
+  isGroup: boolean = false;
   programForm = new FormGroup({
     title: new FormControl('', Validators.required),
     description: new FormControl('', Validators.required),
@@ -60,6 +61,20 @@ export class AdminProgramsComponent {
   deleteSlot(id: number) {
     if (confirm(`Are you sure you want to delete this slot?`)) {
       this.programService.deleteSlot(id);
+    }
+  }
+  onGroupChanged(ev: Event) {
+    const target = ev.target as HTMLInputElement;
+    if (!target.checked) {
+      this.programForm.get('max_size')?.setValue(1);
+      this.isGroup = false;
+    } else {
+      this.isGroup = true;
+    }
+  }
+  onMaxSizeChanged() {
+    if (!this.isGroup) {
+      this.programForm.get('max_size')?.setValue(1);
     }
   }
 }

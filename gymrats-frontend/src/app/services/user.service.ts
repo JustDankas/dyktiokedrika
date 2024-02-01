@@ -115,7 +115,6 @@ export class UserService {
     this.http
       .post(this.configSrv.url + 'user/register', body)
       .subscribe((data) => {
-        console.log(data);
         window.location.reload();
       });
   }
@@ -123,7 +122,11 @@ export class UserService {
   logout() {
     this._user$.next(null);
     this.cookieService.delete('auth', '/');
-    this.router.navigate(['/']);
+    if (this.router.url === '/') {
+      window.location.reload();
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   changePfp(file: File) {
@@ -144,5 +147,19 @@ export class UserService {
           window.location.reload();
         });
     };
+  }
+
+  updatePfp(data: any) {
+    this.http
+      .patch(
+        this.configSrv.url + 'user/' + 'update_pfp_info',
+        { ...data, userId: this._user$.getValue()?.id },
+        {
+          withCredentials: true,
+        }
+      )
+      .subscribe((data) => {
+        window.location.reload();
+      });
   }
 }

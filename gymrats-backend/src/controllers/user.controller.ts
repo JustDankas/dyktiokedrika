@@ -187,7 +187,20 @@ export const updateUserPfp = async (
     res.json("Internal Server Error").status(500);
   }
 };
-
+export const updateUserInfo = async (req: Request, res: Response) => {
+  try {
+    const newUser = await updateUserInfoQuery(req.body);
+    //@ts-ignore
+    if (newUser.affectedRows > 0) {
+      res.status(200).json("OK");
+    } else {
+      throw new Error("Uknown error");
+    }
+  } catch (error) {
+    console.log(error);
+    res.json("Internal Server Error").status(500);
+  }
+};
 async function getUserByUsernameAndPassword(
   username: string,
   password: string
@@ -274,6 +287,29 @@ async function updateExistingUser(user: IUser) {
       user.role,
     ]
   );
+  return row;
+}
+
+async function updateUserInfoQuery({
+  userId,
+  username,
+  email,
+  password,
+  about,
+}: {
+  userId: string;
+  username: string;
+  email: string;
+  password: string;
+  about: string;
+}) {
+  const [row] = await sqlPool.query("CALL sp_UpdateUserInfo(?,?,?,?,?)", [
+    userId,
+    username,
+    email,
+    password,
+    about,
+  ]);
   return row;
 }
 
