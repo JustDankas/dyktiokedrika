@@ -17,6 +17,7 @@ import { StatusCodes, getReasonPhrase } from "http-status-codes";
 
 export const slotCreate = async (req: Request, res: Response) => {
   try {
+    const currentDate = new Date();
     const body = req.body as ISlotCreationRequest;
 
     if (!body.program_id || !body.start || !body.end) {
@@ -24,32 +25,87 @@ export const slotCreate = async (req: Request, res: Response) => {
         .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
-          )}\nMissing at least one of the required parameters in the request body: program_id, start, end `
+          )}\nMissing at least one of the required parameters in the request body: program_id, start, end, `
         )
         .status(StatusCodes.BAD_REQUEST);
       return;
     }
+    if (isNaN(body.program_id) || body.program_id <= 0) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\n Invalid parameter in the request body: program_id \n(Should be positive integer)`
+        );
+      return;
+    }
+    if (
+      (body.interval && isNaN(body.interval)) ||
+      (body.years && isNaN(body.years) && body.years < 0) ||
+      (body.months && isNaN(body.months) && body.months < 0) ||
+      (body.days && isNaN(body.days) && body.days < 0)
+    ) {
+      res.json(
+        `${getReasonPhrase(
+          StatusCodes.BAD_REQUEST
+        )}\n Invalid parameter in the request body: interval (Should be a positive integer), years, months, days (Should be non negative integers)`
+      );
+      return;
+    }
+    if (body.interval <= 0) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\n Cannot create recurring slots for every ${body.interval} days`
+        );
+      return;
+    }
+    if (body.interval > 0 && !body.years && !body.months && !body.days) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\n Cannot create recurring slots for every ${
+            body.interval
+          } days without knowing for how many years or months or days it will last `
+        );
+      return;
+    }
 
-    const { program_id, start, end } = body;
+    if (body.years > 1 || body.months > 12 || body.days > 366) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json(
+          `${getReasonPhrase(
+            StatusCodes.BAD_REQUEST
+          )}\n Cannot create recurring slots for more than about 4 years in total (the max number of a years is 2 year) (the max number of months is 12 months) (the max number of a days is 366 days)`
+        );
+      return;
+    }
+    const { program_id, start, end, interval, years, months, days } = body;
 
     const parsedStartDate = new Date(start);
     const parsedEndDate = new Date(end);
-    const currentDate = new Date();
-    const twoHoursLater = new Date(
-      currentDate.getTime() + (2 * 60 * 60 * 1000 - 60 * 1000)
+
+    const threeHoursLater = new Date(
+      currentDate.getTime() + 3 * 60 * 60 * 1000
     );
 
     if (
       isNaN(parsedStartDate.getTime()) ||
       isNaN(parsedEndDate.getTime()) ||
-      parsedStartDate >= parsedEndDate ||
-      parsedStartDate <= twoHoursLater
+      parsedStartDate.getTime() >= parsedEndDate.getTime() ||
+      parsedStartDate.getTime() < threeHoursLater.getTime()
     ) {
       res
         .json(
           `${getReasonPhrase(
             StatusCodes.BAD_REQUEST
-          )}\nInvalid date in start or end parameter\nOr start date is before 2 hours from now\nOr start date is after end date`
+          )}\nInvalid date in start or end parameter\nOr start date is before 3 hours from now\nOr start date is after end date`
         )
         .status(StatusCodes.BAD_REQUEST);
       return;
@@ -66,14 +122,22 @@ export const slotCreate = async (req: Request, res: Response) => {
       return;
     }
 
-    await createSlot(program_id, parsedStartDate, parsedEndDate);
+    await createSlotRecursively(
+      program_id,
+      parsedStartDate,
+      parsedEndDate,
+      interval,
+      years,
+      months,
+      days
+    );
 
     res
       .status(StatusCodes.CREATED)
       .json(
         `${getReasonPhrase(
           StatusCodes.CREATED
-        )}\nSlot Successfully created and added to program with start date ${start} and end date ${end}`
+        )}\nSlots Successfully created and added to the database with start date ${parsedStartDate} and end date ${parsedEndDate}`
       );
     return;
   } catch (error: unknown) {
@@ -95,6 +159,7 @@ export const slotCreate = async (req: Request, res: Response) => {
     }
   }
 };
+
 export const getSlotById = async (req: Request, res: Response) => {
   try {
     const body = req.body as ISlot;
@@ -412,17 +477,20 @@ export const deleteAllSlots = async (req: Request, res: Response) => {
   }
 };
 
-async function createSlot(
-  program_id: ISlot["program_id"],
-  start: ISlot["start"],
-  end: ISlot["end"]
+async function createSlotRecursively(
+  program_id: ISlotCreationRequest["program_id"],
+  start: Date,
+  end: Date,
+  interval: ISlotCreationRequest["interval"] = 7,
+  years: ISlotCreationRequest["years"] = 0,
+  months: ISlotCreationRequest["months"] = 0,
+  days: ISlotCreationRequest["days"] = 0
 ) {
   // @ts-ignore
-  await sqlPool.query<ISlot>("CALL sp_CreateSlot(?,?,?)", [
-    program_id,
-    start,
-    end,
-  ]);
+  await sqlPool.query<ISlot[]>(
+    "CALL sp_CreateSlotsRecursivelyEveryXDaysForYYearsZMonthsADays(?,?,?,?,?,?,?)",
+    [program_id, start, end, interval, years, months, days]
+  );
 }
 
 export async function getSpecificSlotById(id: ISlot["id"]) {

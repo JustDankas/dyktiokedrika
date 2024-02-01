@@ -7,9 +7,12 @@ export interface ISlot {
 }
 export interface ISlotCreationRequest {
   program_id: number;
-  seats_available: number;
   start: string;
   end: string;
+  interval: number;
+  years: number;
+  months: number;
+  days: number;
 }
 
 export interface ISlotUpdateRequest {

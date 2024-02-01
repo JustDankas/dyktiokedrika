@@ -96,10 +96,7 @@ export const appointmentCreate = async (req: Request, res: Response) => {
         hasAlreadyCancelledAppointmentTwiceThisWeek.cancelled_on.getTime() +
           7 * 24 * 60 * 60 * 1000
       );
-      console.log(
-        dateWhenUserCanMakeAnAppointmentAgain,
-        "dateWhenUserCanMakeAnAppointmentAgain"
-      );
+
       res
         .json(
           `User ${user.username} has already cancelled two appointments this week!
