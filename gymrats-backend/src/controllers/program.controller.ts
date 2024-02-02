@@ -7,7 +7,9 @@ import {
 } from "../models/program";
 import { IUser } from "../models/user";
 import { ISlot } from "../models/slot";
-import { getSlotsQuery } from "./slot.controller";
+import { getSlotsQuery, getSpecificSlotById } from "./slot.controller";
+import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { IAppointement } from "../models/appointment";
 
 export const programCreate = async (
   req: Request<IProgramCreationRequest>,
@@ -50,24 +52,24 @@ export const programCreate = async (
   }
 };
 
-export const createAppointment = async (req: Request, res: Response) => {
-  try {
-    const { id } = res.locals;
-    const { slot_id } = req.body;
-    const newAppointment = await createAppointmentQuery(
-      Number(id),
-      Number(slot_id)
-    );
-    if (newAppointment) {
-      res.status(200).json("OK");
-    } else {
-      throw new Error("Something went wrong");
-    }
-  } catch (error) {
-    console.log(error);
-    res.json("Internal Server Error").status(500);
-  }
-};
+// export const createAppointment = async (req: Request, res: Response) => {
+//   try {
+//     const { id } = res.locals;
+//     const { slot_id } = req.body;
+//     const newAppointment = await createAppointmentQuery(
+//       Number(id),
+//       Number(slot_id)
+//     );
+//     if (newAppointment) {
+//       res.status(200).json("OK");
+//     } else {
+//       throw new Error("Something went wrong");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     res.json("Internal Server Error").status(500);
+//   }
+// };
 export const getProgramById = async (
   req: Request<IProgram["id"]>,
   res: Response
@@ -84,6 +86,100 @@ export const getProgramById = async (
     //@ts-ignore
     const [program] = await getSpecificProgramById(Number(id));
     res.json(program[0]).status(200);
+    return;
+  } catch (getError) {
+    console.log(getError);
+    res.json("Internal Server Error").status(500);
+    return;
+  }
+};
+export const appointmentCreate = async (req: Request, res: Response) => {
+  try {
+    const now = new Date();
+
+    const body = req.body;
+
+    const { slot_id } = body;
+
+    //@ts-ignore
+    const [[slot]] = await getSpecificSlotById(slot_id);
+    console.log(slot);
+    if (!slot) {
+      res.status(StatusCodes.NOT_FOUND).json(
+        `${getReasonPhrase(StatusCodes.NOT_FOUND)}!
+          Slot with ID ${slot_id} not found`
+      );
+      return;
+    }
+
+    if (now.getTime() >= new Date(slot.start).getTime()) {
+      if (now.getTime() <= new Date(slot.end).getTime()) {
+        res.status(StatusCodes.BAD_REQUEST).json(
+          `${getReasonPhrase(StatusCodes.BAD_REQUEST)}!
+                Cannot make an appointment now since the slot has already started at ${
+                  slot.start
+                }`
+        );
+      }
+      res.status(StatusCodes.BAD_REQUEST).json(
+        `${getReasonPhrase(StatusCodes.BAD_REQUEST)}!
+        Cannot make an appointment now since the slot has already ended at ${
+          slot.end
+        }`
+      );
+      return;
+    }
+
+    if (slot.seats_available <= 0) {
+      res.status(StatusCodes.CONFLICT).json(
+        `${getReasonPhrase(StatusCodes.CONFLICT)}!
+          No seats available for this slot with id ${slot_id}`
+      );
+      return;
+    }
+    const alreadyBookedAppointment =
+      await checkIfUserHasAlreadyBookedForASpecificSlot(res.locals.id, slot_id);
+
+    if (alreadyBookedAppointment) {
+      res.status(StatusCodes.CONFLICT).json(
+        `${getReasonPhrase(StatusCodes.CONFLICT)}!
+          User has already booked for this slot that
+          starts at ${slot.start} and ends at ${slot.end}.
+          Cannot book again the same slot, try maybe another slot`
+      );
+      return;
+    }
+    const oldest_of_the_two = true;
+    const hasAlreadyCancelledAppointmentTwiceThisWeek =
+      await checkifUserHasAlreadyCancelledTwiceThisWeek(
+        res.locals.id,
+        oldest_of_the_two
+      );
+    if (hasAlreadyCancelledAppointmentTwiceThisWeek) {
+      const dateWhenUserCanMakeAnAppointmentAgain = new Date(
+        hasAlreadyCancelledAppointmentTwiceThisWeek.cancelled_on.getTime() +
+          7 * 24 * 60 * 60 * 1000
+      );
+
+      res
+        .json(
+          `User has already cancelled two appointments this week!
+          They can make an appointment again in ${dateWhenUserCanMakeAnAppointmentAgain}!`
+        )
+        .status(StatusCodes.CONFLICT);
+      return;
+    }
+
+    await createAppointmentQuery(res.locals.id, slot_id);
+    res
+      .json(
+        `${getReasonPhrase(
+          StatusCodes.CREATED
+        )}\nAppointment Successfully created for the slot time ${
+          slot.start
+        } to ${slot.end}`
+      )
+      .status(StatusCodes.CREATED);
     return;
   } catch (getError) {
     console.log(getError);
@@ -312,4 +408,28 @@ async function programsDelete() {
 async function cancelAppointmentQuery(id: number) {
   // @ts-ignore
   await sqlPool.query<IProgram[]>("CALL sp_CancelAppointmentByID(?)", [id]);
+}
+async function checkifUserHasAlreadyCancelledTwiceThisWeek(
+  user_id: IAppointement["user_id"],
+  oldest_of_the_two: Boolean = false
+) {
+  //@ts-ignore
+  const [rows] = await sqlPool.query<IAppointment[]>(
+    `CALL sp_CheckIfUserHasAlreadyCancelledTwoAppointmentsInTheSameWeek(?,?)`,
+    [user_id, oldest_of_the_two]
+  );
+  //@ts-ignore
+  return rows[0][0];
+}
+async function checkIfUserHasAlreadyBookedForASpecificSlot(
+  user_id: IAppointement["user_id"],
+  slot_id: IAppointement["slot_id"]
+) {
+  // @ts-ignore
+  const [rows] = await sqlPool.query<IAppointment[]>(
+    `CALL sp_CheckIfUserHasAlreadyOneAppointmentActiveForASlot(?,?)`,
+    [user_id, slot_id]
+  );
+  // @ts-ignore
+  return rows[0][0];
 }

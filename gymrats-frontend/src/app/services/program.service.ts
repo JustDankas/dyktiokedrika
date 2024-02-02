@@ -202,8 +202,8 @@ export class ProgramService {
         { withCredentials: true }
       )
       .subscribe((data) => {
-        // console.log(data);
-        this.router.navigate(['/profile']);
+        console.log(data);
+        // this.router.navigate(['/profile']);
       });
   }
 
@@ -219,7 +219,8 @@ export class ProgramService {
         }
       )
       .subscribe((data) => {
-        window.location.reload();
+        console.log(data);
+        // window.location.reload();
       });
   }
 
