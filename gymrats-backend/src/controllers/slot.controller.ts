@@ -147,7 +147,7 @@ async function createSlot(
   ]);
 }
 
-async function getSpecificSlotById(id: ISlot["id"]) {
+export async function getSpecificSlotById(id: ISlot["id"]) {
   // @ts-ignore
   const [row] = await sqlPool.query<ISlot>("CALL sp_GetSlotByID(?)", [id]);
   return row;
