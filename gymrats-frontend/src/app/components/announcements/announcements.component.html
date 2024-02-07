@@ -23,9 +23,7 @@
         </div>
       </a>
       <h3 class="title">{{ announcement.title }}</h3>
-      <p class="description">
-        {{ announcement.text }}
-      </p>
+      <p class="description" [innerHTML]="announcement.text"></p>
     </ng-template>
   </ngb-carousel>
 </section>

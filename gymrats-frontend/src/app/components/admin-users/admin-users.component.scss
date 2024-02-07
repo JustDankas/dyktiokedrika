@@ -1,0 +1,28 @@
+@use "../../../styles/variables" as *;
+
+section {
+  height: 100vh;
+  background-color: #26303a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+.tabs-buttons-container {
+  display: flex;
+}
+.users,
+.admins,
+.trainers {
+  cursor: pointer;
+}
+
+.users-tab,
+.trainers-tab,
+.admins-tab {
+  height: 70vh;
+}

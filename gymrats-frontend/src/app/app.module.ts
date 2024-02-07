@@ -33,6 +33,7 @@ import { CommonModule } from '@angular/common';
 import { EditProgramComponent } from './pages/admin-programs/edit-program/edit-program.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { EditUserComponent } from './pages/profile/edit-user/edit-user.component';
+import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { EditUserComponent } from './pages/profile/edit-user/edit-user.component
     EditProgramComponent,
     LoaderComponent,
     EditUserComponent,
+    AdminUsersComponent,
   ],
   imports: [
     CommonModule,
