@@ -26,9 +26,15 @@
       </div>
     </div>
     <div class="tabs-container">
-      <div *ngIf="selectedTab == 'users'" class="users-tab">users</div>
-      <div *ngIf="selectedTab == 'trainers'" class="trainers-tab">trainers</div>
-      <div *ngIf="selectedTab == 'admins'" class="admins-tab">admins</div>
+      <div *ngIf="selectedTab == 'users'" class="users-tab">
+        <app-user-cell *ngFor="let user of [1, 2, 3]"></app-user-cell>
+      </div>
+      <div *ngIf="selectedTab == 'trainers'" class="trainers-tab">
+        <app-user-cell *ngFor="let user of [1, 2, 3]"></app-user-cell>
+      </div>
+      <div *ngIf="selectedTab == 'admins'" class="admins-tab">
+        <app-user-cell *ngFor="let user of [1, 2, 3]"></app-user-cell>
+      </div>
     </div>
   </div>
 </section>

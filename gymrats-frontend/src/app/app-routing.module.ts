@@ -6,7 +6,7 @@ import { authGuard } from './auth/auth.guard';
 import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.component';
 import { adminGuard } from './auth/admin.guard';
 import { ProgramAppointmentComponent } from './pages/program-appointment/program-appointment.component';
-import { AdminUsersComponent } from './components/admin-users/admin-users.component';
+import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
