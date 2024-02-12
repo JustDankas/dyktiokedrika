@@ -162,6 +162,9 @@ export const userDeleteById = async (
   try {
     const { id } = req.body;
     const user = await deleteUserById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
     res.json("Deletion Successful").status(200);
   } catch (error) {
     console.log(error);
@@ -274,7 +277,7 @@ async function updateExistingUser(user: IUser) {
   // @ts-ignore
 
   const [row] = await sqlPool.query<IUser>(
-    `CALL sp_UpdateUser(?,?,?,?,?,?,?)
+    `CALL sp_UpdateUser(?,?,?,?,?,?,?,?,?)
      `,
     [
       user.id,
@@ -285,6 +288,7 @@ async function updateExistingUser(user: IUser) {
       user.password,
       user.image,
       user.role,
+      user.about,
     ]
   );
   return row;

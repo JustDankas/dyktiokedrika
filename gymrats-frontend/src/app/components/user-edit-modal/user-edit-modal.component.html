@@ -1,0 +1,89 @@
+<div
+  id="user-edit-modal"
+  class="modal-dialog modal-dialog-centered modal-content"
+  *ngIf="userCopy"
+>
+  <i class="fa-solid fa-xmark close" (click)="closeModal()"></i>
+  <img
+    class="user-image"
+    [src]="userCopy?.image ? userCopy?.image : 'assets/default-profile.png'"
+    alt=""
+  />
+
+  <div class="user-inputs">
+    <div class="input">
+      <label for="name">Name</label>
+      <input
+        [(ngModel)]="userCopy.name"
+        class="name"
+        type="text"
+        [value]="user.name"
+      />
+    </div>
+    <div class="input">
+      <label for="surname">Surname</label>
+      <input
+        [(ngModel)]="userCopy.surname"
+        class="surname"
+        type="text"
+        [value]="user.surname"
+      />
+    </div>
+  </div>
+  <div class="user-inputs">
+    <div class="input">
+      <label for="username">Username</label>
+      <input
+        [(ngModel)]="userCopy.username"
+        class="username"
+        type="text"
+        [value]="user.username"
+      />
+    </div>
+    <div class="input">
+      <label for="email">Email</label>
+      <input
+        [(ngModel)]="userCopy.email"
+        class="email"
+        type="text"
+        [value]="user.email"
+      />
+    </div>
+  </div>
+  <div class="user-inputs">
+    <div class="input">
+      <label for="registration_date">Registration Date</label>
+      <input
+        disabled
+        class="registration_date"
+        type="text"
+        [value]="user.registration_date"
+      />
+    </div>
+    <div class="input">
+      <label for="role">Role</label>
+      <select [(ngModel)]="userCopy.role">
+        <option value="user">User</option>
+        <option value="trainer">Trainer</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+  </div>
+  <div class="user-inputs">
+    <div class="input">
+      <label for="about">About</label>
+      <textarea
+        style="resize: none"
+        class="about"
+        type="text"
+        [(ngModel)]="userCopy.about"
+        [value]="user.about"
+      ></textarea>
+    </div>
+  </div>
+  <div class="input">
+    <button class="save" (click)="saveChanges()">Save</button>
+    <button class="cancel" (click)="closeModal()">Cancel</button>
+  </div>
+  <!-- <div>{{ user.name }}</div> -->
+</div>

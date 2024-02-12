@@ -35,6 +35,7 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { EditUserComponent } from './pages/profile/edit-user/edit-user.component';
 import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
 import { UserCellComponent } from './components/user-cell/user-cell.component';
+import { UserEditModalComponent } from './components/user-edit-modal/user-edit-modal.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { UserCellComponent } from './components/user-cell/user-cell.component';
     EditUserComponent,
     AdminUsersComponent,
     UserCellComponent,
+    UserEditModalComponent,
   ],
   imports: [
     CommonModule,

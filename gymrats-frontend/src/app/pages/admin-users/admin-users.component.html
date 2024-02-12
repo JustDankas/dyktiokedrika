@@ -1,6 +1,6 @@
 <section class="section">
   <div class="container">
-    <div class="tabs-buttons-container">
+    <div [hidden]="isLoading" class="tabs-buttons-container">
       <div
         class="users"
         (click)="selectedTab = 'users'"
@@ -26,14 +26,61 @@
       </div>
     </div>
     <div class="tabs-container">
+      <div [hidden]="!isLoading" class="loading-container">
+        <div class="bench-container">
+          <div class="seat"></div>
+          <div class="left"></div>
+          <div class="right"></div>
+        </div>
+        <div class="man">
+          <div class="legs">
+            <div class="leg one"></div>
+            <div class="leg two"></div>
+            <div class="thy"></div>
+          </div>
+          <div class="main-parts">
+            <div class="lower"></div>
+            <div class="upper">
+              <div class="above"></div>
+            </div>
+          </div>
+          <div class="neck">
+            <div class="head"></div>
+          </div>
+
+          <div class="nose">
+            <div></div>
+            <div></div>
+          </div>
+          <div class="hairs">
+            <div class="lower"></div>
+            <div class="upper">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          <div class="hand"></div>
+          <div class="weight"></div>
+        </div>
+        <div class="bicept-machine"></div>
+
+        <div class="rod1"></div>
+      </div>
       <div *ngIf="selectedTab == 'users'" class="users-tab">
-        <app-user-cell *ngFor="let user of [1, 2, 3]"></app-user-cell>
+        <app-user-cell [user]="user" *ngFor="let user of users"></app-user-cell>
       </div>
       <div *ngIf="selectedTab == 'trainers'" class="trainers-tab">
-        <app-user-cell *ngFor="let user of [1, 2, 3]"></app-user-cell>
+        <app-user-cell
+          [user]="trainer"
+          *ngFor="let trainer of trainers"
+        ></app-user-cell>
       </div>
       <div *ngIf="selectedTab == 'admins'" class="admins-tab">
-        <app-user-cell *ngFor="let user of [1, 2, 3]"></app-user-cell>
+        <app-user-cell
+          [user]="admin"
+          *ngFor="let admin of admins"
+        ></app-user-cell>
       </div>
     </div>
   </div>

@@ -8,11 +8,36 @@
     td {
       border: 1px solid #d9d9d9;
       text-align: center;
+      width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 15px;
     }
-    td img {
+    td:nth-child(1) {
+      border: none !important;
+      width: 70px;
+    }
+    .edit,
+    .delete {
       width: 50px;
-      height: 50px;
-      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+
+      color: rgb(36, 36, 36);
     }
+    .edit:hover,
+    .delete:hover {
+      background-color: rgb(199, 199, 199);
+    }
+
+    td img {
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+    }
+  }
+  .delete {
+    color: rgb(190, 0, 0) !important;
   }
 }
