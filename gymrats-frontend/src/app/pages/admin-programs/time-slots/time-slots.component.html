@@ -1,0 +1,86 @@
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="slotModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="slotModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="slotModalLabel">Manage Time Slots</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="start" class="form-label">Start Time</label>
+            <input
+              type="time"
+              class="form-control"
+              id="start"
+              formControlName="start"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="end" class="form-label">End Time</label>
+            <input
+              type="time"
+              class="form-control"
+              id="end"
+              formControlName="end"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+
+            <input
+              type="date"
+              class="form-control"
+              id="date"
+              formControlName="day"
+            />
+          </div>
+          <!-- <div class="mb-3">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              formControlName="day"
+            >
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+            </select>
+          </div> -->
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="form.invalid"
+            >
+              Create
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

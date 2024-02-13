@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ProgramService } from 'src/app/services/program.service';
 
 @Component({
   selector: 'app-program-item',
@@ -10,9 +11,14 @@ export class ProgramItemComponent {
   @Input() description = '';
   @Input() image = '';
   @Input() cancelled = false;
-  @Output() onCancelled = new EventEmitter<void>();
+  @Input() id!: number;
+  @Input() price: number = 0;
+  @Input() isGroup: boolean = false;
+  @Input() type: string = 'No Type';
+
+  constructor(private programService: ProgramService) {}
 
   onClick() {
-    this.onCancelled.emit();
+    this.programService.cancelAppointment(this.id);
   }
 }

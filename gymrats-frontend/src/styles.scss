@@ -366,7 +366,7 @@ header
 }
 
 .header-area .main-nav .logo {
-  line-height: 80px;
+  // line-height: 80px;
   color: #fff;
   font-size: 32px;
   font-weight: 800;
@@ -422,20 +422,20 @@ header
   color: #fff;
 }
 
-.header-area .main-nav .nav li:last-child a {
-  display: inline-block;
-  font-size: 13px;
-  padding: 11px 17px;
-  background-color: $primary-400;
-  color: #fff;
-  text-align: center;
-  font-weight: 400;
-  letter-spacing: 0px;
-  text-transform: uppercase;
-  transition: all 0.3s;
-  height: auto;
-  line-height: 20px;
-}
+// .header-area .main-nav .nav li:last-child a {
+//   display: inline-block;
+//   font-size: 13px;
+//   padding: 11px 17px;
+//   background-color: $primary-400;
+//   color: #fff;
+//   text-align: center;
+//   font-weight: 400;
+//   letter-spacing: 0px;
+//   text-transform: uppercase;
+//   transition: all 0.3s;
+//   height: auto;
+//   line-height: 20px;
+// }
 
 .header-area .main-nav .nav li:last-child a:hover {
   background-color: $primary-300;
@@ -569,10 +569,6 @@ header
   min-height: 80px;
 }
 
-.header-area.header-sticky .nav {
-  margin-top: 20px !important;
-}
-
 .header-area.header-sticky .nav li a.active {
   color: $primary-400;
 }
@@ -641,9 +637,9 @@ header
     background-color: $primary-400 !important;
     color: #fff !important;
   }
-  .header-area.header-sticky .nav {
-    margin-top: 80px !important;
-  }
+  // .header-area.header-sticky .nav {
+  //   margin-top: 80px !important;
+  // }
   .header-area .main-nav .nav li {
     width: 100%;
     background: #fff;
@@ -823,7 +819,7 @@ subscribe
 
 #call-to-action {
   padding: 120px 0px;
-  background-image: url("./assets/cta-bg.jpg");
+  // background-image: url("./assets/cta-bg.jpg");
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -2334,3 +2330,6 @@ responsive
 .flag.flag-zw {
   background-position: 0 -480px;
 }
+
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";

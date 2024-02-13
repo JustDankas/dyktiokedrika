@@ -4,97 +4,40 @@
       <div class="col-lg-6 offset-lg-3">
         <div class="section-heading">
           <h2>Expert <em>Trainers</em></h2>
-          <img src="assets/line-dec.png" alt="" />
+          <img class="waves" src="assets/wave-2-svgrepo-com.svg" alt="" />
           <p>
-            Nunc urna sem, laoreet ut metus id, aliquet consequat magna. Sed
-            viverra ipsum dolor, ultricies fermentum massa consequat eu.
+            Our trainers are trained professionals, they have been training
+            since their birth to become the absolute alpha male beasts
           </p>
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="col-lg-4">
+      <div class="col-lg-4" *ngFor="let trainer of trainers">
         <div class="trainer-item">
           <div class="image-thumb">
-            <img src="assets/first-trainer.jpg" alt="" />
+            <img
+              [src]="trainer.image"
+              width="336"
+              height="255"
+              [alt]="trainer.name + trainer.surname"
+            />
           </div>
           <div class="down-content">
-            <span>Strength Trainer</span>
-            <h4>Bret D. Bowers</h4>
+            <span>Certified Trainer</span>
+            <h4>{{ trainer.name + " " + trainer.surname }}</h4>
             <p>
-              Bitters cliche tattooed 8-bit distillery mustache. Keytar
-              succulents gluten-free vegan church-key pour-over seitan flannel.
+              {{ trainer.about === "" ? "No trainer bio" : trainer.about }}
             </p>
             <ul class="social-icons">
               <li>
-                <a href="#"><i class="fa fa-facebook"></i></a>
+                <i class="bi bi-facebook"></i>
               </li>
               <li>
-                <a href="#"><i class="fa fa-twitter"></i></a>
+                <i class="bi bi-twitter-x"></i>
               </li>
               <li>
-                <a href="#"><i class="fa fa-linkedin"></i></a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-behance"></i></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="trainer-item">
-          <div class="image-thumb">
-            <img src="assets/second-trainer.jpg" alt="" />
-          </div>
-          <div class="down-content">
-            <span>Muscle Trainer</span>
-            <h4>Hector T. Daigl</h4>
-            <p>
-              Bitters cliche tattooed 8-bit distillery mustache. Keytar
-              succulents gluten-free vegan church-key pour-over seitan flannel.
-            </p>
-            <ul class="social-icons">
-              <li>
-                <a href="#"><i class="fa fa-facebook"></i></a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-twitter"></i></a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-linkedin"></i></a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-behance"></i></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="trainer-item">
-          <div class="image-thumb">
-            <img src="assets/third-trainer.jpg" alt="" />
-          </div>
-          <div class="down-content">
-            <span>Power Trainer</span>
-            <h4>Paul D. Newman</h4>
-            <p>
-              Bitters cliche tattooed 8-bit distillery mustache. Keytar
-              succulents gluten-free vegan church-key pour-over seitan flannel.
-            </p>
-            <ul class="social-icons">
-              <li>
-                <a href="#"><i class="fa fa-facebook"></i></a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-twitter"></i></a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-linkedin"></i></a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-behance"></i></a>
+                <i class="bi bi-behance"></i>
               </li>
             </ul>
           </div>

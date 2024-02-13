@@ -169,13 +169,14 @@ async function getSpecificAddressById(id: IAddress["id"]) {
   ]);
   return row;
 }
-async function getAllAddressByUserId(user_id: IAddress["user_id"]) {
+export async function getAllAddressByUserId(user_id: IAddress["user_id"]) {
   // @ts-ignore
-  const [rows] = await sqlPool.query<IAddress[]>(
+  const [rows] = await sqlPool.query<IAddress>(
     "CALL sp_GetAllAddressesByUserId(?)",
     [user_id]
   );
-  return rows[0];
+  // @ts-ignore
+  return rows[0][0];
 }
 async function getAddresses() {
   // @ts-ignore

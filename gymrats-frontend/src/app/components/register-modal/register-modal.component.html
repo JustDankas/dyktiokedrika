@@ -4,6 +4,7 @@
   tabindex="-1"
   aria-labelledby="registerLabel"
   aria-hidden="true"
+  *ngIf="!(user$ | async)"
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
