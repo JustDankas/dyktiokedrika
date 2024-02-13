@@ -27,3 +27,24 @@ services:
       PMA_HOST: mysql
       PMA_PORT: 3306
       TZ: Europe/Athens
+
+  bookstack:
+    image: lscr.io/linuxserver/bookstack
+    container_name: bookstack_gymmrats
+    environment:
+      PUID: 1000
+      PGID: 1000
+      APP_URL: http://83.212.75.182:6875
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: d1kti0k3ntrik@
+      DB_DATABASE: bookstackDB
+      TZ: Europe/Athens
+    volumes:
+      - ./bookstack_app_data:/config
+    ports:
+      - 6875:80
+    restart: unless-stopped
+    depends_on:
+      - mysql
