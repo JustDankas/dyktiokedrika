@@ -9,13 +9,10 @@ import { IProgram, ProgramService } from 'src/app/services/program.service';
 export class OurClassesComponent {
   activeTab = 0;
   programms: IProgram[] | null = null;
-  isLoading = true;
+
   constructor(private programmService: ProgramService) {
     this.programmService.programs$.subscribe((data) => {
       this.programms = data;
-      if (this.programms) {
-        this.isLoading = false;
-      }
     });
   }
   setActiveTab(tab: number) {

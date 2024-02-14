@@ -29,6 +29,7 @@ router.route("/view_program").get(getProgramById);
 router.route("/get_program_slot_trainer").get(getProgramAndSlotBySlotId);
 router
   .route("/get_all_appointments_with_programs")
+  .all(authenticateController)
   .get(getAllAppointmentsAndPrograms);
 router
   .route("/cancel_appointment")
