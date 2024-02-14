@@ -8,6 +8,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./login-modal.component.scss'],
 })
 export class LoginModalComponent {
+  user$;
   loginForm = new FormGroup({
     nameControl: new FormControl('', Validators.required),
     // emailControl: new FormControl('', [Validators.required, Validators.email]),
@@ -18,14 +19,13 @@ export class LoginModalComponent {
 
   constructor(userSrv: UserService) {
     this.userSrv = userSrv;
+    this.user$ = userSrv.user$;
   }
 
   onSubmit() {
     // console.log(this.loginForm);
 
-    this.userSrv.login(this.loginForm.value).subscribe((data) => {
-      console.log(data);
-    });
+    this.userSrv.login(this.loginForm.value);
   }
 
   get nameControl() {

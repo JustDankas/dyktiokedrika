@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-12">
         <nav class="main-nav">
-          <a href="#" class="logo">Training<em> Studio</em></a>
+          <a href="#" class="logo">Gym<em> Rats</em></a>
           <ul class="nav">
             <li class="scroll-to-section">
               <a href="#top" class="active">Home</a>
@@ -14,7 +14,32 @@
             </li>
             <li class="scroll-to-section"><a href="#schedule">Schedules</a></li>
             <li class="scroll-to-section"><a href="#contact-us">Contact</a></li>
+            <li class="dropdown" *ngIf="user$ | async as user">
+              <button
+                class="btn profile-button"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <img
+                  [src]="user.image ? user.image : 'assets/default-profile.png'"
+                  alt="user profile"
+                />
+              </button>
+              <ul
+                class="dropdown-menu"
+                *ngIf="user.role !== 'admin'; else admin_links"
+              >
+                <li>
+                  <a class="dropdown-item" routerLink="/profile">Profile</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" (click)="logout()">Logout</a>
+                </li>
+              </ul>
+            </li>
             <button
+              *ngIf="!(user$ | async)"
               type="button"
               class="button me-3"
               data-bs-toggle="modal"
@@ -23,6 +48,7 @@
               Login
             </button>
             <button
+              *ngIf="!(user$ | async)"
               type="button"
               class="button"
               data-bs-toggle="modal"
@@ -43,3 +69,20 @@
 
 <app-login-modal></app-login-modal>
 <app-register-modal></app-register-modal>
+
+<ng-template #admin_links>
+  <ul class="dropdown-menu">
+    <li>
+      <a class="dropdown-item" routerLink="/profile">Profile</a>
+    </li>
+    <li>
+      <a class="dropdown-item" routerLink="/admin-programs">Manage Programs</a>
+    </li>
+    <li>
+      <a class="dropdown-item" routerLink="/admin-users">Manage Users</a>
+    </li>
+    <li>
+      <a class="dropdown-item" (click)="logout()">Logout</a>
+    </li>
+  </ul>
+</ng-template>

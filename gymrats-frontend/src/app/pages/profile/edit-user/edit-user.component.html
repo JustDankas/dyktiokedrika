@@ -1,0 +1,117 @@
+<!-- Button trigger modal -->
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#editUser"
+>
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="editUser"
+  tabindex="-1"
+  aria-labelledby="editUserLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editUserLabel">Edit Profile</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="userForm">
+          <div class="mb-3 w-100">
+            <input
+              class="form-control"
+              placeholder="Username"
+              type="text"
+              formControlName="username"
+            />
+            <div
+              class="form-text form-error"
+              *ngIf="
+                usernameControl?.hasError('required') &&
+                usernameControl?.touched
+              "
+            >
+              Username is required
+            </div>
+          </div>
+          <div class="mb-3 w-100">
+            <input
+              class="form-control"
+              placeholder="Email"
+              type="email"
+              formControlName="email"
+            />
+            <div
+              class="form-text form-error"
+              *ngIf="
+                emailControl?.hasError('required') && emailControl?.touched
+              "
+            >
+              Email is required
+            </div>
+            <div
+              class="form-text form-error"
+              *ngIf="emailControl?.hasError('email')"
+            >
+              Provide a valid email
+            </div>
+          </div>
+          <div class="mb-3 w-100">
+            <textarea
+              class="form-control"
+              placeholder="About"
+              type="text"
+              formControlName="about"
+            ></textarea>
+          </div>
+          <div class="mb-3 w-100">
+            <input
+              class="form-control"
+              type="password"
+              placeholder="Confirm your password"
+              formControlName="password"
+            />
+            <div
+              class="form-text form-error"
+              *ngIf="
+                passwordControl?.hasError('required') &&
+                passwordControl?.touched
+              "
+            >
+              Please enter your password
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              class="btn btn-primary"
+              type="submit button"
+              (click)="$event.preventDefault(); onSubmit()"
+              [disabled]="userForm.invalid"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

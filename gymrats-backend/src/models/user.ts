@@ -8,6 +8,7 @@ export interface IUser {
   image: string;
   registration_date: string;
   role: "admin" | "user" | "trainer" | "notAssigned";
+  about: string;
   // specialization?: string;
 }
 

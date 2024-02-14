@@ -1,0 +1,14 @@
+.card-title {
+  text-align: center;
+}
+.badges {
+  display: flex;
+  gap: 8px;
+}
+.center {
+  display: flex;
+  justify-content: center;
+}
+.card-img-top {
+  object-fit: cover;
+}

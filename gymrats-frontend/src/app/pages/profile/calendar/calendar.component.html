@@ -1,0 +1,30 @@
+<div class="wrapper">
+  <header>
+    <button (click)="getLastMonth()" class="btn">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+    <p class="current-date">{{ date }}</p>
+    <button (click)="getNextMonth()" class="btn">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </header>
+  <div class="calendar">
+    <ul class="weekdays">
+      <li class="cal-day">Mon</li>
+      <li class="cal-day">Tue</li>
+      <li class="cal-day">Wed</li>
+      <li class="cal-day">Thu</li>
+      <li class="cal-day">Fri</li>
+      <li class="cal-day">Sat</li>
+      <li class="cal-day">Sun</li>
+    </ul>
+    <ul class="days">
+      <li *ngFor="let day of days" class="day" [ngClass]="{ muted: day.muted }">
+        <span *ngIf="day.event" class="event"></span>
+        <span class="day-text" [ngClass]="{ 'text-event': day.event }">{{
+          day.day
+        }}</span>
+      </li>
+    </ul>
+  </div>
+</div>

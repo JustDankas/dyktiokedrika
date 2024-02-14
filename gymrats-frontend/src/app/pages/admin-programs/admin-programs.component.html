@@ -1,0 +1,248 @@
+<main>
+  <section class="container-md">
+    <h1>Manage Programs</h1>
+    <button
+      class="btn btn-success"
+      type="button"
+      data-bs-toggle="modal"
+      data-bs-target="#exampleModal"
+    >
+      Add
+    </button>
+
+    <div class="row">
+      <ul class="programs-list">
+        <li
+          *ngFor="let program of programs$ | async"
+          class="card"
+          style="width: 21rem"
+        >
+          <img
+            [src]="program.image"
+            class="card-img-top"
+            height="125"
+            alt="..."
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ program.title }}</h5>
+            <p class="card-text">{{ program.description }}</p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              Type:
+              <span class="badge bg-primary">{{ program.type }}</span>
+              Price:
+              <span class="badge bg-secondary">{{ program.price + "$" }}</span>
+            </li>
+            <li *ngIf="!program.is_group" class="list-group-item">Non-Group</li>
+            <li *ngIf="program.is_group" class="list-group-item">
+              Group <i class="bi bi-people-fill"></i>
+            </li>
+            <li class="list-group-item">
+              Trainer:
+              {{ program.trainer_name + " " + program.trainer_surname }}
+            </li>
+            <li class="list-group-item">Time Slots:</li>
+            <li *ngFor="let slot of program.slots" class="list-group-item">
+              {{
+                (slot.start | formatTime) +
+                  " - " +
+                  (slot.end | formatTime) +
+                  " " +
+                  (slot.start | formatTime : "date")
+              }}
+              <button class="btn" (click)="deleteSlot(slot.id)">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </li>
+          </ul>
+          <div class="card-body card-actions">
+            <button
+              class="btn btn-warning"
+              (click)="setEditingProgram(program.id)"
+              data-bs-toggle="modal"
+              data-bs-target="#editProgramModal"
+            >
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button
+              class="btn btn-info"
+              data-bs-toggle="modal"
+              data-bs-target="#slotModal"
+              (click)="setEditingProgram(program.id)"
+            >
+              <i class="bi bi-clock-fill"></i>
+            </button>
+            <button (click)="deleteProgram(program.id)" class="btn btn-danger">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </div>
+        </li>
+      </ul>
+      <!-- <ul class="accordion">
+        <li *ngFor="let program of programs$ | async" class="accordion-item">
+          <div class="accordion-header">
+            <img
+              [src]="program.image"
+              [alt]="program.title"
+              width="100"
+              height="100"
+            />
+            <button
+              class="accordion-button"
+              type="button"
+              data-bs-toggle="collapse"
+              [attr.data-bs-target]="'#' + 'accordion-item-' + program.id"
+              aria-expanded="false"
+              [attr.aria-controls]="'accordion-item-' + program.id"
+            >
+              {{ program.title }}
+            </button>
+          </div>
+          <div
+            [id]="'accordion-item-' + program.id"
+            class="accordion-collapse collapse"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body"></div>
+          </div>
+        </li>
+      </ul> -->
+    </div>
+  </section>
+</main>
+
+<app-time-slots></app-time-slots>
+<app-edit-program></app-edit-program>
+
+<!-- Form Create Modal -->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Create Program</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <form
+        class="modal-body"
+        [formGroup]="programForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <div class="mb-3">
+          <label for="title" class="form-label">Program Title</label>
+          <input
+            type="text"
+            formControlName="title"
+            class="form-control"
+            id="title"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label"
+            >Program Description</label
+          >
+          <textarea
+            formControlName="description"
+            type="text"
+            class="form-control"
+            id="description"
+          ></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Program Type</label>
+          <select
+            class="form-select"
+            aria-label="Default select example"
+            formControlName="type"
+          >
+            <option value="pilates">Pilates</option>
+            <option value="weights">Weights</option>
+            <option value="yoga">Yoga</option>
+            <option value="advanced">Advanced</option>
+            <option value="fitness">Fitness</option>
+          </select>
+        </div>
+        <div class="mb-3 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="add-group"
+            formControlName="is_group"
+            (input)="onGroupChanged($event)"
+          />
+          <label class="form-check-label" for="add-group">Is Group</label>
+        </div>
+        <div class="mb-3">
+          <label for="group-size" class="form-label">Max Group Size</label>
+          <input
+            formControlName="max_size"
+            type="number"
+            min="1"
+            max="20"
+            [defaultValue]="1"
+            class="form-control"
+            id="group-size"
+            (input)="onMaxSizeChanged()"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="price" class="form-label">Program Price</label>
+          <input
+            formControlName="price"
+            type="number"
+            step="0.01"
+            min="0"
+            [defaultValue]="0"
+            class="form-control"
+            id="price"
+          />
+        </div>
+        <div class="mb-3">
+          <select
+            class="form-select"
+            aria-label="Default select example"
+            formControlName="trainer_id"
+          >
+            <option value="undefined" selected>Select a trainer</option>
+            <option *ngFor="let trainer of trainers" [value]="trainer.id">
+              {{ trainer.name + " " + trainer.surname }}
+            </option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="image" class="form-label">Program Image</label>
+          <input
+            type="file"
+            class="form-control"
+            id="image"
+            (change)="onFileChange($event)"
+          />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <!-- <button type="button" (click)="showValidity()">show validity</button> -->
+          <button
+            type="submit"
+            [disabled]="!programForm.valid"
+            class="btn btn-success"
+          >
+            Create
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

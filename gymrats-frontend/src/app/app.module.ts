@@ -21,6 +21,21 @@ import { UserInfoComponent } from './pages/profile/user-info/user-info.component
 import { ProgramItemComponent } from './pages/profile/program-item/program-item.component';
 import { SelectBoxComponent } from './components/select-box/select-box.component';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { CalendarComponent } from './pages/profile/calendar/calendar.component';
+import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.component';
+import { AnnouncementsComponent } from './components/announcements/announcements.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TimeSlotsComponent } from './pages/admin-programs/time-slots/time-slots.component';
+import { FormatTimePipe } from './pipes/format-time.pipe';
+import { ProgramAppointmentComponent } from './pages/program-appointment/program-appointment.component';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { EditProgramComponent } from './pages/admin-programs/edit-program/edit-program.component';
+import { LoaderComponent } from './components/loader/loader.component';
+import { EditUserComponent } from './pages/profile/edit-user/edit-user.component';
+import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
+import { UserCellComponent } from './components/user-cell/user-cell.component';
+import { UserEditModalComponent } from './components/user-edit-modal/user-edit-modal.component';
 
 @NgModule({
   declarations: [
@@ -41,13 +56,28 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
     ProgramItemComponent,
     SelectBoxComponent,
     ClickOutsideDirective,
+    CalendarComponent,
+    AdminProgramsComponent,
+    AnnouncementsComponent,
+    TimeSlotsComponent,
+    FormatTimePipe,
+    ProgramAppointmentComponent,
+    EditProgramComponent,
+    LoaderComponent,
+    EditUserComponent,
+    AdminUsersComponent,
+    UserCellComponent,
+    UserEditModalComponent,
   ],
   imports: [
+    CommonModule,
+    RouterModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
     FormsModule,
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

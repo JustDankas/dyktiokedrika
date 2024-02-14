@@ -7,6 +7,13 @@ export interface IProgram {
   price: number;
   is_group: boolean;
   max_size: number;
+  image: Blob;
+}
+
+export interface IProgramTrainer {
+  id: number;
+  name: string;
+  surname: string;
 }
 
 export interface IProgramCreationRequest extends Omit<IProgram, "id"> {

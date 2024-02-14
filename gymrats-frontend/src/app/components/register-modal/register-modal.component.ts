@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CountriesService, ICountry } from 'src/app/services/countries.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -25,10 +26,14 @@ export class RegisterModalComponent implements OnInit {
   countries: ICountry[] = [];
   cities: string[] = [];
   selectedCountry: string | null = null;
+  user$;
   constructor(
     private countriesSrv: CountriesService,
-    private userSrv: UserService
-  ) {}
+    private userSrv: UserService,
+    private router: Router
+  ) {
+    this.user$ = this.userSrv.user$;
+  }
   ngOnInit(): void {
     this.countriesSrv.getCountries().subscribe((res) => {
       this.countries = res.data;
@@ -75,9 +80,7 @@ export class RegisterModalComponent implements OnInit {
 
   onSubmit() {
     // this.userSrv.register(this.registerForm.value);
-    this.userSrv.register(this.registerForm.value).subscribe((data) => {
-      console.log(data);
-    });
+    this.userSrv.register(this.registerForm.value);
   }
 
   next() {

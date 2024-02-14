@@ -1,0 +1,85 @@
+@use "../../../../styles/variables" as *;
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  //   justify-content: center;
+  //   align-items: center;
+  background-color: white;
+  color: black;
+  border-radius: 10px;
+  box-shadow: 2px 5px 10px 5px #c3c3c327;
+  min-width: 280px;
+  overflow: hidden;
+}
+
+.wrapper > * {
+  padding: 15px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  align-items: center;
+  background-color: $primary-300;
+
+  .current-date {
+    font-weight: bold;
+    font-size: 22px;
+    color: $secondary-600;
+    color: white;
+  }
+  button {
+    font-weight: bold;
+    font-size: 22px;
+    color: white;
+  }
+}
+
+@media screen and (min-width: 792px) {
+  .wrapper {
+    font-size: 14px;
+  }
+  .current-date {
+    font-size: 18px !important;
+  }
+}
+.calendar {
+  .weekdays {
+    color: $primary-400;
+    font-weight: bold;
+    display: flex;
+  }
+  .days {
+    display: flex;
+    flex-wrap: wrap;
+    .muted {
+      color: $neutral-300;
+    }
+    .event {
+      width: 30px;
+      height: 30px;
+      position: absolute;
+      display: block;
+      border-radius: 200%;
+      background-color: $primary-300;
+    }
+    .day-text {
+      position: absolute;
+    }
+  }
+  li {
+    width: calc(100% / 7);
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0;
+    position: relative !important;
+    // background-color: red;
+    .text-event {
+      color: white;
+      font-weight: bold;
+    }
+  }
+}

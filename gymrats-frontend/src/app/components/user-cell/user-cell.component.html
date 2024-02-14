@@ -1,0 +1,34 @@
+<div *ngIf="user" class="user-cell">
+  <table>
+    <tr>
+      <td>
+        <img
+          [src]="user.image ? user.image : 'assets/default-profile.png'"
+          alt=""
+        />
+      </td>
+      <td>
+        <div class="name">{{ user.name }}</div>
+      </td>
+      <td>
+        <div class="surname">{{ user.surname }}</div>
+      </td>
+      <td>
+        <div class="username">{{ user.username }}</div>
+      </td>
+      <td>
+        <div class="email">{{ user.email }}</div>
+      </td>
+      <td>
+        <div class="registration">{{ user.registration_date }}</div>
+      </td>
+
+      <td class="edit" (click)="editUser()">
+        <i class="fa-solid fa-pen-to-square"></i>
+      </td>
+      <td class="delete" (click)="deleteUser()">
+        <i class="fa-solid fa-trash"></i>
+      </td>
+    </tr>
+  </table>
+</div>

@@ -3,6 +3,10 @@ import { sqlPool } from "../mysqlPool";
 import { IUser, ILoginRequest, IAuth } from "../models/user";
 import jwt from "jsonwebtoken";
 import { ICreateUser } from "../interfaces/user.interface";
+import {
+  getAddressByUserId,
+  getAllAddressByUserId,
+} from "./address.controller";
 
 export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
   try {
@@ -11,33 +15,50 @@ export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
     if (!user) {
       throw new Error("Incorrect credentials");
     }
-    console.log(user);
-    const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
-    res.cookie("token", token, {
-      path: "/",
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
-    });
-    res.json(user).status(200);
+    const { id } = user;
+    const address = await getAllAddressByUserId(id);
+    if (address) {
+      const token = jwt.sign({ id }, "secret", { expiresIn: "1d" });
+      res.cookie("auth", token, {
+        path: "/",
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      });
+      res.json({ ...user, ...address }).status(200);
+    } else {
+      throw new Error("No address found");
+    }
   } catch (error) {
     console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
-export const userAuth = async (req: Request<IAuth>, res: Response) => {
+export const userAuth = async (req: Request, res: Response) => {
   try {
-    const { token } = req.body;
-    console.log(token);
-    jwt.verify(token as string, "secret", (err, decoded) => {
-      if (err) {
-        console.error(err);
-      }
-      console.log(decoded);
-    });
+    // const { token } = req.body;
+    // console.log(token);
+    if ("auth" in req.cookies) {
+      const { auth } = req.cookies;
+      jwt.verify(auth as string, "secret", async (err, decoded) => {
+        if (err) {
+          console.error(err);
+        }
+        //@ts-ignore
+        const { id } = decoded;
+        const user = await getUserByIdQuery(id);
+        const address = await getAllAddressByUserId(id);
+        if (user && address) {
+          res.json({ ...user, ...address }).status(200);
+        } else {
+          throw new Error("User not found");
+        }
+      });
+    } else {
+      res.status(404).json("No auth");
+    }
     // console.log(id);
     // const user = await getUserByUsernameAndPassword(username, password);
     // const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
     // res.cookie("token", token, { httpOnly: true });
-    res.json("OK").status(200);
   } catch (error) {
     console.log(error);
     res.json("Internal Server Error").status(500);
@@ -141,6 +162,9 @@ export const userDeleteById = async (
   try {
     const { id } = req.body;
     const user = await deleteUserById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
     res.json("Deletion Successful").status(200);
   } catch (error) {
     console.log(error);
@@ -148,6 +172,38 @@ export const userDeleteById = async (
   }
 };
 
+export const updateUserPfp = async (
+  req: Request<IUser["image"] & IUser["id"]>,
+  res: Response
+) => {
+  try {
+    const { image, id } = req.body;
+    const newUser = await updateUserPfpById(image, id);
+    //@ts-ignore
+    if (newUser.affectedRows > 0) {
+      res.status(200).json("OK");
+    } else {
+      throw new Error("Uknown error");
+    }
+  } catch (error) {
+    console.log(error);
+    res.json("Internal Server Error").status(500);
+  }
+};
+export const updateUserInfo = async (req: Request, res: Response) => {
+  try {
+    const newUser = await updateUserInfoQuery(req.body);
+    //@ts-ignore
+    if (newUser.affectedRows > 0) {
+      res.status(200).json("OK");
+    } else {
+      throw new Error("Uknown error");
+    }
+  } catch (error) {
+    console.log(error);
+    res.json("Internal Server Error").status(500);
+  }
+};
 async function getUserByUsernameAndPassword(
   username: string,
   password: string
@@ -163,15 +219,16 @@ async function getUserByUsernameAndPassword(
   return rows[0][0];
 }
 
-async function getUserById(id: number) {
+export async function getUserByIdQuery(id: number) {
   // @ts-ignore
 
   const [rows] = await sqlPool.query<IUser[]>(
     `CALL sp_GetUserById(?)
-     `,
+    `,
     [id]
   );
-  return rows[0];
+  // @ts-ignore
+  return rows[0][0];
 }
 
 async function getUsersByTheirRole(role: IUser["role"]) {
@@ -220,7 +277,7 @@ async function updateExistingUser(user: IUser) {
   // @ts-ignore
 
   const [row] = await sqlPool.query<IUser>(
-    `CALL sp_UpdateUser(?,?,?,?,?,?,?)
+    `CALL sp_UpdateUser(?,?,?,?,?,?,?,?,?)
      `,
     [
       user.id,
@@ -231,8 +288,32 @@ async function updateExistingUser(user: IUser) {
       user.password,
       user.image,
       user.role,
+      user.about,
     ]
   );
+  return row;
+}
+
+async function updateUserInfoQuery({
+  userId,
+  username,
+  email,
+  password,
+  about,
+}: {
+  userId: string;
+  username: string;
+  email: string;
+  password: string;
+  about: string;
+}) {
+  const [row] = await sqlPool.query("CALL sp_UpdateUserInfo(?,?,?,?,?)", [
+    userId,
+    username,
+    email,
+    password,
+    about,
+  ]);
   return row;
 }
 
@@ -268,4 +349,11 @@ async function massUpdateRoles(updatedRoles: Record<number, IUser["role"]>) {
 
     await sqlPool.query(`CALL sp_UpdateUserRole(?, ?)`, [userId, newRole]);
   }
+}
+async function updateUserPfpById(image: IUser["image"], id: IUser["id"]) {
+  const [rows] = await sqlPool.query(`CALL sp_UpdateUserPfp(?, ?)`, [
+    image,
+    id,
+  ]);
+  return rows;
 }

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { CountriesService, ICountry } from 'src/app/services/countries.service';
+import { LoaderService } from 'src/app/services/loader.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -7,5 +9,12 @@ import { CountriesService, ICountry } from 'src/app/services/countries.service';
   styleUrls: ['./nav-bar.component.scss'],
 })
 export class NavBarComponent {
-  constructor() {}
+  user$;
+  constructor(private userSrv: UserService) {
+    this.user$ = userSrv.user$;
+  }
+
+  logout() {
+    this.userSrv.logout();
+  }
 }

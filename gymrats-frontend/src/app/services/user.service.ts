@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config.service';
+import { BehaviorSubject } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
+import { LoaderService } from './loader.service';
 
-export enum Role {
-  user,
-  trainer,
-  admin,
-}
+export type Role = 'notAssigned' | 'admin' | 'trainer' | 'user';
 export interface IUser {
   id: number;
   name: string;
@@ -15,10 +15,11 @@ export interface IUser {
   username: string;
   image: string;
   registration_date: string;
-  role: string;
+  role: Role;
   country: string;
   city: string;
   street: string;
+  about: string;
 }
 
 type ILoginForm = Partial<{
@@ -41,49 +42,69 @@ type IRegisterForm = Partial<{
   providedIn: 'root',
 })
 export class UserService {
-  user: IUser | null = {
-    id: 1,
-    name: 'Mixalhs',
-    surname: 'Fillipakhs',
-    email: 'sex@example.com',
-    username: 'makemecum',
-    image:
-      'https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg',
-    registration_date: new Date().toISOString(),
-    role: Role[Role.user],
-    country: 'Greece',
-    city: 'Athens',
-    street: 'Some Street 11',
-  };
-  constructor(private http: HttpClient, private configSrv: ConfigService) {
+  private _user$ = new BehaviorSubject<IUser | null>(null);
+  user$ = this._user$.asObservable();
+  constructor(
+    private http: HttpClient,
+    private configSrv: ConfigService,
+    private cookieService: CookieService,
+    private router: Router,
+    private loaderService: LoaderService
+  ) {
     this.loginFromToken();
   }
 
   loginFromToken() {
-    console.log(document.cookie);
-    const token = document.cookie.split(';').find((c) => /auth=.+/.test(c));
-    if (token) {
-      console.log(token.split('=')[1]);
-      this.http
-        .post(
-          this.configSrv.url + 'user/auth',
-          { token: token.split('=')[1] },
-          {
-            headers: {
-              credentials: 'include',
-            },
-          }
-        )
-        .subscribe((data) => console.log(data));
-    }
+    this.http
+      .get(this.configSrv.url + 'user/auth', {
+        withCredentials: true,
+      })
+      .subscribe((data: any) => {
+        this._user$.next(data);
+      });
   }
 
+  getPermission() {
+    return this.http.get(this.configSrv.url + 'user/auth', {
+      withCredentials: true,
+    });
+  }
+  getAllUsers() {
+    return this.http.get(this.configSrv.url + 'user/view/all_users', {
+      withCredentials: true,
+    });
+  }
+
+  updateUser(user: any) {
+    console.log(user);
+    return this.http.put(this.configSrv.url + 'user/update_user', {
+      ...user,
+      withCredentials: true,
+    });
+  }
+  deleteUser(userId: number) {
+    return this.http.delete(this.configSrv.url + 'user/delete_user', {
+      withCredentials: true,
+      body: {
+        id: userId,
+      },
+    });
+  }
   login({ nameControl, passwordControl }: ILoginForm) {
     const body = {
       username: nameControl,
       password: passwordControl,
     };
-    return this.http.post(this.configSrv.url + 'user/login', body);
+    this.loaderService.toggleLoading();
+    this.http
+      .post(this.configSrv.url + 'user/login', body, {
+        withCredentials: true,
+      })
+      .subscribe((data: any) => {
+        this.loaderService.toggleLoading();
+        // this._user$.next(data);
+        window.location.reload();
+      });
   }
 
   register({
@@ -110,6 +131,55 @@ export class UserService {
       registration_date: new Date().toISOString(),
     };
     // console.log(body);
-    return this.http.post(this.configSrv.url + 'user/register', body);
+
+    this.http
+      .post(this.configSrv.url + 'user/register', body)
+      .subscribe((data) => {
+        window.location.reload();
+      });
+  }
+
+  logout() {
+    this._user$.next(null);
+    this.cookieService.delete('auth', '/');
+    if (this.router.url === '/') {
+      window.location.reload();
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
+  changePfp(file: File) {
+    let blob: string;
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      blob = reader.result as string;
+      this.loaderService.toggleLoading();
+
+      this.http
+        .patch(this.configSrv.url + 'user/' + 'update_pfp', {
+          image: blob,
+          id: this._user$.getValue()?.id,
+        })
+        .subscribe((data) => {
+          this.loaderService.toggleLoading();
+          window.location.reload();
+        });
+    };
+  }
+
+  updatePfp(data: any) {
+    this.http
+      .patch(
+        this.configSrv.url + 'user/' + 'update_pfp_info',
+        { ...data, userId: this._user$.getValue()?.id },
+        {
+          withCredentials: true,
+        }
+      )
+      .subscribe((data) => {
+        window.location.reload();
+      });
   }
 }
