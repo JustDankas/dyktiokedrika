@@ -16,7 +16,6 @@ services:
       MYSQL_ROOT_PASSWORD: "d1kti0k3ntrik@"
       TZ: Europe/Athens
 
-
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: "dev_phpmyadmin"
