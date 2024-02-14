@@ -43,6 +43,7 @@ export class UserEditModalComponent {
         showCancelButton: true,
         confirmButtonText: 'Save',
         cancelButtonColor: 'rgb(215 53 53)',
+        icon: 'warning',
       }).then((result) => {
         if (result.isDismissed) {
           this.modal.dismiss();

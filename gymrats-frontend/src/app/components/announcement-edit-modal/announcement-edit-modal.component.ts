@@ -12,8 +12,22 @@ import Swal from 'sweetalert2';
   styleUrls: ['./announcement-edit-modal.component.scss'],
 })
 export class AnnouncementEditModalComponent {
-  @Input() announcement: IAnnouncement | null = null;
-  announcementCopy: IAnnouncement | null = null;
+  @Input() announcement: IAnnouncement | null = {
+    id: -1,
+    title: '',
+    text: '',
+    image: './assets/default-profile.png',
+    created_at: '',
+  };
+  announcementCopy: IAnnouncement | null = {
+    id: -1,
+    title: '',
+    text: '',
+    image: './assets/default-profile.png',
+    created_at: '',
+  };
+
+  buttonDisabled = false;
   constructor(
     private modal: NgbActiveModal,
     private announcementService: AnnouncementService
@@ -58,22 +72,44 @@ export class AnnouncementEditModalComponent {
     }
   }
   saveChanges() {
-    this.announcementService
-      .updateAnnouncement(this.announcementCopy)
-      .subscribe(
-        (res) => {
-          console.log(res);
-          // this.modal.dismiss();
-          Swal.fire('Announcement saved successfully!', '', 'success').then(
-            () => {
-              window.location.reload();
-            }
-          );
-        },
-        (err) => {
-          console.log(err);
-          Swal.fire('Something went wrong!', '', 'error');
-        }
-      );
+    if (this.announcementCopy?.id == -1) {
+      this.buttonDisabled = true;
+      this.announcementService
+        .createAnnouncement(this.announcementCopy)
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            // this.modal.dismiss();
+            Swal.fire('Announcement saved successfully!', '', 'success').then(
+              () => {
+                window.location.reload();
+              }
+            );
+          },
+          (err: any) => {
+            console.log(err);
+            this.buttonDisabled = true;
+            Swal.fire('Something went wrong!', '', 'error');
+          }
+        );
+    } else {
+      this.announcementService
+        .updateAnnouncement(this.announcementCopy)
+        .subscribe(
+          (res) => {
+            console.log(res);
+            // this.modal.dismiss();
+            Swal.fire('Announcement saved successfully!', '', 'success').then(
+              () => {
+                window.location.reload();
+              }
+            );
+          },
+          (err) => {
+            console.log(err);
+            Swal.fire('Something went wrong!', '', 'error');
+          }
+        );
+    }
   }
 }

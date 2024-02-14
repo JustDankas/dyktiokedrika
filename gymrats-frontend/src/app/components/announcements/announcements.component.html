@@ -3,11 +3,15 @@
     <h2 class="header">ANNOUNCEMENTS <span>OFFERS</span></h2>
     <img src="assets/images/line-dec.png" alt="" />
   </div>
+  <div class="loading-container" *ngIf="isLoading">
+    <app-loading-animation></app-loading-animation>
+  </div>
   <ngb-carousel
     #carousel
     [interval]="5000"
     class="carousel"
     [showNavigationIndicators]="false"
+    *ngIf="!isLoading"
   >
     <ng-template
       ngbSlide

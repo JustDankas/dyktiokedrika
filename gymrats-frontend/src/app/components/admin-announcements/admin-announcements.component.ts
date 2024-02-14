@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   AnnouncementService,
   IAnnouncement,
 } from 'src/app/services/announcement.service';
+import { AnnouncementEditModalComponent } from '../announcement-edit-modal/announcement-edit-modal.component';
 
 @Component({
   selector: 'app-admin-announcements',
@@ -11,9 +13,24 @@ import {
 })
 export class AdminAnnouncementsComponent {
   announcements: IAnnouncement[] | null = [];
-  constructor(annoucementService: AnnouncementService) {
+  isLoading = true;
+  constructor(
+    annoucementService: AnnouncementService,
+    private modal: NgbModal
+  ) {
     annoucementService.announcements$.subscribe((next) => {
       this.announcements = next;
+      if (this.announcements) {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  createAnnouncement() {
+    this.modal.open(AnnouncementEditModalComponent, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
     });
   }
 }

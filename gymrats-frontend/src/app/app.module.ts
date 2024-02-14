@@ -39,6 +39,7 @@ import { UserEditModalComponent } from './components/user-edit-modal/user-edit-m
 import { AdminAnnouncementsComponent } from './components/admin-announcements/admin-announcements.component';
 import { AnnouncementCellComponent } from './components/announcement-cell/announcement-cell.component';
 import { AnnouncementEditModalComponent } from './components/announcement-edit-modal/announcement-edit-modal.component';
+import { LoadingAnimationComponent } from './components/loading-animation/loading-animation.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { AnnouncementEditModalComponent } from './components/announcement-edit-m
     AdminAnnouncementsComponent,
     AnnouncementCellComponent,
     AnnouncementEditModalComponent,
+    LoadingAnimationComponent,
   ],
   imports: [
     CommonModule,

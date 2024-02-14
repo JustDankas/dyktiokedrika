@@ -4,76 +4,54 @@
       <div
         class="users"
         (click)="selectedTab = 'users'"
-        [ngStyle]="selectedTab == 'users' ? { color: '#8a1254' } : {}"
+        [ngStyle]="
+          selectedTab == 'users'
+            ? { backgroundColor: '#8a1254', color: 'white' }
+            : {}
+        "
       >
         <strong>Users</strong>
       </div>
-      /
+
       <div
         class="trainers"
         (click)="selectedTab = 'trainers'"
-        [ngStyle]="selectedTab == 'trainers' ? { color: '#8a1254' } : {}"
+        [ngStyle]="
+          selectedTab == 'trainers'
+            ? { backgroundColor: '#8a1254', color: 'white' }
+            : {}
+        "
       >
         <strong>Trainers</strong>
       </div>
-      /
+
       <div
         class="admins"
         (click)="selectedTab = 'admins'"
-        [ngStyle]="selectedTab == 'admins' ? { color: '#8a1254' } : {}"
+        [ngStyle]="
+          selectedTab == 'admins'
+            ? { backgroundColor: '#8a1254', color: 'white' }
+            : {}
+        "
       >
         <strong>Admins</strong>
       </div>
-      /
+
       <div
         class="not-assigned"
         (click)="selectedTab = 'notAssigned'"
-        [ngStyle]="selectedTab == 'notAssigned' ? { color: '#8a1254' } : {}"
+        [ngStyle]="
+          selectedTab == 'notAssigned'
+            ? { backgroundColor: '#8a1254', color: 'white' }
+            : {}
+        "
       >
         <strong>Requests</strong>
       </div>
     </div>
     <div class="tabs-container">
-      <div [hidden]="!isLoading" class="loading-container">
-        <div class="bench-container">
-          <div class="seat"></div>
-          <div class="left"></div>
-          <div class="right"></div>
-        </div>
-        <div class="man">
-          <div class="legs">
-            <div class="leg one"></div>
-            <div class="leg two"></div>
-            <div class="thy"></div>
-          </div>
-          <div class="main-parts">
-            <div class="lower"></div>
-            <div class="upper">
-              <div class="above"></div>
-            </div>
-          </div>
-          <div class="neck">
-            <div class="head"></div>
-          </div>
-
-          <div class="nose">
-            <div></div>
-            <div></div>
-          </div>
-          <div class="hairs">
-            <div class="lower"></div>
-            <div class="upper">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-          <div class="hand"></div>
-          <div class="weight"></div>
-        </div>
-        <div class="bicept-machine"></div>
-
-        <div class="rod1"></div>
+      <div class="loading-container" *ngIf="isLoading">
+        <app-loading-animation></app-loading-animation>
       </div>
       <div *ngIf="selectedTab == 'users'" class="users-tab">
         <app-user-cell [user]="user" *ngFor="let user of users"></app-user-cell>

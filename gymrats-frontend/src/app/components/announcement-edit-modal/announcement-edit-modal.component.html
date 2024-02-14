@@ -3,6 +3,7 @@
   <div class="image-container">
     <img class="announcement-image" [src]="announcementCopy.image" alt="" />
     <input
+      formControlName="announcement"
       type="file"
       class="image-overlay"
       id="announcement-input"
@@ -47,7 +48,9 @@
     </div>
   </div>
   <div class="inputs">
-    <button class="save" (click)="saveChanges()">Save</button>
+    <button class="save" (click)="saveChanges()" [disabled]="buttonDisabled">
+      {{ announcementCopy.id == -1 ? "Create" : "Save" }}
+    </button>
     <button class="cancel" (click)="closeModal()">Cancel</button>
   </div>
 </div>

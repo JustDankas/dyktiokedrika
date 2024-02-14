@@ -16,9 +16,13 @@ export class AnnouncementsComponent {
     'assets/gym-background.jpg',
   ];
   announcements: IAnnouncement[] | null = [];
+  isLoading = true;
   constructor(annoucementService: AnnouncementService) {
     annoucementService.announcements$.subscribe((next) => {
       this.announcements = next;
+      if (this.announcements) {
+        this.isLoading = false;
+      }
     });
   }
 }
