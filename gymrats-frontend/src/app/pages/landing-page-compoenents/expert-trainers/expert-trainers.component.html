@@ -17,7 +17,8 @@
         <div class="trainer-item">
           <div class="image-thumb">
             <img
-              [src]="trainer.image"
+              class="image-thumb"
+              [src]="trainer.image || 'assets/default-profile.png'"
               width="336"
               height="255"
               [alt]="trainer.name + trainer.surname"
