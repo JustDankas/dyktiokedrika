@@ -3,10 +3,7 @@ import { sqlPool } from "../mysqlPool";
 import { IUser, ILoginRequest, IAuth } from "../models/user";
 import jwt from "jsonwebtoken";
 import { ICreateUser } from "../interfaces/user.interface";
-import {
-  getAddressByUserId,
-  getAllAddressByUserId,
-} from "./address.controller";
+import { getAllAddressByUserId } from "./address.controller";
 
 export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
   try {
@@ -107,48 +104,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const usersList = await getUsers();
     res.json(usersList).status(200);
-  } catch (error) {
-    console.log(error);
-    res.json("Internal Server Error").status(500);
-  }
-};
-
-export const massUpdateUserRoles = async (req: Request, res: Response) => {
-  try {
-    const updatedRoles: Record<number, IUser["role"]> = req.body;
-
-    await massUpdateRoles(updatedRoles);
-
-    res.json("User roles updated successfully").status(200);
-  } catch (error) {
-    console.log(error);
-    res.json("Internal Server Error").status(500);
-  }
-};
-export const massDeleteUsersByRole = async (req: Request, res: Response) => {
-  try {
-    const role: IUser["role"] = req.body;
-
-    await massDeleteByRole(role);
-
-    res
-      .json(`Users that had the ${role} have been deleted successfully`)
-      .status(200);
-  } catch (error) {
-    console.log(error);
-    res.json("Internal Server Error").status(500);
-  }
-};
-export const deleteAllUsersExceptAdmins = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    await deleteUsersExceptAdmins("admin");
-
-    res
-      .json(`All users except admins have been deleted successfully`)
-      .status(200);
   } catch (error) {
     console.log(error);
     res.json("Internal Server Error").status(500);
@@ -326,30 +281,7 @@ async function deleteUserById(id: IUser["id"]) {
   );
   return row;
 }
-async function massDeleteByRole(role: IUser["role"]) {
-  // @ts-ignore
-  await sqlPool.query<IUser>(
-    `CALL sp_DeleteAllUsersByRole(?)
-     `,
-    [role]
-  );
-}
-async function deleteUsersExceptAdmins(role: "admin") {
-  // @ts-ignore
-  await sqlPool.query<IUser>(
-    `CALL sp_DeleteAllUsersExceptAdmins(?)
-     `,
-    [role]
-  );
-}
 
-async function massUpdateRoles(updatedRoles: Record<number, IUser["role"]>) {
-  for (const userId in updatedRoles) {
-    const newRole = updatedRoles[userId];
-
-    await sqlPool.query(`CALL sp_UpdateUserRole(?, ?)`, [userId, newRole]);
-  }
-}
 async function updateUserPfpById(image: IUser["image"], id: IUser["id"]) {
   const [rows] = await sqlPool.query(`CALL sp_UpdateUserPfp(?, ?)`, [
     image,

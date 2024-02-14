@@ -3,10 +3,9 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 import multer from "multer";
-import testRoute from "./routes/test.route";
 import userRoute from "./routes/user.route";
 import announcementRoute from "./routes/announcement.route";
-import addressRoute from "./routes/address.route";
+
 import programRoute from "./routes/program.route";
 import { authenticateController } from "./controllers/authenticate.controller";
 import bodyParser from "body-parser";
@@ -41,10 +40,8 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Express & TypeScript Server!!!!");
 });
 
-app.use("/test", testRoute);
 app.use("/user", userRoute);
 app.use("/announcement", announcementRoute);
-app.use("/address", authenticateController, addressRoute);
 app.use("/program", programRoute);
 // app.use("/program", programRoute);
 
