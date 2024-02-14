@@ -227,6 +227,18 @@ p {
 global styles
 --------------------------------------------- 
 */
+.loading-container {
+  position: absolute;
+  margin: 20px auto;
+  border-radius: 20px;
+  // background: #435175;
+  width: 350px;
+  height: 250px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -75%);
+}
+
 html,
 body {
   background: #fff;

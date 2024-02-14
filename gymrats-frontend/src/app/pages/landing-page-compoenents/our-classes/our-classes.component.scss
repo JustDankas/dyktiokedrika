@@ -1,8 +1,21 @@
 .section-heading img {
   width: 20px;
+  height: 70vh;
+}
+
+.container {
+  position: relative;
 }
 #tabs li {
   img {
     width: 35px;
+  }
+}
+.programms-list {
+  overflow: auto;
+  padding: 10px !important;
+  max-height: 500px;
+  img {
+    max-height: 300px;
   }
 }
