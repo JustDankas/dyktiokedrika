@@ -40,6 +40,23 @@ export class AnnouncementEditModalComponent {
       });
     }
   }
+  changeImage(event: any): void {
+    const file = event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (e: any) => {
+        const base64String = e.target.result;
+        if (this.announcementCopy?.image)
+          this.announcementCopy.image = base64String;
+
+        // Now you can use the base64String as needed, e.g., send it to the server, display it in an image tag, etc.
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
   saveChanges() {
     this.announcementService
       .updateAnnouncement(this.announcementCopy)

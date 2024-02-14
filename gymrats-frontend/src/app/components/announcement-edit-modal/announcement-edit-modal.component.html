@@ -3,11 +3,11 @@
   <div class="image-container">
     <img class="announcement-image" [src]="announcementCopy.image" alt="" />
     <input
-      formControlName="image"
       type="file"
       class="image-overlay"
       id="announcement-input"
       accept="image/png, image/jpeg"
+      (change)="changeImage($event)"
     />
     <label for="announcement-input" class="image-overlay"
       >Click to change image
