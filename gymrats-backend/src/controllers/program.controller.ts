@@ -6,7 +6,6 @@ import {
   IProgramTrainer,
 } from "../models/program";
 import { IUser } from "../models/user";
-import { ISlot } from "../models/slot";
 import { getSlotsQuery, getSpecificSlotById } from "./slot.controller";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import { IAppointement } from "../models/appointment";

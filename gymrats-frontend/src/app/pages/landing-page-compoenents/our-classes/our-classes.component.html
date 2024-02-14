@@ -17,11 +17,11 @@
       <div class="col-lg-4">
         <ul class="programms-list">
           <li *ngFor="let programm of programms">
-            <a href="#" (click)="setActiveTab(programm.id)"
-              ><img src="assets/gym-fitness-svgrepo-com (1).svg" alt="" />{{
+            <div (click)="setActiveTab(programm.id)">
+              <img src="assets/gym-fitness-svgrepo-com (1).svg" alt="" />{{
                 programm.title
-              }}</a
-            >
+              }}
+            </div>
           </li>
         </ul>
       </div>

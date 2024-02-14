@@ -92,14 +92,6 @@ async function createAnnouncement({
   ]);
 }
 
-async function getSpecificAnnouncementById(id: IAnnouncement["id"]) {
-  // @ts-ignore
-  const [row] = await sqlPool.query<IAnnouncement>(
-    "CALL sp_GetAnnouncementById(?)",
-    [id]
-  );
-  return row;
-}
 async function getAnnouncements() {
   // @ts-ignore
   const [rows] = await sqlPool.query<IAnnouncement[]>(
