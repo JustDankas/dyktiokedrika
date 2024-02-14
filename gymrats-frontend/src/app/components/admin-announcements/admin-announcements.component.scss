@@ -1,0 +1,52 @@
+@use "../../../styles/variables" as *;
+
+.admin-announcements {
+  height: 100vh;
+  background-color: #26303a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.container {
+  background-color: white;
+  height: 70vh;
+  width: 70%;
+  border-radius: 10px;
+  padding: 0 10px;
+  overflow: auto;
+}
+
+.announcements {
+  margin-bottom: 20px;
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 10px;
+}
+
+.create-announcement {
+  padding: 5px 10px;
+  border: 1px solid $primary-400;
+  border-radius: 5px;
+  background-color: $primary-400;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.create-announcement:hover {
+  background-color: white;
+  color: $primary-400;
+}
+.loading-container {
+  position: absolute;
+  margin: 20px auto;
+  border-radius: 20px;
+  // background: #435175;
+  width: 350px;
+  height: 250px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -75%);
+}

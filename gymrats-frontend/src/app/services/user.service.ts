@@ -69,7 +69,27 @@ export class UserService {
       withCredentials: true,
     });
   }
+  getAllUsers() {
+    return this.http.get(this.configSrv.url + 'user/view/all_users', {
+      withCredentials: true,
+    });
+  }
 
+  updateUser(user: any) {
+    console.log(user);
+    return this.http.put(this.configSrv.url + 'user/update_user', {
+      ...user,
+      withCredentials: true,
+    });
+  }
+  deleteUser(userId: number) {
+    return this.http.delete(this.configSrv.url + 'user/delete_user', {
+      withCredentials: true,
+      body: {
+        id: userId,
+      },
+    });
+  }
   login({ nameControl, passwordControl }: ILoginForm) {
     const body = {
       username: nameControl,

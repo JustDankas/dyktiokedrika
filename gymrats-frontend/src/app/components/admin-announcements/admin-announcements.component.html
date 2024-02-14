@@ -1,0 +1,17 @@
+<section class="admin-announcements">
+  <div class="container">
+    <div class="announcements">
+      <!-- <strong>Announcements</strong> -->
+      <button class="create-announcement" (click)="createAnnouncement()">
+        Create Announcement
+      </button>
+    </div>
+    <div class="loading-container" *ngIf="isLoading">
+      <app-loading-animation></app-loading-animation>
+    </div>
+    <app-announcement-cell
+      *ngFor="let announcement of announcements"
+      [announcement]="announcement"
+    ></app-announcement-cell>
+  </div>
+</section>

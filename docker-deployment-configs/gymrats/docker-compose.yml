@@ -5,8 +5,12 @@ services:
     container_name: gymrats_backend
     ports:
       - "4242:4200"
+    environment:
+      TZ: Europe/Athens
   frontend:
     image: orestiskarap/dyktiokedrika_backend
     container_name: gymrats_frontend
     ports:
       - "8420:8000"
+    environment:
+      TZ: Europe/Athens

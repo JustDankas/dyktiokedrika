@@ -1,0 +1,79 @@
+<section class="section">
+  <div class="container">
+    <div [hidden]="isLoading" class="tabs-buttons-container">
+      <div
+        class="users"
+        (click)="selectedTab = 'users'"
+        [ngStyle]="
+          selectedTab == 'users'
+            ? { backgroundColor: '#8a1254', color: 'white' }
+            : {}
+        "
+      >
+        <strong>Users</strong>
+      </div>
+
+      <div
+        class="trainers"
+        (click)="selectedTab = 'trainers'"
+        [ngStyle]="
+          selectedTab == 'trainers'
+            ? { backgroundColor: '#8a1254', color: 'white' }
+            : {}
+        "
+      >
+        <strong>Trainers</strong>
+      </div>
+
+      <div
+        class="admins"
+        (click)="selectedTab = 'admins'"
+        [ngStyle]="
+          selectedTab == 'admins'
+            ? { backgroundColor: '#8a1254', color: 'white' }
+            : {}
+        "
+      >
+        <strong>Admins</strong>
+      </div>
+
+      <div
+        class="not-assigned"
+        (click)="selectedTab = 'notAssigned'"
+        [ngStyle]="
+          selectedTab == 'notAssigned'
+            ? { backgroundColor: '#8a1254', color: 'white' }
+            : {}
+        "
+      >
+        <strong>Requests</strong>
+      </div>
+    </div>
+    <div class="tabs-container">
+      <div class="loading-container" *ngIf="isLoading">
+        <app-loading-animation></app-loading-animation>
+      </div>
+      <div *ngIf="selectedTab == 'users'" class="users-tab">
+        <app-user-cell [user]="user" *ngFor="let user of users"></app-user-cell>
+      </div>
+      <div *ngIf="selectedTab == 'trainers'" class="trainers-tab">
+        <app-user-cell
+          [user]="trainer"
+          *ngFor="let trainer of trainers"
+        ></app-user-cell>
+      </div>
+      <div *ngIf="selectedTab == 'admins'" class="admins-tab">
+        <app-user-cell
+          [user]="admin"
+          *ngFor="let admin of admins"
+        ></app-user-cell>
+      </div>
+      <div *ngIf="selectedTab == 'notAssigned'" class="not-assigned-tab">
+        <app-user-cell
+          [user]="user"
+          *ngFor="let user of notAssignedUsers"
+        ></app-user-cell>
+      </div>
+    </div>
+  </div>
+</section>

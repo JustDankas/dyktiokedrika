@@ -18,7 +18,7 @@ export const announcementCreate = async (
   }
   try {
     await createAnnouncement(req.body);
-    res.send("Announcement Successfully created").status(200);
+    res.json("Announcement Successfully created").status(200);
     return;
   } catch (createError) {
     console.log(createError);
@@ -39,7 +39,7 @@ export const getAnnouncementById = async (
   }
   try {
     const announcement = await getSpecificAnnouncementById(req.body);
-    res.send(announcement).status(200);
+    res.json(announcement).status(200);
     return;
   } catch (createError) {
     console.log(createError);
@@ -50,7 +50,7 @@ export const getAnnouncementById = async (
 export const getAllAnnouncements = async (req: Request, res: Response) => {
   try {
     const announcementList = await getAnnouncements();
-    res.send(announcementList).status(200);
+    res.json(announcementList).status(200);
     return;
   } catch (getError) {
     console.log(getError);
@@ -71,7 +71,7 @@ export const updateAnnouncement = async (
   }
   try {
     await updateAnnouncementById(req.body);
-    res.send("Announcement Successfully updated").status(200);
+    res.json("Announcement Successfully updated").status(200);
     return;
   } catch (updateError) {
     console.log(updateError);
@@ -90,8 +90,9 @@ export const announcementDeleteById = async (
     return;
   }
   try {
-    await deleteAnnouncementById(req.body);
-    res.send("Announcement Successfully deleted").status(200);
+    const { id } = req.body;
+    await deleteAnnouncementById(id);
+    res.json("Announcement Successfully deleted").status(200);
     return;
   } catch (deleteError) {
     console.log(deleteError);
@@ -102,7 +103,7 @@ export const announcementDeleteById = async (
 export const announcementsDelete = async (req: Request, res: Response) => {
   try {
     await deleteAllAnnouncements();
-    res.send("All Announcements Successfully deleted").status(200);
+    res.json("All Announcements Successfully deleted").status(200);
     return;
   } catch (deleteError) {
     console.log(deleteError);
@@ -189,7 +190,7 @@ async function updateAnnouncementById({
   ]);
 }
 
-async function deleteAnnouncementById(id: IAnnouncement["id"]) {
+async function deleteAnnouncementById(id: number) {
   // @ts-ignore
   await sqlPool.query<IAnnouncement>("CALL sp_DeleteAnnouncementById(?)", [id]);
 }

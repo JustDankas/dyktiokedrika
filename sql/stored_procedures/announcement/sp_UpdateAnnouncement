@@ -5,7 +5,7 @@ CREATE PROCEDURE sp_UpdateAnnouncement(
     IN newTitle VARCHAR(255),
     IN newText TEXT,
     IN newCreatedAt TIMESTAMP,
-    IN newImage BLOB
+    IN newImage LONGTEXT
 )
 BEGIN
     UPDATE announcement

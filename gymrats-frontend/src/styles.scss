@@ -819,7 +819,7 @@ subscribe
 
 #call-to-action {
   padding: 120px 0px;
-  background-image: url("./assets/cta-bg.jpg");
+  // background-image: url("./assets/cta-bg.jpg");
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -2330,3 +2330,6 @@ responsive
 .flag.flag-zw {
   background-position: 0 -480px;
 }
+
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";

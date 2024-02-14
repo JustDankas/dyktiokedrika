@@ -23,6 +23,8 @@ import { SelectBoxComponent } from './components/select-box/select-box.component
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { CalendarComponent } from './pages/profile/calendar/calendar.component';
 import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.component';
+import { AnnouncementsComponent } from './components/announcements/announcements.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TimeSlotsComponent } from './pages/admin-programs/time-slots/time-slots.component';
 import { FormatTimePipe } from './pipes/format-time.pipe';
 import { ProgramAppointmentComponent } from './pages/program-appointment/program-appointment.component';
@@ -31,6 +33,13 @@ import { CommonModule } from '@angular/common';
 import { EditProgramComponent } from './pages/admin-programs/edit-program/edit-program.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { EditUserComponent } from './pages/profile/edit-user/edit-user.component';
+import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
+import { UserCellComponent } from './components/user-cell/user-cell.component';
+import { UserEditModalComponent } from './components/user-edit-modal/user-edit-modal.component';
+import { AdminAnnouncementsComponent } from './components/admin-announcements/admin-announcements.component';
+import { AnnouncementCellComponent } from './components/announcement-cell/announcement-cell.component';
+import { AnnouncementEditModalComponent } from './components/announcement-edit-modal/announcement-edit-modal.component';
+import { LoadingAnimationComponent } from './components/loading-animation/loading-animation.component';
 
 @NgModule({
   declarations: [
@@ -53,12 +62,20 @@ import { EditUserComponent } from './pages/profile/edit-user/edit-user.component
     ClickOutsideDirective,
     CalendarComponent,
     AdminProgramsComponent,
+    AnnouncementsComponent,
     TimeSlotsComponent,
     FormatTimePipe,
     ProgramAppointmentComponent,
     EditProgramComponent,
     LoaderComponent,
     EditUserComponent,
+    AdminUsersComponent,
+    UserCellComponent,
+    UserEditModalComponent,
+    AdminAnnouncementsComponent,
+    AnnouncementCellComponent,
+    AnnouncementEditModalComponent,
+    LoadingAnimationComponent,
   ],
   imports: [
     CommonModule,
@@ -68,6 +85,7 @@ import { EditUserComponent } from './pages/profile/edit-user/edit-user.component
     ReactiveFormsModule,
     HttpClientModule,
     FormsModule,
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

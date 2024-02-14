@@ -1,0 +1,46 @@
+@use "../../../styles/variables" as *;
+
+section {
+  height: 100vh;
+  background-color: #26303a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+.tabs-buttons-container {
+  display: flex;
+  margin-bottom: 20px;
+}
+.users,
+.admins,
+.trainers,
+.not-assigned {
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.users-tab,
+.trainers-tab,
+.admins-tab,
+.not-assigned-tab {
+  height: 70vh;
+  overflow: auto;
+}
+
+.loading-container {
+  position: absolute;
+  margin: 20px auto;
+  border-radius: 20px;
+  // background: #435175;
+  width: 350px;
+  height: 250px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -75%);
+}

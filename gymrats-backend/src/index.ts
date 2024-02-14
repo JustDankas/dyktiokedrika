@@ -43,7 +43,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/test", testRoute);
 app.use("/user", userRoute);
-app.use("/announcement", authenticateController, announcementRoute);
+app.use("/announcement", announcementRoute);
 app.use("/address", authenticateController, addressRoute);
 app.use("/program", authenticateController, programRoute);
 // app.use("/program", programRoute);

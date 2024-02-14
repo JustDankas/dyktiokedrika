@@ -1,0 +1,44 @@
+.announcement-cell {
+  display: flex;
+  margin-bottom: 20px;
+}
+img {
+  width: 50%;
+  max-height: 270px;
+  margin-right: 10px;
+}
+.announcement-info {
+  width: 50%;
+}
+.date-and-edit {
+  display: flex;
+  align-items: center;
+  p {
+    margin: 0;
+  }
+  padding: 0;
+
+  .edit {
+    margin-left: auto;
+    cursor: pointer;
+    padding: 7px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  .delete {
+    margin-left: 5px;
+    color: rgb(175 0 0) !important;
+    cursor: pointer;
+    padding: 7px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  .edit:hover,
+  .delete:hover {
+    background-color: rgb(236, 236, 236);
+  }
+  .fa-calendar {
+    color: #aaaaaa;
+    margin-right: 5px;
+  }
+}
