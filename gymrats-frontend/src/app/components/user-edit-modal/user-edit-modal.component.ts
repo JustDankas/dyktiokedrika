@@ -1,12 +1,5 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChange,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { IUser, UserService } from 'src/app/services/user.service';
 import Swal from 'sweetalert2';
 
@@ -24,26 +17,39 @@ export class UserEditModalComponent {
   ) {}
 
   saveChanges() {
-    this.userService.updateUser(this.userCopy).subscribe(() => {
-      this.modal.dismiss();
-      window.location.reload();
-    });
+    this.userService.updateUser(this.userCopy).subscribe(
+      () => {
+        // this.modal.dismiss();
+        Swal.fire('Announcement saved successfully!', '', 'success').then(
+          () => {
+            window.location.reload();
+          }
+        );
+        window.location.reload();
+      },
+      (err) => {
+        Swal.fire('Something went wrong!', '', 'error');
+      }
+    );
   }
 
   closeModal() {
-    Swal.fire({
-      title: 'Cancel changes?',
-      text: 'You changes will be lost!',
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      cancelButtonColor: 'rgb(215 53 53)',
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isDismissed) {
-        this.modal.dismiss();
-      } else if (result.isConfirmed) {
-        this.saveChanges();
-      }
-    });
+    if (JSON.stringify(this.user) === JSON.stringify(this.userCopy)) {
+      this.modal.dismiss();
+    } else {
+      Swal.fire({
+        title: 'Cancel changes?',
+        text: 'You changes will be lost!',
+        showCancelButton: true,
+        confirmButtonText: 'Save',
+        cancelButtonColor: 'rgb(215 53 53)',
+      }).then((result) => {
+        if (result.isDismissed) {
+          this.modal.dismiss();
+        } else if (result.isConfirmed) {
+          this.saveChanges();
+        }
+      });
+    }
   }
 }

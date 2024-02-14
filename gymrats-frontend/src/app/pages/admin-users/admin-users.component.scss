@@ -18,13 +18,15 @@ section {
 }
 .users,
 .admins,
-.trainers {
+.trainers,
+.not-assigned {
   cursor: pointer;
 }
 
 .users-tab,
 .trainers-tab,
-.admins-tab {
+.admins-tab,
+.not-assigned-tab {
   height: 70vh;
   overflow: auto;
 }

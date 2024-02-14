@@ -57,7 +57,7 @@
         disabled
         class="registration_date"
         type="text"
-        [value]="user.registration_date"
+        [value]="user.registration_date | date : 'mediumDate'"
       />
     </div>
     <div class="input">

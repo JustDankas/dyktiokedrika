@@ -5,16 +5,11 @@ import {
 } from 'src/app/services/announcement.service';
 
 @Component({
-  selector: 'app-announcements',
-  templateUrl: './announcements.component.html',
-  styleUrls: ['./announcements.component.scss'],
+  selector: 'app-admin-announcements',
+  templateUrl: './admin-announcements.component.html',
+  styleUrls: ['./admin-announcements.component.scss'],
 })
-export class AnnouncementsComponent {
-  images = [
-    'assets/gym-background.jpg',
-    'assets/gym-background.jpg',
-    'assets/gym-background.jpg',
-  ];
+export class AdminAnnouncementsComponent {
   announcements: IAnnouncement[] | null = [];
   constructor(annoucementService: AnnouncementService) {
     annoucementService.announcements$.subscribe((next) => {

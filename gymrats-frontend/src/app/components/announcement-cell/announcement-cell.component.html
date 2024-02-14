@@ -1,0 +1,16 @@
+<div *ngIf="announcement" class="announcement-cell">
+  <img [src]="announcement.image" alt="" />
+  <div class="announcement-info">
+    <div class="date-and-edit">
+      <i class="fa-regular fa-calendar"></i>
+      <p [innerHTML]="announcement.created_at | date : 'mediumDate'"></p>
+      <i
+        class="fa-solid fa-pen-to-square edit"
+        (click)="editAnnouncement()"
+      ></i>
+      <i class="fa-solid fa-trash delete" (click)="deleteAnnouncement()"></i>
+    </div>
+    <h4 [innerHTML]="announcement.title"></h4>
+    <p [innerHTML]="announcement.text"></p>
+  </div>
+</div>

@@ -20,7 +20,9 @@
         <div class="email">{{ user.email }}</div>
       </td>
       <td>
-        <div class="registration">{{ user.registration_date }}</div>
+        <div class="registration">
+          {{ user.registration_date | date : "mediumDate" }}
+        </div>
       </td>
 
       <td class="edit" (click)="editUser()">

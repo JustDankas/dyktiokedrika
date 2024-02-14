@@ -7,6 +7,7 @@ import { AdminProgramsComponent } from './pages/admin-programs/admin-programs.co
 import { adminGuard } from './auth/admin.guard';
 import { ProgramAppointmentComponent } from './pages/program-appointment/program-appointment.component';
 import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
+import { AdminAnnouncementsComponent } from './components/admin-announcements/admin-announcements.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -19,6 +20,11 @@ const routes: Routes = [
   {
     path: 'admin-users',
     component: AdminUsersComponent,
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin-announcements',
+    component: AdminAnnouncementsComponent,
     canActivate: [adminGuard],
   },
   {

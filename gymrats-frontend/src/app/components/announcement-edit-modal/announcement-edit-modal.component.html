@@ -1,0 +1,53 @@
+<div class="announcement-edit-modal" *ngIf="announcement && announcementCopy">
+  <i class="fa-solid fa-xmark close" (click)="closeModal()"></i>
+  <div class="image-container">
+    <img class="announcement-image" [src]="announcementCopy.image" alt="" />
+    <input
+      formControlName="image"
+      type="file"
+      class="image-overlay"
+      id="announcement-input"
+      accept="image/png, image/jpeg"
+    />
+    <label for="announcement-input" class="image-overlay"
+      >Click to change image
+    </label>
+  </div>
+  <div class="announcement-inputs">
+    <div class="input" style="width: 70%">
+      <label for="title">Title</label>
+      <input
+        [(ngModel)]="announcementCopy.title"
+        class="title"
+        type="text"
+        [value]="announcement.title"
+      />
+    </div>
+    <div class="input" style="width: 20%">
+      <label for="created_at">Creation Date</label>
+      <input
+        disabled
+        class="created-at"
+        type="text"
+        [value]="announcement.created_at | date : 'mediumDate'"
+      />
+    </div>
+  </div>
+
+  <div class="announcement-inputs">
+    <div class="input" style="width: 100%">
+      <label for="text">Description</label>
+      <textarea
+        style="resize: none"
+        class="text"
+        type="text"
+        [(ngModel)]="announcementCopy.text"
+        [value]="announcement.text"
+      ></textarea>
+    </div>
+  </div>
+  <div class="inputs">
+    <button class="save" (click)="saveChanges()">Save</button>
+    <button class="cancel" (click)="closeModal()">Cancel</button>
+  </div>
+</div>

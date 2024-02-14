@@ -28,4 +28,22 @@ export class AnnouncementService {
         this._announcements$.next(data);
       });
   }
+  updateAnnouncement(announcement: IAnnouncement | null) {
+    return this.http.put(
+      'http://localhost:8000/announcement/update_announcement',
+      { ...announcement },
+      { withCredentials: true }
+    );
+  }
+  deleteAnnouncement(announcementId: number) {
+    return this.http.delete(
+      'http://localhost:8000/announcement/delete_announcement',
+      {
+        withCredentials: true,
+        body: {
+          id: announcementId,
+        },
+      }
+    );
+  }
 }

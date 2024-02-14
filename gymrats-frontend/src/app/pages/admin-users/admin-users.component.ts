@@ -12,6 +12,7 @@ export class AdminUsersComponent {
   admins: IUser[] = [];
   trainers: IUser[] = [];
   users: IUser[] = [];
+  notAssignedUsers: IUser[] = [];
   constructor(userService: UserService) {
     userService.getAllUsers().subscribe((users: any) => {
       console.log(users);
@@ -19,6 +20,7 @@ export class AdminUsersComponent {
         if (user['role'] == 'admin') this.admins.push(user);
         if (user['role'] == 'trainer') this.trainers.push(user);
         if (user['role'] == 'user') this.users.push(user);
+        if (user['role'] == 'notAssigned') this.notAssignedUsers.push(user);
       });
       this.isLoading = false;
     });

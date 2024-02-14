@@ -29,6 +29,8 @@ export class UserCellComponent {
     Swal.fire({
       title: 'Do you want to delete this user?',
       text: "You won't be able to revert this!",
+      icon: 'warning',
+      iconColor: 'rgb(215 53 53)',
       showCancelButton: true,
       confirmButtonText: 'Delete',
       confirmButtonColor: 'rgb(215 53 53)',
