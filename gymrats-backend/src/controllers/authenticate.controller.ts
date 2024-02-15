@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import cookie from "cookie";
 import { getUserByIdQuery } from "./user.controller";
 export const authenticateController = async (
-  req: Request,
+  req: Request<any>,
   res: Response,
   next: NextFunction
 ) => {
@@ -17,9 +17,11 @@ export const authenticateController = async (
         }
         //@ts-ignore
         const { id } = decoded;
+
         const user = await getUserByIdQuery(id);
         if (user) {
-          res.locals.id = id;
+          // res.locals.id = id;
+          console.log("Is User");
           next();
         } else {
           throw new Error("User not found");
@@ -49,7 +51,6 @@ export const authenticateAdmin = async (
         const user = await getUserByIdQuery(id);
         if (user && user.role == "admin") {
           res.locals.id = id;
-
           next();
         } else {
           throw new Error("User not found");

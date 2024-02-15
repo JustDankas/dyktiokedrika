@@ -76,11 +76,17 @@ export class UserService {
   }
 
   updateUser(user: any) {
+    delete user['image'];
     console.log(user);
-    return this.http.put(this.configSrv.url + 'user/update_user', {
-      ...user,
-      withCredentials: true,
-    });
+    return this.http.put(
+      this.configSrv.url + 'user/update_user',
+      {
+        ...user,
+      },
+      {
+        withCredentials: true,
+      }
+    );
   }
   deleteUser(userId: number) {
     return this.http.delete(this.configSrv.url + 'user/delete_user', {

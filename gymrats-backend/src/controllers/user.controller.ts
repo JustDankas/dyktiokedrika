@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
 import { IUser, ILoginRequest, IAuth } from "../models/user";
 import jwt from "jsonwebtoken";
@@ -89,7 +89,6 @@ export const getUsersByRole = async (
   res: Response
 ) => {
   try {
-    // const {role}=req.params;
     const { role } = req.body;
 
     const usersList = await getUsersByTheirRole(role);
