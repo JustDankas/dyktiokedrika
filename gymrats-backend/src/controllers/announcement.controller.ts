@@ -13,7 +13,7 @@ export const announcementCreate = async (
     const { title, text, image } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
@@ -22,7 +22,7 @@ export const announcementCreate = async (
     return;
   } catch (createError) {
     console.log(createError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
     return;
   }
 };
@@ -34,7 +34,7 @@ export const getAllAnnouncements = async (req: Request, res: Response) => {
     return;
   } catch (getError) {
     console.log(getError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
     return;
   }
 };
@@ -46,7 +46,7 @@ export const updateAnnouncement = async (
     const { id, title, text, image } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
@@ -55,7 +55,7 @@ export const updateAnnouncement = async (
     return;
   } catch (updateError) {
     console.log(updateError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 export const announcementDeleteById = async (
@@ -66,7 +66,7 @@ export const announcementDeleteById = async (
     const { id } = req.body;
   } catch (deconstructionError) {
     console.log(deconstructionError);
-    res.send("Invalid fields in the request form").status(400);
+    res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
@@ -76,7 +76,7 @@ export const announcementDeleteById = async (
     return;
   } catch (deleteError) {
     console.log(deleteError);
-    res.send("Internal Server Error").status(500);
+    res.json("Internal Server Error").status(500);
   }
 };
 
