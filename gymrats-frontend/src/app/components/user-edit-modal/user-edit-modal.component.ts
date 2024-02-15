@@ -20,11 +20,9 @@ export class UserEditModalComponent {
     this.userService.updateUser(this.userCopy).subscribe(
       () => {
         // this.modal.dismiss();
-        Swal.fire('Announcement saved successfully!', '', 'success').then(
-          () => {
-            window.location.reload();
-          }
-        );
+        Swal.fire('User saved successfully!', '', 'success').then(() => {
+          window.location.reload();
+        });
         window.location.reload();
       },
       (err) => {
