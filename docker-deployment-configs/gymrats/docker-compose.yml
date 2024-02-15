@@ -3,6 +3,7 @@ services:
   backend:
     image: orestiskarap/dyktiokedrika_frontend
     container_name: gymrats_backend
+    restart: always
     ports:
       - "4242:4200"
     environment:
@@ -10,6 +11,7 @@ services:
   frontend:
     image: orestiskarap/dyktiokedrika_backend
     container_name: gymrats_frontend
+    restart: always
     ports:
       - "8420:8000"
     environment:
