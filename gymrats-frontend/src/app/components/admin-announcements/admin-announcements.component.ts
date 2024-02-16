@@ -18,7 +18,7 @@ export class AdminAnnouncementsComponent {
     annoucementService: AnnouncementService,
     private modal: NgbModal
   ) {
-    annoucementService.announcements$.subscribe((next) => {
+    annoucementService.getAnnouncements().subscribe((next) => {
       this.announcements = next;
       if (this.announcements) {
         this.isLoading = false;

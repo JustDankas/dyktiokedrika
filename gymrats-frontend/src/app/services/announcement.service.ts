@@ -13,8 +13,6 @@ export interface IAnnouncement {
   providedIn: 'root',
 })
 export class AnnouncementService {
-  private _announcements$ = new BehaviorSubject<IAnnouncement[] | null>(null);
-  announcements$ = this._announcements$.asObservable();
   constructor(private http: HttpClient, private configSrv: ConfigService) {
     this.getAnnouncements();
   }
@@ -23,16 +21,10 @@ export class AnnouncementService {
     if (limit) {
       params['limit'] = limit;
     }
-    return this.http
-      .get<IAnnouncement[]>(
-        this.configSrv.url + 'announcement/view_all_announcements',
-        { withCredentials: true, params }
-      )
-      .pipe(
-        tap((data) => {
-          this._announcements$.next(data);
-        })
-      );
+    return this.http.get<IAnnouncement[]>(
+      this.configSrv.url + 'announcement/view_all_announcements',
+      { withCredentials: true, params }
+    );
   }
   createAnnouncement(announcement: IAnnouncement | null) {
     return this.http.post(
