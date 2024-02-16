@@ -7,6 +7,7 @@ import {
   ISlot,
   ProgramService,
 } from 'src/app/services/program.service';
+import Swal from 'sweetalert2';
 
 interface IprogramAppointment extends Omit<ISlot, ISlot['id']> {
   title: string;
@@ -63,7 +64,20 @@ export class ProgramAppointmentComponent {
   }
 
   makeAppointment() {
-    this.programService.createAppointment(this.slotId);
+    this.programService.createAppointment(this.slotId).subscribe({
+      next: (next) => {
+        this.router.navigate(['/profile']);
+      },
+      error: (err) => {
+        Swal.fire({
+          title: 'There seems to be an error',
+          text: err.error,
+          icon: 'error',
+          confirmButtonText: 'Ok',
+          iconColor: 'rgb(215 53 53)',
+        });
+      },
+    });
   }
   getDay(date: Date) {
     return (new Date(date).getDay() - 1) % 7;

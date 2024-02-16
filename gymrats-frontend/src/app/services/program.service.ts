@@ -193,35 +193,25 @@ export class ProgramService {
       });
   }
   createAppointment(slot_id: number) {
-    this.http
-      .post(
-        this.configSrv.url + this.programUrl + 'create_appointment',
-        {
-          slot_id,
-        },
-        { withCredentials: true }
-      )
-      .subscribe((data) => {
-        console.log(data);
-        // this.router.navigate(['/profile']);
-      });
+    return this.http.post(
+      this.configSrv.url + this.programUrl + 'create_appointment',
+      {
+        slot_id,
+      },
+      { withCredentials: true }
+    );
   }
 
   cancelAppointment(id: number) {
-    this.http
-      .patch(
-        this.configSrv.url + this.programUrl + 'cancel_appointment',
-        {
-          id,
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .subscribe((data) => {
-        // console.log(data);
-        window.location.reload();
-      });
+    return this.http.patch(
+      this.configSrv.url + this.programUrl + 'cancel_appointment',
+      {
+        id,
+      },
+      {
+        withCredentials: true,
+      }
+    );
   }
 
   getAllAppointmentsWithPrograms() {
