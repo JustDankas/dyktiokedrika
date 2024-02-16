@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProgramService } from 'src/app/services/program.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-program-item',
@@ -19,6 +20,20 @@ export class ProgramItemComponent {
   constructor(private programService: ProgramService) {}
 
   onClick() {
-    this.programService.cancelAppointment(this.id);
+    this.programService.cancelAppointment(this.id).subscribe({
+      next: (next) => {
+        console.log(next);
+      },
+      error: (err) => {
+        console.error(err.error);
+        Swal.fire({
+          title: 'There seems to be an error',
+          text: err.error,
+          icon: 'error',
+          confirmButtonText: 'Ok',
+          iconColor: 'rgb(215 53 53)',
+        });
+      },
+    });
   }
 }
