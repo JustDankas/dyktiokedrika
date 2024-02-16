@@ -290,9 +290,7 @@ export const cancelAppointment = async (req: Request, res: Response) => {
       console.error(
         `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
       );
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(sqlError.sqlMessage);
       return;
     } else {
       console.error("Generic Error:", error);
