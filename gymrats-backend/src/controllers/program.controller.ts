@@ -9,6 +9,7 @@ import { IUser } from "../models/user";
 import { getSlotsQuery, getSpecificSlotById } from "./slot.controller";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import { IAppointement } from "../models/appointment";
+import { SqlError, isSqlError } from "../models/error-handling";
 
 export const programCreate = async (
   req: Request<IProgramCreationRequest>,
@@ -283,11 +284,26 @@ export const cancelAppointment = async (req: Request, res: Response) => {
     const { id } = req.body;
     await cancelAppointmentQuery(Number(id));
     res.json("OK").status(200);
-  } catch (error) {
-    console.log(error);
-    res.json("Internal Server Error").status(500);
+  } catch (error: unknown) {
+    if (isSqlError(error)) {
+      const sqlError = error as SqlError;
+      console.error(
+        `SQL Error: Code ${sqlError.code}, Errno ${sqlError.errno}, SQL: ${sqlError.sql}, Message: ${sqlError.sqlMessage}`
+      );
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    } else {
+      console.error("Generic Error:", error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+      return;
+    }
   }
 };
+
 export const programDeleteById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
