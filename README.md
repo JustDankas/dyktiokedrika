@@ -11,7 +11,7 @@
 
 ### Documentation
 
-Το documentation υπάρχει στο zip αλλά μπορείτε να το βρείτε και στο http://83.212.75.182:6875/books/gymrats-documentation
+Το documentation υπάρχει στο zip (`gymrats_documentation.html`) αλλά μπορείτε να το βρείτε και στο http://83.212.75.182:6875/books/gymrats-documentation (προτείνεται)
 
 >  Τρέχει στην open-source πλατφόρμα BookStack σε δικό μας server, στον okeanos-knossos της GRNET
 
