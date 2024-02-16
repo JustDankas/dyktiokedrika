@@ -1,5 +1,4 @@
--- Update Slot by ID
-CREATE PROCEDURE sp_UpdateSlot(
+CREATE DEFINER=`root`@`%` PROCEDURE `sp_UpdateSlotByID`(
     IN p_slot_id INT,
     IN p_program_id INT,
     IN p_seats_available INT,
