@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { LoaderService } from './loader.service';
+import Swal from 'sweetalert2';
 
 export type Role = 'notAssigned' | 'admin' | 'trainer' | 'user';
 export interface IUser {
@@ -106,10 +107,20 @@ export class UserService {
       .post(this.configSrv.url + 'user/login', body, {
         withCredentials: true,
       })
-      .subscribe((data: any) => {
-        this.loaderService.toggleLoading();
-        // this._user$.next(data);
-        window.location.reload();
+      .subscribe({
+        next: (data: any) => {
+          this.loaderService.toggleLoading();
+          // this._user$.next(data);
+          window.location.reload();
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire({
+            title: 'Wrong username or password',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+          });
+        },
       });
   }
 

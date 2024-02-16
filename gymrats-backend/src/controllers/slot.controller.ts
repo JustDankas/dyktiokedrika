@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { sqlPool } from "../mysqlPool";
 import { ISlot, ISlotCreationRequest } from "../models/slot";
 import { getSpecificProgramById } from "./program.controller";
-
 export const slotCreate = async (
   req: Request<ISlotCreationRequest>,
   res: Response
@@ -20,12 +19,20 @@ export const slotCreate = async (
     // const parsedStartDate = new Date(start);
     // const parsedEndDate = new Date(end);
     // const [program] = await sqlPool.query<any>(
-    //   `SELECT max_size FROM program WHERE id = ?`,
+    //   SELECT max_size FROM program WHERE id = ?,
     //   [program_id]
     // );
     // console.log(program);
+    const parsedStartDate = new Date(start);
+    const correctParsedStartDate = new Date(
+      parsedStartDate.getTime() + 2 * 60 * 60 * 1000
+    );
 
-    await createSlot(program_id, start, end);
+    const parsedEndDate = new Date(end);
+    const correctParsedEndDate = new Date(
+      parsedEndDate.getTime() + 2 * 60 * 60 * 1000
+    );
+    await createSlot(program_id, correctParsedStartDate, correctParsedEndDate);
     res.status(200).json("Slot Successfully created");
     return;
   } catch (createError) {
