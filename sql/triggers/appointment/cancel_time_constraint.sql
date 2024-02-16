@@ -1,6 +1,3 @@
--- 
--- Not gonna be used after all - The check will be done from the backend.
--- 
 CREATE DEFINER = CURRENT_USER TRIGGER cancel_time_constraint
 BEFORE UPDATE ON appointment
 FOR EACH ROW

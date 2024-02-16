@@ -1,0 +1,4 @@
+CREATE DEFINER=`root`@`%` PROCEDURE `sp_GetAllUsers`()
+BEGIN
+	SELECT * FROM user;
+END
