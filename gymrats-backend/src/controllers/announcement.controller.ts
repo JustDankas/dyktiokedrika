@@ -29,7 +29,8 @@ export const announcementCreate = async (
 
 export const getAllAnnouncements = async (req: Request, res: Response) => {
   try {
-    const announcementList = await getAnnouncements();
+    const { limit } = req.query;
+    const announcementList = await getAnnouncements(limit);
     res.json(announcementList).status(200);
     return;
   } catch (getError) {
@@ -92,10 +93,11 @@ async function createAnnouncement({
   ]);
 }
 
-async function getAnnouncements() {
+async function getAnnouncements(maxInput: any) {
   // @ts-ignore
   const [rows] = await sqlPool.query<IAnnouncement[]>(
-    "CALL sp_GetAnnouncements()"
+    "CALL sp_GetAnnouncements(?)",
+    [maxInput]
   );
   return rows[0];
 }

@@ -31,4 +31,4 @@ jobs:
           script: |
             docker-compose pull
             docker-compose up -d
-            docker image prune -a
+            docker system prune -a

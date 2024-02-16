@@ -2,12 +2,12 @@ CREATE PROCEDURE `sp_SlotDeletedAnnouncement` (IN deleted_slot_id INT)
 BEGIN
     DECLARE announcement_title VARCHAR(255);
     DECLARE announcement_text TEXT;
-	DECLARE announcement_image TEXT;
+	DECLARE announcement_image LONGTEXT;
 
     -- Retrieve information about the deleted slot
      SELECT
         CONCAT(
-			'Slot canceled on',
+			'Slot canceled on ',
             p.title
         ),
         CONCAT(
@@ -29,4 +29,4 @@ BEGIN
 
     -- Call the stored procedure to create the announcement
     CALL sp_CreateAnnouncement(announcement_title, announcement_text, announcement_image);
-END;
+END
