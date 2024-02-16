@@ -219,8 +219,8 @@ export class ProgramService {
         }
       )
       .subscribe((data) => {
-        console.log(data);
-        // window.location.reload();
+        // console.log(data);
+        window.location.reload();
       });
   }
 

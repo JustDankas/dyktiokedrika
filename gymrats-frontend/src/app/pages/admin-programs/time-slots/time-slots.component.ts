@@ -37,8 +37,12 @@ export class TimeSlotsComponent {
 
   private dateValidator(): ValidatorFn {
     return (control: AbstractControl<Date | null>): ValidationErrors | null => {
+      console.log(control.value);
       if (control.value) {
-        if (new Date(control.value).getTime() > Date.now()) {
+        if (
+          new Date(control.value).getTime() >=
+          Date.now() - 1000 * 24 * 60 * 60
+        ) {
           return null;
         }
       }

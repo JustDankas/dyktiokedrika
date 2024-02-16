@@ -20,8 +20,7 @@ export const authenticateController = async (
 
         const user = await getUserByIdQuery(id);
         if (user) {
-          // res.locals.id = id;
-          console.log("Is User");
+          res.locals.id = id;
           next();
         } else {
           throw new Error("User not found");

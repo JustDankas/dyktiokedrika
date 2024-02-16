@@ -10,10 +10,21 @@ import { IUser, UserService } from 'src/app/services/user.service';
 })
 export class EditUserComponent {
   userForm = new FormGroup({
-    username: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required, Validators.email]),
+    username: new FormControl('', [
+      Validators.required,
+      Validators.minLength(5),
+      Validators.maxLength(255),
+    ]),
+    email: new FormControl('', [
+      Validators.required,
+      Validators.email,
+      Validators.maxLength(255),
+    ]),
     about: new FormControl(''),
-    password: new FormControl('', [Validators.required]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(2000),
+    ]),
   });
 
   constructor(private userService: UserService) {

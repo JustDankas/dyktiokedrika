@@ -18,11 +18,8 @@ export class AnnouncementsComponent {
   announcements: IAnnouncement[] | null = [];
   isLoading = true;
   constructor(annoucementService: AnnouncementService) {
-    annoucementService.announcements$.subscribe((next) => {
+    annoucementService.getAnnouncements(2).subscribe((next) => {
       this.announcements = next;
-      if (this.announcements) {
-        this.isLoading = false;
-      }
     });
   }
 }

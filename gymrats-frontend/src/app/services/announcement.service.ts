@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { ConfigService } from './config.service';
 export interface IAnnouncement {
   id: number;
@@ -18,16 +18,21 @@ export class AnnouncementService {
   constructor(private http: HttpClient, private configSrv: ConfigService) {
     this.getAnnouncements();
   }
-  getAnnouncements() {
-    this.http
+  getAnnouncements(limit?: number) {
+    const params: any = {};
+    if (limit) {
+      params['limit'] = limit;
+    }
+    return this.http
       .get<IAnnouncement[]>(
         this.configSrv.url + 'announcement/view_all_announcements',
-        { withCredentials: true }
+        { withCredentials: true, params }
       )
-      .subscribe((data) => {
-        console.log(data);
-        this._announcements$.next(data);
-      });
+      .pipe(
+        tap((data) => {
+          this._announcements$.next(data);
+        })
+      );
   }
   createAnnouncement(announcement: IAnnouncement | null) {
     return this.http.post(
