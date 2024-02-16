@@ -15,7 +15,7 @@
     </label>
   </div>
   <div class="announcement-inputs">
-    <div class="input" style="width: 70%">
+    <div class="input" [ngStyle]="{ width: isEdit ? '70%' : '100%' }">
       <label for="title">Title</label>
       <input
         [(ngModel)]="announcementCopy.title"
@@ -24,7 +24,7 @@
         [value]="announcement.title"
       />
     </div>
-    <div class="input" style="width: 20%">
+    <div class="input" style="width: 20%" *ngIf="isEdit">
       <label for="created_at">Creation Date</label>
       <input
         disabled
@@ -49,7 +49,7 @@
   </div>
   <div class="inputs">
     <button class="save" (click)="saveChanges()" [disabled]="buttonDisabled">
-      {{ announcementCopy.id == -1 ? "Create" : "Save" }}
+      {{ isEdit ? "Save" : "Create" }}
     </button>
     <button class="cancel" (click)="closeModal()">Cancel</button>
   </div>
