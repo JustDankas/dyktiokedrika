@@ -16,14 +16,14 @@ export class AnnouncementEditModalComponent {
     id: -1,
     title: '',
     text: '',
-    image: './assets/default-profile.png',
+    image: './assets/default-announcement.png',
     created_at: '',
   };
   announcementCopy: IAnnouncement | null = {
     id: -1,
     title: '',
     text: '',
-    image: './assets/default-profile.png',
+    image: './assets/default-announcement.png',
     created_at: '',
   };
 
@@ -32,6 +32,13 @@ export class AnnouncementEditModalComponent {
     private modal: NgbActiveModal,
     private announcementService: AnnouncementService
   ) {}
+
+  get isEdit() {
+    if (this.announcementCopy) {
+      return this.announcementCopy.id != -1;
+    }
+    return true;
+  }
   closeModal() {
     if (
       JSON.stringify(this.announcement) ===
