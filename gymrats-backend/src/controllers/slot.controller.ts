@@ -24,8 +24,9 @@ export const slotCreate = async (
     //   [program_id]
     // );
     // console.log(program);
-
-    await createSlot(program_id, start, end);
+    const parsedStartDate = new Date(start);
+    const parsedEndDate = new Date(end);
+    await createSlot(program_id, parsedStartDate, parsedEndDate);
     res.status(200).json("Slot Successfully created");
     return;
   } catch (createError) {
