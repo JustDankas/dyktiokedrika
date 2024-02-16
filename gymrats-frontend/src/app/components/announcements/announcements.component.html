@@ -15,7 +15,7 @@
   >
     <ng-template
       ngbSlide
-      *ngFor="let announcement of announcements; let i = index"
+      *ngFor="let announcement of announcements$ | async; let i = index"
       [showNavigationIndicators]="false"
     >
       <a [href]="'#'" target="_blank" rel="nofollow noopener noreferrer">

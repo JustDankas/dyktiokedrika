@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import {
   AnnouncementService,
   IAnnouncement,
@@ -15,11 +16,12 @@ export class AnnouncementsComponent {
     'assets/gym-background.jpg',
     'assets/gym-background.jpg',
   ];
-  announcements: IAnnouncement[] | null = [];
+  announcements$ = new BehaviorSubject<IAnnouncement[]>([]);
   isLoading = true;
   constructor(annoucementService: AnnouncementService) {
-    annoucementService.getAnnouncements(2).subscribe((next) => {
-      this.announcements = next;
+    annoucementService.getAnnouncements(10).subscribe((next) => {
+      this.announcements$.next(next);
+      this.isLoading = false;
     });
   }
 }
