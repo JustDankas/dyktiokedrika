@@ -1,16 +1,16 @@
 version: '3'
 services:
-  backend:
+  frontend:
     image: orestiskarap/dyktiokedrika_frontend
-    container_name: gymrats_backend
+    container_name: gymrats_frontend
     restart: always
     ports:
       - "4242:4200"
     environment:
       TZ: Europe/Athens
-  frontend:
+  backend:
     image: orestiskarap/dyktiokedrika_backend
-    container_name: gymrats_frontend
+    container_name: gymrats_backend
     restart: always
     ports:
       - "8420:8000"
