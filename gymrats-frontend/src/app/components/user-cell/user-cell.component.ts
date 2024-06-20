@@ -30,10 +30,10 @@ export class UserCellComponent {
       title: 'Do you want to delete this user?',
       text: "You won't be able to revert this!",
       icon: 'warning',
-      iconColor: 'rgb(215 53 53)',
+      iconColor: 'rgb(215 74 74)',
       showCancelButton: true,
       confirmButtonText: 'Delete',
-      confirmButtonColor: 'rgb(215 53 53)',
+      confirmButtonColor: 'rgb(215 74 74)',
       denyButtonText: `Cancel`,
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */

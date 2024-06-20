@@ -1,4 +1,19 @@
 @use "../../../styles/variables" as *;
+
+main {
+  background-color: $primary-400;
+}
+
+.add-button {
+  background-color: white;
+  border: 2px solid white;
+  // color: $primary-400;
+  font-weight: 500;
+}
+.add-button:hover {
+  background-color: $primary-400;
+  color: white;
+}
 section {
   padding: 40px 20px;
   color: white;

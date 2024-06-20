@@ -8,6 +8,7 @@ import {
 import { ProgramService } from 'src/app/services/program.service';
 import { ProgramTypes } from 'src/app/services/program.service';
 import { IUser } from 'src/app/services/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-programs',
@@ -53,15 +54,37 @@ export class AdminProgramsComponent {
   }
 
   deleteProgram(id: number) {
-    if (confirm(`Are you sure you want to delete this program?`)) {
-      this.programService.deleteProgram(id);
-    }
+    Swal.fire({
+      title: 'Do you want to delete this sector?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      iconColor: 'rgb(215 74 74)',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      confirmButtonColor: 'rgb(215 74 74)',
+      denyButtonText: `Cancel`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.programService.deleteProgram(id);
+      }
+    });
   }
 
   deleteSlot(id: number) {
-    if (confirm(`Are you sure you want to delete this slot?`)) {
-      this.programService.deleteSlot(id);
-    }
+    Swal.fire({
+      title: 'Do you want to delete this slot?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      iconColor: 'rgb(215 74 74)',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      confirmButtonColor: 'rgb(215 74 74)',
+      denyButtonText: `Cancel`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.programService.deleteSlot(id);
+      }
+    });
   }
   onGroupChanged(ev: Event) {
     const target = ev.target as HTMLInputElement;

@@ -1,8 +1,8 @@
 <main>
   <section class="container-md">
-    <h1>Manage Programs</h1>
+    <h1>Manage Sectors</h1>
     <button
-      class="btn btn-success"
+      class="btn add-button"
       type="button"
       data-bs-toggle="modal"
       data-bs-target="#exampleModal"
@@ -34,12 +34,12 @@
               Price:
               <span class="badge bg-secondary">{{ program.price + "$" }}</span>
             </li>
-            <li *ngIf="!program.is_group" class="list-group-item">Non-Group</li>
+            <!-- <li *ngIf="!program.is_group" class="list-group-item">Non-Group</li>
             <li *ngIf="program.is_group" class="list-group-item">
               Group <i class="bi bi-people-fill"></i>
-            </li>
+            </li> -->
             <li class="list-group-item">
-              Trainer:
+              Doctor:
               {{ program.trainer_name + " " + program.trainer_surname }}
             </li>
             <li class="list-group-item">Time Slots:</li>
@@ -126,7 +126,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Create Program</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Create Section</h1>
         <button
           type="button"
           class="btn-close"
@@ -140,7 +140,7 @@
         (ngSubmit)="onSubmit()"
       >
         <div class="mb-3">
-          <label for="title" class="form-label">Program Title</label>
+          <label for="title" class="form-label">Section Title</label>
           <input
             type="text"
             formControlName="title"
@@ -150,7 +150,7 @@
         </div>
         <div class="mb-3">
           <label for="description" class="form-label"
-            >Program Description</label
+            >Section Description</label
           >
           <textarea
             formControlName="description"
@@ -160,17 +160,17 @@
           ></textarea>
         </div>
         <div class="mb-3">
-          <label class="form-label">Program Type</label>
+          <label class="form-label">Section Type</label>
           <select
             class="form-select"
             aria-label="Default select example"
             formControlName="type"
           >
-            <option value="pilates">Pilates</option>
-            <option value="weights">Weights</option>
-            <option value="yoga">Yoga</option>
-            <option value="advanced">Advanced</option>
-            <option value="fitness">Fitness</option>
+            <option value="anesthisiologist">Anesthisiologist</option>
+            <option value="microbiologist">Microbiologist</option>
+            <option value="gynecologist">Gynecologist</option>
+            <option value="cardiologist">Cardiologist</option>
+            <option value="pathologist">Pathologist</option>
           </select>
         </div>
         <div class="mb-3 form-check">
@@ -214,7 +214,7 @@
             aria-label="Default select example"
             formControlName="trainer_id"
           >
-            <option value="undefined" selected>Select a trainer</option>
+            <option value="undefined" selected>Select a doctor</option>
             <option *ngFor="let trainer of trainers" [value]="trainer.id">
               {{ trainer.name + " " + trainer.surname }}
             </option>

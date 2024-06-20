@@ -9,9 +9,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="editProgramModalLabel">
-          Edit Program
-        </h1>
+        <h1 class="modal-title fs-5" id="editProgramModalLabel">Edit Sector</h1>
         <button
           type="button"
           class="btn-close"
@@ -26,7 +24,7 @@
           (ngSubmit)="onSubmit()"
         >
           <div class="mb-3">
-            <label for="title" class="form-label">Program Title</label>
+            <label for="title" class="form-label">Sector Title</label>
             <input
               type="text"
               formControlName="title"
@@ -36,7 +34,7 @@
           </div>
           <div class="mb-3">
             <label for="description" class="form-label"
-              >Program Description</label
+              >Section Description</label
             >
             <textarea
               formControlName="description"
@@ -46,7 +44,7 @@
             ></textarea>
           </div>
           <div class="mb-3">
-            <label class="form-label">Program Type</label>
+            <label class="form-label">Section Type</label>
             <select
               class="form-select"
               aria-label="Default select example"
@@ -59,7 +57,7 @@
               <option value="fitness">Fitness</option>
             </select>
           </div>
-          <div class="mb-3 form-check">
+          <!-- <div class="mb-3 form-check">
             <input
               type="checkbox"
               class="form-check-input"
@@ -67,21 +65,10 @@
               formControlName="is_group"
             />
             <label class="form-check-label" for="group">Is Group</label>
-          </div>
+          </div> -->
+
           <div class="mb-3">
-            <label for="group-size" class="form-label">Max Group Size</label>
-            <input
-              formControlName="max_size"
-              type="number"
-              min="0"
-              max="20"
-              [defaultValue]="1"
-              class="form-control"
-              id="group-size"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="price" class="form-label">Program Price</label>
+            <label for="price" class="form-label">Section Price</label>
             <input
               formControlName="price"
               type="number"
@@ -98,14 +85,14 @@
               aria-label="Default select example"
               formControlName="trainer_id"
             >
-              <option value="undefined" selected>Select a trainer</option>
+              <option value="undefined" selected>Select a doctor</option>
               <option *ngFor="let trainer of trainers" [value]="trainer.id">
                 {{ trainer.name + " " + trainer.surname }}
               </option>
             </select>
           </div>
           <div class="mb-3">
-            <label for="image" class="form-label">Program Image</label>
+            <label for="image" class="form-label">Section Image</label>
             <input
               type="file"
               class="form-control"

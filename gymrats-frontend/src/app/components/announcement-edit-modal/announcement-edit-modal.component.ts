@@ -51,7 +51,7 @@ export class AnnouncementEditModalComponent {
         text: 'You changes will be lost!',
         showCancelButton: true,
         confirmButtonText: 'Save',
-        cancelButtonColor: 'rgb(215 53 53)',
+        cancelButtonColor: 'rgb(215 74 74)',
       }).then((result) => {
         if (result.isDismissed) {
           this.modal.dismiss();

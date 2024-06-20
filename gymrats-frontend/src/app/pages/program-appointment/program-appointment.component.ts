@@ -74,7 +74,7 @@ export class ProgramAppointmentComponent {
           text: err.error,
           icon: 'error',
           confirmButtonText: 'Ok',
-          iconColor: 'rgb(215 53 53)',
+          iconColor: 'rgb(215 74 74)',
         });
       },
     });
