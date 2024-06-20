@@ -1,16 +1,14 @@
 import { Request, Response } from "express";
-import { sqlPool } from "../mysqlPool";
-import { IUser, ILoginRequest, IAuth } from "../models/user";
 import jwt from "jsonwebtoken";
 import { ICreateUser } from "../interfaces/user.interface";
-import {
-  getAddressByUserId,
-  getAllAddressByUserId,
-} from "./address.controller";
+import { ILoginRequest, IUser } from "../models/user";
+import { sqlPool } from "../mysqlPool";
+import { getAllAddressByUserId } from "./address.controller";
 
 export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
   try {
     const { username, password } = req.body;
+    console.log(username, password);
     const user = await getUserByUsernameAndPassword(username, password);
     if (!user) {
       throw new Error("Incorrect credentials");
