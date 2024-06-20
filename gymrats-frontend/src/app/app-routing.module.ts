@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: '', component: LandingPageComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   {
-    path: 'admin-programs',
+    path: 'admin-sectors',
     component: AdminProgramsComponent,
     canActivate: [adminGuard],
   },
@@ -28,7 +28,7 @@ const routes: Routes = [
     canActivate: [adminGuard],
   },
   {
-    path: 'program-reserve',
+    path: 'sector-reserve',
     component: ProgramAppointmentComponent,
     canActivate: [],
   },

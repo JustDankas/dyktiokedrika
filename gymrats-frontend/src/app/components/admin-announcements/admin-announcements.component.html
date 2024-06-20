@@ -7,7 +7,9 @@
       </button>
     </div>
     <div class="loading-container" *ngIf="isLoading">
-      <app-loading-animation></app-loading-animation>
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
     </div>
     <app-announcement-cell
       *ngFor="let announcement of announcements"

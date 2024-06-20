@@ -19,7 +19,7 @@ BEGIN
             DATE_FORMAT(s.end, '%H:%i'),
             ' on ',
             DATE_FORMAT(s.start, '%W, %d/%m/%y'),
-            '. We are looking forward to seeing you!'
+            -- '. We are looking forward to seeing you!'
         ),
         p.image
     INTO announcement_title, announcement_text, announcement_image

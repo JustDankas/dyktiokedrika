@@ -2,7 +2,7 @@
 
 .admin-announcements {
   height: 100vh;
-  background-color: #26303a;
+  background-color: $primary-400;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,5 +48,10 @@
   height: 250px;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -75%);
+  transform: translate(-25%, -50%);
+
+  .spinner-border {
+    width: 200px;
+    height: 200px;
+  }
 }

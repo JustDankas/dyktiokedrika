@@ -19,7 +19,7 @@ BEGIN
             DATE_FORMAT(s.start, '%W, %d/%m/%y'),
             ' of ',
             p.title,
-            ' class has been canceled. We\'re sorry for the inconvenience.'
+            ' sector has been canceled. We\'re sorry for the inconvenience.'
         ),
         p.image
     INTO announcement_title, announcement_text, announcement_image

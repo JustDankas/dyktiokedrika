@@ -6,14 +6,13 @@ BEGIN
     
     -- Retrieve information about the new program
     SELECT
-        CONCAT('New class started: ', p.title),
+        CONCAT('New sector opened: ', p.title),
         CONCAT(
-			'A new class has started named ', p.title, ' tutored by ', t.name, ' ', t.surname, '!<br />',
+			'A new sector has opened named ', p.title, ' runned by ', t.name, ' ', t.surname, '!<br />',
             'Description:<br />',
             p.description,'<br />',
             'Type: ', p.type,'<br />',
-            'Price: ', p.price,'<br />',
-            'Max seats:', p.max_size,'<br />'
+            'Price: ', p.price,'<br />'
         ),
         p.image
     INTO announcement_title, announcement_text, announcement_image
