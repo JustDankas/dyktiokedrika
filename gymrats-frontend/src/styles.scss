@@ -1,8 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
 $primary-200: #ba4987;
-$primary-300: #a8276d;
-$primary-400: #8a1254;
+$primary-300: #4a9f92;
+$primary-400: #5acab9;
 $primary-500: #6f013d;
 $primary-600: #4c002a;
 
@@ -318,11 +318,11 @@ header
 }
 
 .background-header .main-nav .nav li:last-child a {
-  color: #fff !important;
+  color: black !important;
 }
 
 .background-header .main-nav .nav li:last-child a:hover {
-  color: #fff !important;
+  color: black !important;
 }
 
 .background-header .main-nav .nav li:hover a {
@@ -340,7 +340,7 @@ header
   right: 0px;
   z-index: 100;
   height: 80px;
-  background: rgba(250, 250, 250, 0.1);
+  background: rgb(255, 255, 255);
   -webkit-transition: all 0.5s ease 0s;
   -moz-transition: all 0.5s ease 0s;
   -o-transition: all 0.5s ease 0s;
@@ -354,7 +354,7 @@ header
 
 .header-area .main-nav .logo {
   // line-height: 80px;
-  color: #fff;
+  color: black;
   font-size: 32px;
   font-weight: 800;
   text-transform: uppercase;
@@ -406,7 +406,7 @@ header
 }
 
 .header-area .main-nav .nav li a {
-  color: #fff;
+  color: black;
 }
 
 // .header-area .main-nav .nav li:last-child a {
@@ -714,7 +714,7 @@ banner
 
 .video-overlay {
   position: absolute;
-  background-color: rgba(35, 45, 57, 0.8);
+  background-color: #4a9f9292;
   top: 0;
   left: 0;
   bottom: 7px;
