@@ -58,7 +58,7 @@
           </ul>
           <div class="card-body card-actions">
             <button
-              class="btn btn-warning"
+              class="btn button"
               (click)="setEditingProgram(program.id)"
               data-bs-toggle="modal"
               data-bs-target="#editProgramModal"
@@ -66,14 +66,17 @@
               <i class="bi bi-pencil-fill"></i>
             </button>
             <button
-              class="btn btn-info"
+              class="btn btn-info button"
               data-bs-toggle="modal"
               data-bs-target="#slotModal"
               (click)="setEditingProgram(program.id)"
             >
               <i class="bi bi-clock-fill"></i>
             </button>
-            <button (click)="deleteProgram(program.id)" class="btn btn-danger">
+            <button
+              (click)="deleteProgram(program.id)"
+              class="btn btn-danger button"
+            >
               <i class="bi bi-trash-fill"></i>
             </button>
           </div>

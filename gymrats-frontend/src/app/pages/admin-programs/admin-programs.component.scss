@@ -54,3 +54,12 @@ section {
     object-fit: cover;
   }
 }
+.button {
+  background-color: white;
+  color: $primary-400;
+  border: 1px solid $primary-400;
+}
+.button:hover {
+  background-color: $primary-400;
+  color: white;
+}

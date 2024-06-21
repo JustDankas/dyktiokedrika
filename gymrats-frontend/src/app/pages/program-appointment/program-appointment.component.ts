@@ -71,7 +71,7 @@ export class ProgramAppointmentComponent {
       error: (err) => {
         Swal.fire({
           title: 'There seems to be an error',
-          text: err.error,
+          text: 'Something went wrong',
           icon: 'error',
           confirmButtonText: 'Ok',
           iconColor: 'rgb(215 74 74)',

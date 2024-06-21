@@ -28,7 +28,7 @@ export class ProgramItemComponent {
         console.error(err.error);
         Swal.fire({
           title: 'There seems to be an error',
-          text: err.error,
+          text: 'Cannot cancel appointment 2 hours before the start time',
           icon: 'error',
           confirmButtonText: 'Ok',
           iconColor: 'rgb(215 74 74)',

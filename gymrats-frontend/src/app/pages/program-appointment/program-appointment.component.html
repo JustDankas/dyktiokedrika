@@ -15,9 +15,12 @@
             {{ program.start | formatTime }} - {{ program.end | formatTime }}
           </div>
           <div class="seats-info">
-            <i class="bi bi-people-fill"></i>Size:
+            <!-- <i class="bi bi-people-fill"></i>Size:
             <span class="dotted">{{ program.max_size }}</span> Seats Left:
-            <span class="dotted">{{ program.seats_available }}</span>
+            <span class="dotted">{{ program.seats_available }}</span> -->
+            <span class="dotted" *ngIf="program.seats_available == 0"
+              >No longer available</span
+            >
           </div>
           <hr />
           <p class="desc mb-3">
