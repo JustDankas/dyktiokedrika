@@ -1,10 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConfigService } from './config.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { IUser } from './user.service';
-import { BehaviorSubject, pipe, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { ConfigService } from './config.service';
 import { LoaderService } from './loader.service';
+import { IUser } from './user.service';
 export type ProgramTypes =
   | 'pilates'
   | 'weights'
@@ -98,11 +98,14 @@ export class ProgramService {
           });
       };
     } else {
+      this.loaderService.toggleLoading();
+
       this.http
         .put(this.configSrv.url + this.programUrl + 'edit_program', data, {
           withCredentials: true,
         })
         .subscribe((data) => {
+          this.loaderService.toggleLoading();
           window.location.reload();
         });
     }
@@ -172,12 +175,16 @@ export class ProgramService {
   }
 
   deleteProgram(id: number) {
+    this.loaderService.toggleLoading();
+
     this.http
       .delete(
         this.configSrv.url + this.programUrl + 'delete_program' + '?id=' + id,
         { withCredentials: true }
       )
       .subscribe((data) => {
+        this.loaderService.toggleLoading();
+
         window.location.reload();
       });
   }

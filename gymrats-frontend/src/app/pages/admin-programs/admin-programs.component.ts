@@ -1,12 +1,6 @@
 import { Component } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ProgramService } from 'src/app/services/program.service';
-import { ProgramTypes } from 'src/app/services/program.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ProgramService, ProgramTypes } from 'src/app/services/program.service';
 import { IUser } from 'src/app/services/user.service';
 import Swal from 'sweetalert2';
 
