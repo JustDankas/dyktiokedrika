@@ -25,7 +25,6 @@ export const userLogin = async (req: Request<ILoginRequest>, res: Response) => {
       throw new Error("No address found");
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json("Internal Server Error");
   }
 };
@@ -57,7 +56,6 @@ export const userAuth = async (req: Request, res: Response) => {
     // const token = jwt.sign({ id: user.id }, "secret", { expiresIn: "1d" });
     // res.cookie("token", token, { httpOnly: true });
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -70,7 +68,6 @@ export const userRegister = async (
     const newUser = await createNewUser(req.body);
     res.json("OK").status(200);
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -79,7 +76,6 @@ export const userUpdate = async (req: Request<IUser>, res: Response) => {
     const updatedUser = await updateExistingUser(req.body);
     res.json("OK").status(200);
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -94,7 +90,6 @@ export const getUsersByRole = async (
     const usersList = await getUsersByTheirRole(role);
     res.json(usersList).status(200);
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -104,7 +99,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
     const usersList = await getUsers();
     res.json(usersList).status(200);
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -121,7 +115,6 @@ export const userDeleteById = async (
     }
     res.json("Deletion Successful").status(200);
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -140,7 +133,6 @@ export const updateUserPfp = async (
       throw new Error("Uknown error");
     }
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -154,7 +146,6 @@ export const updateUserInfo = async (req: Request, res: Response) => {
       throw new Error("Uknown error");
     }
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };

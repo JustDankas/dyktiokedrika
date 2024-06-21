@@ -21,9 +21,7 @@ export class ProgramItemComponent {
 
   onClick() {
     this.programService.cancelAppointment(this.id).subscribe({
-      next: (next) => {
-        console.log(next);
-      },
+      next: (next) => {},
       error: (err) => {
         console.error(err.error);
         Swal.fire({

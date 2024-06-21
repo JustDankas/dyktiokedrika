@@ -19,7 +19,9 @@
   <div class="profile-info-c ms-2">
     <div class="profile-name-badge-c">
       <h2 class="name me-auto">{{ user.name }}</h2>
-      <span class="badge bg-primary ms-2">{{ user.role }}</span>
+      <span class="badge bg-primary ms-2">{{
+        user.role == "trainer" ? "doctor" : user.role
+      }}</span>
       <button
         class="btn settings-btn ms-1"
         data-bs-toggle="modal"

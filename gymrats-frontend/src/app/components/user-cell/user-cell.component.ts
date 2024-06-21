@@ -41,13 +41,11 @@ export class UserCellComponent {
         if (this.user) {
           this.userService.deleteUser(this.user.id).subscribe(
             (res) => {
-              console.log(res);
               Swal.fire('User deleted!', '', 'success').then(() => {
                 window.location.reload();
               });
             },
             (err) => {
-              console.log(err);
               Swal.fire('Something whent wrong', '', 'error');
             }
           );

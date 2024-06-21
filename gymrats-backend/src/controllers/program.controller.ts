@@ -41,12 +41,10 @@ export const programCreate = async (
         res.status(200).json("OK");
       }
     } catch (getError) {
-      console.log(getError);
       res.json("Internal Server Error").status(500);
       return;
     }
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.status(400).json("Invalid fields in the request form");
     return;
   }
@@ -77,7 +75,6 @@ export const getProgramById = async (
   try {
     const { id } = req.query;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
@@ -88,7 +85,6 @@ export const getProgramById = async (
     res.json(program[0]).status(200);
     return;
   } catch (getError) {
-    console.log(getError);
     res.json("Internal Server Error").status(500);
     return;
   }
@@ -103,7 +99,6 @@ export const appointmentCreate = async (req: Request, res: Response) => {
 
     //@ts-ignore
     const [[slot]] = await getSpecificSlotById(slot_id);
-    console.log(slot);
     if (!slot) {
       res.status(StatusCodes.NOT_FOUND).json(
         `${getReasonPhrase(StatusCodes.NOT_FOUND)}!
@@ -182,7 +177,6 @@ export const appointmentCreate = async (req: Request, res: Response) => {
       .status(StatusCodes.CREATED);
     return;
   } catch (getError) {
-    console.log(getError);
     res.json("Internal Server Error").status(500);
     return;
   }
@@ -197,7 +191,6 @@ export const getProgramAndSlotBySlotId = async (
     const [data] = await getProgramAndSlotBySlotIdQuery(Number(slotId));
     res.status(200).json(data);
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -216,7 +209,6 @@ export const getAllPrograms = async (req: Request, res: Response) => {
     res.json(programList).status(200);
     return;
   } catch (getError) {
-    console.log(getError);
     res.json("Internal Server Error").status(500);
     return;
   }
@@ -231,7 +223,6 @@ export const getAllAppointmentsAndPrograms = async (
     const [data] = await getAllAppointmentsAndProgramsByUserId(Number(id));
     res.json(data).status(200);
   } catch (error) {
-    console.log(error);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -260,12 +251,10 @@ export const updateProgram = async (req: Request<IProgram>, res: Response) => {
         return;
       }
     } catch (getError) {
-      console.log(getError);
       res.json("Internal Server Error").status(500);
       return;
     }
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.status(400).json("Invalid fields in the request form");
     return;
   }
@@ -274,7 +263,6 @@ export const updateProgram = async (req: Request<IProgram>, res: Response) => {
     res.json("Program Successfully updated").status(200);
     return;
   } catch (updateError) {
-    console.log(updateError);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -306,18 +294,15 @@ export const programDeleteById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
   try {
     const { id } = req.query;
-    console.log(id);
     await deleteProgramById(Number(id));
     res.json("Program Successfully deleted").status(200);
     return;
   } catch (deleteError) {
-    console.log(deleteError);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -328,7 +313,6 @@ export const deleteAllPrograms = async (req: Request, res: Response) => {
     res.json("All Programs Successfully deleted").status(200);
     return;
   } catch (deleteError) {
-    console.log(deleteError);
     res.json("Internal Server Error").status(500);
   }
 };

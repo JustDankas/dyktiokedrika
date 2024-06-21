@@ -85,7 +85,6 @@ export class AnnouncementEditModalComponent {
         .createAnnouncement(this.announcementCopy)
         .subscribe(
           (res: any) => {
-            console.log(res);
             // this.modal.dismiss();
             Swal.fire('Announcement saved successfully!', '', 'success').then(
               () => {
@@ -94,7 +93,6 @@ export class AnnouncementEditModalComponent {
             );
           },
           (err: any) => {
-            console.log(err);
             this.buttonDisabled = true;
             Swal.fire('Something went wrong!', '', 'error');
           }
@@ -104,7 +102,6 @@ export class AnnouncementEditModalComponent {
         .updateAnnouncement(this.announcementCopy)
         .subscribe(
           (res) => {
-            console.log(res);
             // this.modal.dismiss();
             Swal.fire('Announcement saved successfully!', '', 'success').then(
               () => {
@@ -113,7 +110,6 @@ export class AnnouncementEditModalComponent {
             );
           },
           (err) => {
-            console.log(err);
             Swal.fire('Something went wrong!', '', 'error');
           }
         );

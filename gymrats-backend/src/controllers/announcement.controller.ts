@@ -12,7 +12,6 @@ export const announcementCreate = async (
   try {
     const { title, text, image } = req.body;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
@@ -21,7 +20,6 @@ export const announcementCreate = async (
     res.json("Announcement Successfully created").status(200);
     return;
   } catch (createError) {
-    console.log(createError);
     res.json("Internal Server Error").status(500);
     return;
   }
@@ -34,7 +32,6 @@ export const getAllAnnouncements = async (req: Request, res: Response) => {
     res.json(announcementList).status(200);
     return;
   } catch (getError) {
-    console.log(getError);
     res.json("Internal Server Error").status(500);
     return;
   }
@@ -46,7 +43,6 @@ export const updateAnnouncement = async (
   try {
     const { id, title, text, image } = req.body;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
@@ -55,7 +51,6 @@ export const updateAnnouncement = async (
     res.json("Announcement Successfully updated").status(200);
     return;
   } catch (updateError) {
-    console.log(updateError);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -66,7 +61,6 @@ export const announcementDeleteById = async (
   try {
     const { id } = req.body;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
@@ -76,7 +70,6 @@ export const announcementDeleteById = async (
     res.json("Announcement Successfully deleted").status(200);
     return;
   } catch (deleteError) {
-    console.log(deleteError);
     res.json("Internal Server Error").status(500);
   }
 };

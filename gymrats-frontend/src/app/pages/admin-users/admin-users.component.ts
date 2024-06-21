@@ -15,7 +15,6 @@ export class AdminUsersComponent {
   notAssignedUsers: IUser[] = [];
   constructor(userService: UserService) {
     userService.getAllUsers().subscribe((users: any) => {
-      console.log(users);
       users.forEach((user: IUser) => {
         if (user['role'] == 'admin') this.admins.push(user);
         if (user['role'] == 'trainer') this.trainers.push(user);

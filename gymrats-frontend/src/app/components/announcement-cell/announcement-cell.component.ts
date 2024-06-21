@@ -43,13 +43,11 @@ export class AnnouncementCellComponent {
           .deleteAnnouncement(this.announcement!.id)
           .subscribe(
             (res) => {
-              console.log(res);
               Swal.fire('Announcement deleted!', '', 'success').then(() => {
                 window.location.reload();
               });
             },
             (err) => {
-              console.log(err);
               Swal.fire('Something went wrong', '', 'error');
             }
           );

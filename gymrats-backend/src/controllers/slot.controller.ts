@@ -9,7 +9,6 @@ export const slotCreate = async (
   try {
     const { program_id, start, end } = req.body;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
@@ -36,7 +35,6 @@ export const slotCreate = async (
     res.status(200).json("Slot Successfully created");
     return;
   } catch (createError) {
-    console.log(createError);
     res.status(500).json("Internal Server Error");
     return;
   }
@@ -45,7 +43,6 @@ export const getSlotById = async (req: Request<ISlot["id"]>, res: Response) => {
   try {
     const { id } = req.body;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
@@ -54,7 +51,6 @@ export const getSlotById = async (req: Request<ISlot["id"]>, res: Response) => {
     res.json(slot).status(200);
     return;
   } catch (getError) {
-    console.log(getError);
     res.json("Internal Server Error").status(500);
     return;
   }
@@ -66,7 +62,6 @@ export const getSlotsByProgramId = async (
   try {
     const { program_id } = req.body;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
@@ -77,7 +72,6 @@ export const getSlotsByProgramId = async (
     res.json(programSlots).status(200);
     return;
   } catch (getError) {
-    console.log(getError);
     res.json("Internal Server Error").status(500);
     return;
   }
@@ -88,7 +82,6 @@ export const getAllSlots = async (req: Request, res: Response) => {
     res.json(SlotList).status(200);
     return;
   } catch (getError) {
-    console.log(getError);
     res.json("Internal Server Error").status(500);
     return;
   }
@@ -97,7 +90,6 @@ export const updateSlot = async (req: Request<ISlot["id"]>, res: Response) => {
   try {
     const { id } = req.body;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
@@ -106,7 +98,6 @@ export const updateSlot = async (req: Request<ISlot["id"]>, res: Response) => {
     res.json("Slot Successfully updated").status(200);
     return;
   } catch (updateError) {
-    console.log(updateError);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -114,7 +105,6 @@ export const SlotDeleteById = async (req: Request, res: Response) => {
   try {
     const { id } = req.query;
   } catch (deconstructionError) {
-    console.log(deconstructionError);
     res.json("Invalid fields in the request form").status(400);
     return;
   }
@@ -125,7 +115,6 @@ export const SlotDeleteById = async (req: Request, res: Response) => {
     res.json("Slot Successfully deleted").status(200);
     return;
   } catch (deleteError) {
-    console.log(deleteError);
     res.json("Internal Server Error").status(500);
   }
 };
@@ -136,7 +125,6 @@ export const deleteAllSlots = async (req: Request, res: Response) => {
     res.json("All Slots Successfully deleted").status(200);
     return;
   } catch (deleteError) {
-    console.log(deleteError);
     res.json("Internal Server Error").status(500);
   }
 };

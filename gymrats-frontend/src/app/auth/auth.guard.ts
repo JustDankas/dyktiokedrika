@@ -8,7 +8,6 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   return userSrv.getPermission().pipe(
     switchMap((res) => {
-      console.log(res, 'guard');
       if (res) {
         return of(true);
       } else {
